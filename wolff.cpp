@@ -4,9 +4,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <random>
-
-using namespace std;
+#include <random> // genearator and dist
+#include <sys/time.h>// time in microseconds
 
 double J = +1;                  // ferromagnetic coupling
 int Lx, Ly;                     // number of spins in x and y
@@ -15,15 +14,17 @@ int **s;                        // the spins
 double T;                       // temperature
 int steps;                      // number of Monte Carlo steps
 
-mt19937_64 rndGen;
-uniform_real_distribution<double> rndDist(0,1);
+std::mt19937 rndGen;
+std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
-  s = new int* [Lx];
+  s =
+    new int* [Lx];
   for (int i = 0; i < Lx; i++) {
     s[i] = new int [Ly];
   }
   for (int i = 0; i < Lx; i++) {
+
     for (int j = 0; j < Ly; j++) {
       s[i][j] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
     }
@@ -52,10 +53,12 @@ void tryAdd(int i, int j, int clusterSpin);
 
 void oneMonteCarloStep() {
 
-  // no cluster defined so clear the cluster array
+  //
+  //no cluster defined so clear the cluster array
   for (int i = 0; i < Lx; i++) {
     for (int j = 0; j < Lx; j++) {
       cluster[i][j] = false;
+
     }
   }
 
@@ -89,11 +92,13 @@ void growCluster(int i, int j, int clusterSpin) {
   if (!cluster[i][jPrev])
     tryAdd(i, jPrev, clusterSpin);
   if (!cluster[i][jNext])
+
     tryAdd(i, jNext, clusterSpin);
 }
 
 void tryAdd(int i, int j, int clusterSpin) {
-  if (s[i][j] == clusterSpin) {
+  if
+    (s[i][j] == clusterSpin) {
     if (rndDist(rndGen) < addProbability) {
       growCluster(i, j, clusterSpin);
     }
@@ -124,6 +129,12 @@ int main() {
   // start temperature
   T = 1;
   while (T <= 5) {
+
+    // get time in microseconds and use it as seed
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    rndGen.seed(tv.tv_usec);
+
     initialize();
     initializeClusterVariables();
 
@@ -131,14 +142,16 @@ int main() {
       oneMonteCarloStep();
     }
     measureObservables();
-    cout << magnetization << " " << T << "\n";
+    std::cout << magnetization << " " << T << "\n";
 
     for (int i = 0; i < Lx; i++) {
       for (int j = 0; j < Ly; j++) {
-        cout << s[i][j] << " ";
+        std::cout << s[i][j] << " ";
       }
+
     }
-    cout << "\n";
+    std::cout << "\n";
+
 
     T += 0.1;
   }
