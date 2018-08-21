@@ -1,3 +1,4 @@
 # file to ignore in commit
 *.out
 *.dat
+.*.swp
