@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# Machine Learning programm written using TensorFlow
+# Data used to train the neural network come from a computer simulated 2D Ising
+#  model, the purpose is to identify critical phase transitions using a trained
+#  neural network, without feeding it with the order parameter.
+
 import numpy as np
 import sys
 import tensorflow as tf
@@ -7,7 +12,17 @@ from tensorflow import keras
 import matplotlib.pyplot as plt
 
 
+
 def read_data(input_set):
+
+    """Read data from file.
+
+    Only argument is the path to the data file.
+    
+    File format:
+    - odd lines contain magnetization and temperature separated by spaces
+    - even lines contain spin configuration, single spin separated by spaces
+    """
 
     magnetizations = []
     binary_temperatures = []
@@ -41,6 +56,7 @@ def read_data(input_set):
     return magnetizations, binary_temperatures, real_temperatures, configurations
 
 
+
 neurons_number = 20
 
 def build_model(data_shape):
@@ -66,6 +82,7 @@ def build_model(data_shape):
             optimizer=optimizer,
             metrics=['accuracy'])
     return model
+
 
 
 train_set = sys.argv[1]
