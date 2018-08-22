@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <random> // genearator and dist
+#include <vector> // std::vector
+#include <algorithm> // std::for_each
 #include <sys/time.h>// time in microseconds
 
 double J = +1;                  // ferromagnetic coupling
@@ -18,6 +20,7 @@ std::mt19937 rndGen;
 std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
+
   s =
     new int* [Lx];
   for (int i = 0; i < Lx; i++) {
@@ -93,15 +96,40 @@ void growCluster(int i, int j, int clusterSpin) {
     tryAdd(i, jPrev, clusterSpin);
   if (!cluster[i][jNext])
     tryAdd(i, jNext, clusterSpin);
+
+  // add two diagonal nearest neighbor to obtain
+  // a triangular lattice
+  if (!cluster[iPrev][jPrev])
+    tryAdd(iPrev, jPrev, clusterSpin);
+  if (!cluster[iNext][jNext])
+    tryAdd(iNext, iPrev, clusterSpin);
 }
 
 void tryAdd(int i, int j, int clusterSpin) {
+
   if
     (s[i][j] == clusterSpin) {
     if (rndDist(rndGen) < addProbability) {
       growCluster(i, j, clusterSpin);
     }
   }
+}
+
+// various block interesting values
+double blockM = 0; // magnetization, spin average
+double blockV = 0; // spin variance
+
+// compute block averages, useful to understand model behaviour
+void measureBlockObservables() {
+
+  // compute mean spin value
+  int M = 0;
+  for (int i = 0; i < Lx; i++) {
+    for (int j = 0; j < Ly; j++) {
+      M += s[i][j];
+    }
+  }
+  blockM = fabs(double(M) / double(N));
 }
 
 // declare mean spin value
@@ -123,11 +151,18 @@ int main() {
 
   Ly = Lx = 32;
   N = Lx * Ly;
-  int MCSteps = 5000;
+  int MCSteps = 20000;
+  int blockSize = 1000; // suggested by Wolff is 1000
+
+  // if true block values will be computed and printed on stderr
+  // more information, more time
+  // useful to adjust parameters (steps, block size)
+  bool computeBlockValues = true;
+  std::vector<double> blockMvector; // magnetization averages computed on blocks
 
   // start temperature
-  T = 1;
-  while (T <= 5) {
+  T = 2;
+  while (T <= 4.5) {
 
     // get time in microseconds and use it as seed
     struct timeval tv;
@@ -137,11 +172,44 @@ int main() {
     initialize();
     initializeClusterVariables();
 
+    if (computeBlockValues) {
+      // thermalize
+      for (int i = 0; i < int(MCSteps/5); i++) {
+        oneMonteCarloStep();
+      }
+    } else {
+      MCSteps += int(MCSteps/5);
+    }
+
     for (int i = 0; i < MCSteps; i++) {
       oneMonteCarloStep();
+      if (computeBlockValues and i != 0 and i % blockSize == 0) {
+        measureBlockObservables();
+        blockMvector.push_back(blockM);
+      }
     }
     measureObservables();
+
+    // compute mean value of block avgs vector
+    double sum = std::accumulate(
+        std::begin(blockMvector),
+        std::end(blockMvector),
+        0.0);
+    double meanM =  sum / blockMvector.size();
+
+    // compute variance of block avgs vector
+    double accum = 0.0;
+    std::for_each (
+        std::begin(blockMvector),
+        std::end(blockMvector),
+        [&](const double d) { accum += (d - meanM) * (d - meanM); });
+    double meanV = accum / blockMvector.size();
+
+    // reset vector for the next temperature run
+    blockMvector.clear();
+
     std::cout << magnetization << " " << T << "\n";
+    std::cerr << T << " " << meanM << " " << meanV << std::endl;
 
     for (int i = 0; i < Lx; i++) {
       for (int j = 0; j < Ly; j++) {
@@ -151,7 +219,6 @@ int main() {
     }
     std::cout << "\n";
 
-
-    T += 0.1;
+    T += 0.05;
   }
 }
