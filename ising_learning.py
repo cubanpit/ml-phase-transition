@@ -57,9 +57,11 @@ def read_data(input_set):
 
 
 
-neurons_number = 20
+def build_model(data_shape, neurons_number):
 
-def build_model(data_shape):
+    """Build neural network model. 
+    """
+
     model = keras.Sequential([
         keras.layers.Dense(neurons_number, 
             activation=tf.sigmoid,
@@ -80,7 +82,7 @@ def build_model(data_shape):
 
     model.compile(loss='binary_crossentropy',
             optimizer=optimizer,
-            metrics=['accuracy'])
+            metrics=['accuracy', 'binary_crossentropy'])
     return model
 
 
@@ -90,7 +92,8 @@ train_magns, train_bin_temps, train_real_temps, train_configs = read_data(train_
 test_set = sys.argv[2]
 test_magns, test_bin_temps, test_real_temps, test_configs = read_data(test_set)
 
-model = build_model(train_configs.shape[1])
+neurons_number = 10
+model = build_model(train_configs.shape[1], neurons_number)
 model.summary()
 
 config_val = train_configs[:10000]
@@ -101,10 +104,10 @@ temp_train_part = train_bin_temps[10000:]
 
 history = model.fit(config_train_part,
         temp_train_part,
-        epochs=22,
-        batch_size=100,
+        epochs=30,
+        batch_size=64,
         validation_data=(config_val, temp_val),
-        verbose=1)
+        verbose=2)
 
 # evaluate model using test dataset
 results = model.evaluate(test_configs, test_bin_temps)
@@ -117,7 +120,7 @@ single_real_temps = np.round_(np.linspace(1.0, 5.0, 41), decimals=2)
 predictions_t1 = []
 predictions_t2 = []
 
-# divide data for common real temperatures 
+# divide data for equal real temperatures 
 for i in range(len(single_real_temps)):
     tmp_array = np.extract(test_real_temps==single_real_temps[i], predictions[:,0])
     predictions_t1.append(
@@ -151,31 +154,25 @@ x = test_magns
 for i in range(0, neurons_number):
     plt.scatter(x, y[:,i], c=np.random.rand(3,1), marker='_')
 
-#plt.scatter(x, y[:,0], c='b', marker='*', label='No.1')
-#plt.scatter(x, y[:,1], c='y', marker='1', label='No.2')
-#plt.scatter(x, y[:,2], c='g', marker='+', label='No.3')
-#plt.scatter(x, y[:,3], c='r', marker='_', label='No.4')
-#plt.legend()
 plt.show()
 
 acc = history.history['acc']
 val_acc = history.history['val_acc']
-#loss = history.history['loss']
-#val_loss = history.history['val_loss']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+binary_crossentropy = history.history['binary_crossentropy']
+val_binary_crossentropy = history.history['val_binary_crossentropy']
+
 epochs = range(1, len(acc) + 1)
 
-#plt.plot(epochs, loss, 'ro', label='Training loss')
-#plt.plot(epochs, val_loss, 'r', label='Validation loss')
-
-history_dict = history.history
-acc_values = history_dict['acc']
-val_acc_values = history_dict['val_acc']
-
-plt.plot(epochs, acc, 'bo', label='Training acc')
-plt.plot(epochs, val_acc, 'b', label='Validation acc')
+#plt.plot(epochs, acc, 'go', label='Training acc')
+#plt.plot(epochs, loss, 'bo', label='Training loss')
+plt.plot(epochs, binary_crossentropy, 'rx', label='Training crossentropy')
+#plt.plot(epochs, val_acc, 'g', label='Validation acc')
+#plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.plot(epochs, val_binary_crossentropy, 'r', label='Validation crossentropy')
 plt.xlabel('Epochs')
-plt.ylabel('Accuracy or loss')
+plt.ylabel('Accuracy or loss or binary_crossentropy')
 plt.legend()
 
 plt.show()
-
