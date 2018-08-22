@@ -92,7 +92,6 @@ void growCluster(int i, int j, int clusterSpin) {
   if (!cluster[i][jPrev])
     tryAdd(i, jPrev, clusterSpin);
   if (!cluster[i][jNext])
-
     tryAdd(i, jNext, clusterSpin);
 }
 
