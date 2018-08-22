@@ -157,8 +157,12 @@ int main() {
   // if true block values will be computed and printed on stderr
   // more information, more time
   // useful to adjust parameters (steps, block size)
-  bool computeBlockValues = true;
+  bool computeBlockValues = false;
   std::vector<double> blockMvector; // magnetization averages computed on blocks
+
+  if (computeBlockValues) {
+    MCSteps += int(MCSteps/5);
+  }
 
   // start temperature
   T = 2;
@@ -177,8 +181,6 @@ int main() {
       for (int i = 0; i < int(MCSteps/5); i++) {
         oneMonteCarloStep();
       }
-    } else {
-      MCSteps += int(MCSteps/5);
     }
 
     for (int i = 0; i < MCSteps; i++) {
@@ -190,26 +192,28 @@ int main() {
     }
     measureObservables();
 
-    // compute mean value of block avgs vector
-    double sum = std::accumulate(
-        std::begin(blockMvector),
-        std::end(blockMvector),
-        0.0);
-    double meanM =  sum / blockMvector.size();
+    if (computeBlockValues) {
+      // compute mean value of block avgs vector
+      double sum = std::accumulate(
+          std::begin(blockMvector),
+          std::end(blockMvector),
+          0.0);
+      double meanM =  sum / blockMvector.size();
 
-    // compute variance of block avgs vector
-    double accum = 0.0;
-    std::for_each (
-        std::begin(blockMvector),
-        std::end(blockMvector),
-        [&](const double d) { accum += (d - meanM) * (d - meanM); });
-    double meanV = accum / blockMvector.size();
+      // compute variance of block avgs vector
+      double accum = 0.0;
+      std::for_each (
+          std::begin(blockMvector),
+          std::end(blockMvector),
+          [&](const double d) { accum += (d - meanM) * (d - meanM); });
+      double meanV = accum / blockMvector.size();
 
-    // reset vector for the next temperature run
-    blockMvector.clear();
+      // reset vector for the next temperature run
+      blockMvector.clear();
 
+      std::cerr << T << " " << meanM << " " << meanV << std::endl;
+	}
     std::cout << magnetization << " " << T << "\n";
-    std::cerr << T << " " << meanM << " " << meanV << std::endl;
 
     for (int i = 0; i < Lx; i++) {
       for (int j = 0; j < Ly; j++) {
