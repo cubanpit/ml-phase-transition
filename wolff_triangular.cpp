@@ -151,7 +151,7 @@ int main() {
 
   Ly = Lx = 32;
   N = Lx * Ly;
-  int MCSteps = 20000;
+  int MCSteps = 12000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
   // if true block values will be computed and printed on stderr
@@ -212,7 +212,7 @@ int main() {
       blockMvector.clear();
 
       std::cerr << T << " " << meanM << " " << meanV << std::endl;
-	}
+    }
     std::cout << magnetization << " " << T << "\n";
 
     for (int i = 0; i < Lx; i++) {

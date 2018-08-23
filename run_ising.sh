@@ -1,9 +1,8 @@
 #!/bin/bash
 
 for i in {1..313}; do
-	./a.out >> out1.dat &
-	./a.out >> out2.dat &
-	./a.out >> out3.dat &
-	./a.out >> out4.dat &
-	wait
+  for j in {1..6}; do
+    ./a.out >> out$j.dat &
+  done
+  wait
 done
