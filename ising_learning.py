@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 
 
 
+trans_temp = 2/np.log(1+np.sqrt(2))
+#trans_temp = 4/np.log(3)
+
 def read_data(input_set):
 
     """Read data from file.
@@ -37,7 +40,7 @@ def read_data(input_set):
                 magnetizations.append(float(magnetization))
                 temperature = float(temperature)
                 real_temperatures.append(temperature)
-                if temperature < 2/np.log(1+np.sqrt(2)):
+                if temperature < trans_temp:
                     binary_temperatures.append(np.array([1,0]))
                 else:
                     binary_temperatures.append(np.array([0,1]))
@@ -67,7 +70,7 @@ def build_model(data_shape, neurons_number):
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),  
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.01),
+            kernel_regularizer=keras.regularizers.l2(0.001),
             input_shape=(data_shape,)),
         #keras.layers.Dropout(0.2),
         keras.layers.Dense(2,
@@ -92,22 +95,26 @@ train_magns, train_bin_temps, train_real_temps, train_configs = read_data(train_
 test_set = sys.argv[2]
 test_magns, test_bin_temps, test_real_temps, test_configs = read_data(test_set)
 
-neurons_number = 10
+neurons_number = 4
 model = build_model(train_configs.shape[1], neurons_number)
 model.summary()
 
-config_val = train_configs[:10000]
-config_train_part = train_configs[10000:]
+#Calculate number of training set configurations to give to validation set (80%-20%)
+val_perc = int(train_configs.shape[0]*20/100)
 
-temp_val = train_bin_temps[:10000]
-temp_train_part = train_bin_temps[10000:]
+
+config_val = train_configs[:val_perc]
+config_train_part = train_configs[val_perc:]
+
+temp_val = train_bin_temps[:val_perc]
+temp_train_part = train_bin_temps[val_perc:]
 
 history = model.fit(config_train_part,
         temp_train_part,
-        epochs=30,
-        batch_size=64,
+        epochs=100,
+        batch_size=16,
         validation_data=(config_val, temp_val),
-        verbose=2)
+        verbose=1)
 
 # evaluate model using test dataset
 results = model.evaluate(test_configs, test_bin_temps)
@@ -139,6 +146,7 @@ y1 = predictions_t1[:,0]
 y1_e = predictions_t1[:,1]
 y2 = predictions_t2[:,0]
 y2_e = predictions_t2[:,1]
+plt.axvline(x=trans_temp, marker='|', c='g', label='Trans temp')
 plt.errorbar(x, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
 plt.errorbar(x, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
 plt.legend()
@@ -165,14 +173,26 @@ val_binary_crossentropy = history.history['val_binary_crossentropy']
 
 epochs = range(1, len(acc) + 1)
 
-#plt.plot(epochs, acc, 'go', label='Training acc')
-#plt.plot(epochs, loss, 'bo', label='Training loss')
-plt.plot(epochs, binary_crossentropy, 'rx', label='Training crossentropy')
-#plt.plot(epochs, val_acc, 'g', label='Validation acc')
-#plt.plot(epochs, val_loss, 'b', label='Validation loss')
-plt.plot(epochs, val_binary_crossentropy, 'r', label='Validation crossentropy')
+plt.plot(epochs, acc, 'g', label='Training acc')
+plt.plot(epochs, val_acc, 'g--', label='Validation acc')
 plt.xlabel('Epochs')
-plt.ylabel('Accuracy or loss or binary_crossentropy')
+plt.ylabel('Accuracy')
+plt.legend()
+
+plt.show()
+
+plt.plot(epochs, loss, 'b', label='Training loss')
+plt.plot(epochs, val_loss, 'b--', label='Validation loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.show()
+
+plt.plot(epochs, binary_crossentropy, 'r', label='Training crossentropy')
+plt.plot(epochs, val_binary_crossentropy, 'r--', label='Validation crossentropy')
+plt.xlabel('Epochs')
+plt.ylabel('Binary_crossentropy')
 plt.legend()
 
 plt.show()
