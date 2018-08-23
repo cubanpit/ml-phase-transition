@@ -12,6 +12,7 @@
 #include <random>
 #include <algorithm>
 #include <numeric>
+#include <sys/time.h>
 
 // random generator and distribution
 std::mt19937 rndGen;
@@ -125,6 +126,7 @@ int main() {
   // every step try a flip of a random spin
   int Nstep = 100 * L * L;
   int Nblock = L;
+  bool computeBlockValues = false;
 
   double J = 1.;
   // double beta_critical = log(1 + sqrt(2)) / (2 * J);
@@ -140,27 +142,34 @@ int main() {
 
   std::cout << "Looping simulation on different β values...\n" << std::endl;
   for (int i = 0; T <= T_stop; ++i) {
+    // get time in microseconds and use it as seed
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    rndGen.seed(tv.tv_usec);
+
     std::vector<double> block_spin_avgs = ising_2D(L*L, J, 1/T, Nblock, Nstep);
 
     // compute mean value of spin for last spin config
     double magnetization =
       std::accumulate(std::begin(spins), std::end(spins), 0.0) / spins.size();
 
-    // compute mean value of block avgs vector
-    double meanM =
-      std::accumulate(std::begin(block_spin_avgs), std::end(block_spin_avgs), 0.0) /
-      block_spin_avgs.size();
+    if (computeBlockValues) {
+      // compute mean value of block avgs vector
+      double meanM =
+        std::accumulate(std::begin(block_spin_avgs), std::end(block_spin_avgs), 0.0) /
+        block_spin_avgs.size();
 
-    // compute variance of block avgs vector
-    double accum = 0.0;
-    std::for_each (
-        std::begin(block_spin_avgs),
-        std::end(block_spin_avgs),
-        [&](const double d) { accum += (d - meanM) * (d - meanM); });
-    double meanV = accum / block_spin_avgs.size();
+      // compute variance of block avgs vector
+      double accum = 0.0;
+      std::for_each (
+          std::begin(block_spin_avgs),
+          std::end(block_spin_avgs),
+          [&](const double d) { accum += (d - meanM) * (d - meanM); });
+      double meanV = accum / block_spin_avgs.size();
 
+      std::cerr << T << " " << meanM << " " << meanV << std::endl;
+    }
     std::cout << magnetization << " " << T << "\n";
-    std::cerr << T << " " << meanM << " " << meanV << std::endl;
 
     for (int s = 0; s < spins.size(); ++s) {
       std::cout << spins[s] << " ";
