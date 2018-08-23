@@ -56,12 +56,10 @@ void tryAdd(int i, int j, int clusterSpin);
 
 void oneMonteCarloStep() {
 
-  //
   //no cluster defined so clear the cluster array
   for (int i = 0; i < Lx; i++) {
     for (int j = 0; j < Lx; j++) {
       cluster[i][j] = false;
-
     }
   }
 
@@ -99,16 +97,15 @@ void growCluster(int i, int j, int clusterSpin) {
 
   // add two diagonal nearest neighbor to obtain
   // a triangular lattice
-  if (!cluster[iPrev][jPrev])
+  if (!cluster[iPrev][jNext])
     tryAdd(iPrev, jPrev, clusterSpin);
-  if (!cluster[iNext][jNext])
+  if (!cluster[iNext][jPrev])
     tryAdd(iNext, iPrev, clusterSpin);
 }
 
 void tryAdd(int i, int j, int clusterSpin) {
 
-  if
-    (s[i][j] == clusterSpin) {
+  if (s[i][j] == clusterSpin) {
     if (rndDist(rndGen) < addProbability) {
       growCluster(i, j, clusterSpin);
     }
@@ -151,7 +148,7 @@ int main() {
 
   Ly = Lx = 32;
   N = Lx * Ly;
-  int MCSteps = 20000;
+  int MCSteps = 50000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
   // if true block values will be computed and printed on stderr
@@ -162,7 +159,7 @@ int main() {
 
   // start temperature
   T = 2;
-  while (T <= 4.5) {
+  while (T <= 4) {
 
     // get time in microseconds and use it as seed
     struct timeval tv;
@@ -219,6 +216,6 @@ int main() {
     }
     std::cout << "\n";
 
-    T += 0.05;
+    T += 0.1;
   }
 }
