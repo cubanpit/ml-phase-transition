@@ -124,23 +124,19 @@ int main() {
   // int L = 32;
 
   // every step try a flip of a random spin
-  int Nstep = 100 * L * L;
-  int Nblock = L;
+  int Nstep = L * L;
+  int Nblock = 10 * L;
   bool computeBlockValues = false;
 
   double J = 1.;
   // double beta_critical = log(1 + sqrt(2)) / (2 * J);
-  double T = 2.5;
-  double T_stop = 4.5;
-  double T_step = 0.05;
+  double T = 2;
+  double T_stop = 8;
+  double T_step = 0.1;
 
-  std::cout << "Ising simulation with a square lattice "
-    << L << "x" << L << std::endl;
-
-  std::cout << "Initializing nearest neighbors table..." << std::endl;
+  std::cout << " ";
   nn_array(L);
 
-  std::cout << "Looping simulation on different β values...\n" << std::endl;
   for (int i = 0; T <= T_stop; ++i) {
     // get time in microseconds and use it as seed
     struct timeval tv;
