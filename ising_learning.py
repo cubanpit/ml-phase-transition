@@ -132,6 +132,11 @@ def build_model(data_shape, neurons_number):
     return model
 
 
+if len(sys.argv) != 4:
+    raise SyntaxError(
+            "This program requires three arguments: "
+            "training_set_file test_set_file lattice_shape\n"
+            "lattice_shape : sq (square), tr (triangular), cb (cubic)")
 
 input_temp = sys.argv[3]
 test_temp = critical_temp(input_temp)
@@ -161,7 +166,7 @@ temp_train_part = train_bin_temps[val_perc:]
 history = model.fit(
         config_train_part,
         temp_train_part,
-        epochs=15,
+        epochs=40,
         batch_size=100,
         validation_data=(config_val, temp_val),
         verbose=1)

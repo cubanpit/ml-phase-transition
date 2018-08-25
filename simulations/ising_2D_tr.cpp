@@ -26,7 +26,7 @@ int main() {
   std::uniform_real_distribution<double> rndDist(0,1);
 
   // array of spins
-  int L = 32;
+  int L = 30;
   // total spin number
   int N = L * L;
   std::vector<int> spins(N);
