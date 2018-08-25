@@ -8,6 +8,6 @@ for i in {1..300}; do
   echo "Round $i"
 done
 
-echo "Done"
+echo "$(date) --- Done"
 
 exit 0

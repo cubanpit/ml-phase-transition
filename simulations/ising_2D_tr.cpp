@@ -18,7 +18,7 @@
 // MAIN
 //
 
-// TODO remove from head of file lattice dimensions and random stuff
+// TODO put MC stuff in function, for more readability
 
 int main() {
   // random generator and distribution
@@ -36,10 +36,11 @@ int main() {
   int Nblock = 10 * L;
   bool computeBlockValues = false;
 
-  double J = 1.;
-  double T = 2;
-  double T_stop = 8;
-  double T_step = 0.1;
+  double J = 1.;                     // coupling costant
+  double Tc = 4 / log(3);            // critical temperature
+  double Tstart = 2;                 // start temperature
+  int Tn = 40;              // number of different temperatures (even number)
+  double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
   // nearest neighbour vector
   int nn[N][6];
@@ -59,7 +60,8 @@ int main() {
     nn[i][6] = xNext + L * yNext;
   }
 
-  for (int i = 0; T <= T_stop; ++i) {
+  double T = Tstart;
+  for (int t = 0; t < Tn; ++t) {
     // get time in microseconds and use it as seed
     struct timeval tv;
     gettimeofday(&tv,NULL);
@@ -143,7 +145,7 @@ int main() {
     }
     std::cout << "\n";
 
-    T += T_step;
+    T += Tstep;
   }
 
   return 0;

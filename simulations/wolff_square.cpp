@@ -157,9 +157,13 @@ int main() {
     MCSteps += int(MCSteps/5);
   }
 
-  // start temperature
-  T = 1;
-  while (T <= 5) {
+  double Tc = 2 / log1p(sqrt(2));   // critical temperature
+  double Tstart = 1;                 // start temperature
+  int Tn = 40;              // number of different temperatures (even number)
+  double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
+
+  double T = Tstart;
+  for (int t = 0; t < Tn; ++t) {
 
     // get time in microseconds and use it as seed
     struct timeval tv;
@@ -216,6 +220,8 @@ int main() {
     }
     std::cout << "\n";
 
-    T += 0.1;
+    T += Tstep;
   }
+
+  return 0;
 }

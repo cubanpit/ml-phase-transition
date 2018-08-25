@@ -169,16 +169,20 @@ int main() {
   // if true block values will be computed and printed on stderr
   // more information, more time
   // useful to adjust parameters (steps, block size)
-  bool computeBlockValues = true;
+  bool computeBlockValues = false;
   std::vector<double> blockMvector; // magnetization averages computed on blocks
 
   if (computeBlockValues) {
     MCSteps += int(MCSteps/5);
   }
 
-  // start temperature
-  T = 2;
-  while (T <= 7) {
+  double Tc = 1/0.221654;   // critical temperature
+  double Tstart = 3;                 // start temperature
+  int Tn = 40;              // number of different temperatures (even number)
+  double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
+
+  double T = Tstart;
+  for (int t = 0; t < Tn; ++t) {
 
     // get time in microseconds and use it as seed
     struct timeval tv;
@@ -236,6 +240,6 @@ int main() {
     }
     std::cout << "\n";
 
-    T += 0.05;
+    T += Tstep;
   }
 }
