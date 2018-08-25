@@ -36,13 +36,13 @@ def read_data(input_set, critical_temp):
                 if len(infos) == 2:
                     magnetization, temperature = infos[:]
                 elif len(infos) == 1:
-                    temperature = infos
+                    temperature = infos[0]
+                    magnetization = 0.0
                 else:
                     raise RuntimeError(
                             "Wrong number of information on the same line.\n"
                             "Expected informations: (magnetization) "
                             "temperature")
-                magnetizations.append(float(magnetization))
                 temperature = float(temperature)
                 real_temperatures.append(temperature)
                 if temperature < critical_temp:
@@ -62,6 +62,26 @@ def read_data(input_set, critical_temp):
     configurations = np.array(configurations)
 
     return magnetizations, binary_temperatures, real_temperatures, configurations
+
+def critical_temp(input_lattice):
+    
+    """Returns critical temperature for different lattice.
+    """
+
+    square_temp = 2/np.log(1+np.sqrt(2))
+    triangular_temp = 4/np.log(3)
+    cubic_temp = 1/0.221654
+    
+    if input_lattice == "sq":
+      test_temp = square_temp
+    elif input_lattice == "tr":
+        test_temp = triangular_temp
+    elif input_lattice == "cb":
+        test_temp = cubic_temp
+    else:
+        raise SyntaxError("Use sq for square, tr for triangular and cb for cubic")
+    
+    return test_temp
 
 
 def unique_elements(complete_array):
@@ -91,7 +111,7 @@ def build_model(data_shape, neurons_number):
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.003),
+            kernel_regularizer=keras.regularizers.l2(0.05),
             input_shape=(data_shape,)),
         # keras.layers.Dropout(0.2),
         keras.layers.Dense(
@@ -103,7 +123,7 @@ def build_model(data_shape, neurons_number):
             bias_initializer=keras.initializers.RandomNormal(stddev=1))
         ])
 
-    optimizer = tf.train.AdamOptimizer(0.001)
+    optimizer = tf.train.AdamOptimizer(0.0001)
 
     model.compile(
             loss='binary_crossentropy',
@@ -112,18 +132,19 @@ def build_model(data_shape, neurons_number):
     return model
 
 
-square_temp = 2/np.log(1+np.sqrt(2))
-triangular_temp = 4/np.log(3)
-cubic_temp = 1/0.221654
 
-test_temp = square_temp
+input_temp = sys.argv[3]
+test_temp = critical_temp(input_temp)
 
 train_set = sys.argv[1]
-train_magns, train_bin_temps, train_real_temps, train_configs = read_data(train_set, square_temp)
+train_magns, train_bin_temps, train_real_temps, train_configs = read_data(train_set, critical_temp("sq"))
+
 test_set = sys.argv[2]
 test_magns, test_bin_temps, test_real_temps, test_configs = read_data(test_set, test_temp)
 
-neurons_number = 100
+
+
+neurons_number = 150
 model = build_model(train_configs.shape[1], neurons_number)
 model.summary()
 
@@ -140,8 +161,8 @@ temp_train_part = train_bin_temps[val_perc:]
 history = model.fit(
         config_train_part,
         temp_train_part,
-        epochs=4,
-        batch_size=128,
+        epochs=15,
+        batch_size=100,
         validation_data=(config_val, temp_val),
         verbose=1)
 
