@@ -181,7 +181,7 @@ int main() {
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
-  double T = Tstart;
+  T = Tstart;
   for (int t = 0; t < Tn; ++t) {
 
     // get time in microseconds and use it as seed
