@@ -31,8 +31,8 @@ void initialize ( ) {
   for (int i = 0; i < Lx; i++) {
     for (int j = 0; j < Ly; j++) {
       for (int k = 0; k < Lz; k++) {
-        s[i][j][k] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
-        //s[i][j][k] = +1;   // cold start
+        //s[i][j][k] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
+        s[i][j][k] = +1;   // cold start
       }
     }
   }
@@ -160,8 +160,8 @@ void measureObservables() {
 int main() {
 
   Lx = 16;
-  Ly = 8;
-  Lz = 8;
+  Ly = 16;
+  Lz = 16;
   N = Lx * Ly * Lz;
   int MCSteps = 10000;
   int blockSize = 1000; // suggested by Wolff is 1000
@@ -177,8 +177,8 @@ int main() {
   }
 
   // start temperature
-  T = 3;
-  while (T <= 6) {
+  T = 2;
+  while (T <= 7) {
 
     // get time in microseconds and use it as seed
     struct timeval tv;
