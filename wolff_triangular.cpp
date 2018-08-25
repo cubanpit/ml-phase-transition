@@ -148,7 +148,6 @@ int main() {
 
   Ly = Lx = 32;
   N = Lx * Ly;
-  int MCSteps = 50000;
   int MCSteps = 12000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
@@ -162,9 +161,13 @@ int main() {
     MCSteps += int(MCSteps/5);
   }
 
-  // start temperature
-  T = 2;
-  while (T <= 4) {
+  double Tc = 4 / log(3);   // critical temperature
+  double Tstart = 2;                 // start temperature
+  int Tn = 40;              // number of different temperatures (even number)
+  double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
+
+  double T = Tstart;
+  for (int t = 0; t < Tn; ++t) {
 
     // get time in microseconds and use it as seed
     struct timeval tv;
@@ -221,6 +224,6 @@ int main() {
     }
     std::cout << "\n";
 
-    T += 0.1;
+    T += Tstep;
   }
 }

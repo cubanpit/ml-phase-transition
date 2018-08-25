@@ -112,9 +112,9 @@ def build_model(data_shape, neurons_number):
     return model
 
 
-square_temp = 2/np.log(1+np.sqrt(2))
-triangular_temp = 4/np.log(3)
-cubic_temp = 1/0.221654
+square_temp = 2 / np.log(1+np.sqrt(2))
+triangular_temp = 4 / np.log(3)
+cubic_temp = 1 / 0.221654
 
 test_temp = square_temp
 
