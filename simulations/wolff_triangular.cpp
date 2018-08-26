@@ -146,15 +146,15 @@ void measureObservables() {
 
 int main() {
 
-  Ly = Lx = 32;
+  Ly = Lx = 60;
   N = Lx * Ly;
-  int MCSteps = 12000;
+  int MCSteps = 10000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
   // if true block values will be computed and printed on stderr
   // more information, more time
   // useful to adjust parameters (steps, block size)
-  bool computeBlockValues = false;
+  bool computeBlockValues = true;
   std::vector<double> blockMvector; // magnetization averages computed on blocks
 
   if (computeBlockValues) {

@@ -26,7 +26,7 @@ int main() {
   std::uniform_real_distribution<double> rndDist(0,1);
 
   // array of spins
-  int L = 32;
+  int L = 60;
   // total spin number
   int N = L * L;
   std::vector<int> spins(N);
@@ -34,7 +34,7 @@ int main() {
   // every step try a flip of a random spin
   int Nstep = 5 * L * L;
   int Nblock = 10 * L;
-  bool computeBlockValues = false;
+  bool computeBlockValues = true;
 
   double J = 1.;                     // coupling costant
   double Tc = 4 / log(3);            // critical temperature

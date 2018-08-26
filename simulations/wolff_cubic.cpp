@@ -159,11 +159,11 @@ void measureObservables() {
 
 int main() {
 
-  Lx = 16;
-  Ly = 16;
+  Lx = 15;
+  Ly = 15;
   Lz = 16;
   N = Lx * Ly * Lz;
-  int MCSteps = 10000;
+  int MCSteps = 20000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
   // if true block values will be computed and printed on stderr
@@ -177,7 +177,7 @@ int main() {
   }
 
   double Tc = 1/0.221654;   // critical temperature
-  double Tstart = 3;                 // start temperature
+  double Tstart = 1;                 // start temperature
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 

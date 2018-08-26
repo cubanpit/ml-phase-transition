@@ -1,4 +1,4 @@
-// Wolff cluster algorithm for the 2-D Ising Model
+// Wolff cluster algorithm for the 2-D Ising Model on honeycomb lattice
 
 #include <cmath>
 #include <cstdlib>
@@ -21,15 +21,14 @@ std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
 
-  s =
-    new int* [Lx];
+  s = new int* [Lx];
   for (int i = 0; i < Lx; i++) {
     s[i] = new int [Ly];
   }
   for (int i = 0; i < Lx; i++) {
-
     for (int j = 0; j < Ly; j++) {
-      s[i][j] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
+      //s[i][j] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
+      s[i][j] = 1;   // cold start
     }
   }
   steps = 0;
@@ -79,23 +78,37 @@ void growCluster(int i, int j, int clusterSpin) {
   cluster[i][j] = true;
   s[i][j] = -s[i][j];
 
-  // find the indices of the 4 neighbors
+  // find the indices of the 3 neighbors
   // assuming periodic boundary conditions
-  int iPrev = i == 0    ? Lx-1 : i-1;
-  int iNext = i == Lx-1 ? 0    : i+1;
-  int jPrev = j == 0    ? Ly-1 : j-1;
-  int jNext = j == Ly-1 ? 0    : j+1;
+  if (j % 2 == 0) {
+    int iPrev = i == 0    ? Lx-1 : i-1;
+    int iNext = i == Lx-1 ? 0    : i+1;
+    int jPrev = j == 0    ? Ly-1 : j-1;
+    int jNext = j == Ly-1 ? 0    : j+1;
 
-  // if the neighbor spin does not belong to the
-  // cluster, then try to add it to the cluster
-  if (!cluster[iPrev][j])
-    tryAdd(iPrev, j, clusterSpin);
-  if (!cluster[iNext][j])
-    tryAdd(iNext, j, clusterSpin);
-  if (!cluster[i][jPrev])
-    tryAdd(i, jPrev, clusterSpin);
-  if (!cluster[i][jNext])
-    tryAdd(i, jNext, clusterSpin);
+    // if the neighbor spin does not belong to the
+    // cluster, then try to add it to the cluster
+    if (!cluster[i][jPrev])
+      tryAdd(i, jPrev, clusterSpin);
+    if (!cluster[iPrev][jNext])
+      tryAdd(iPrev, jNext, clusterSpin);
+    if (!cluster[iNext][jNext])
+      tryAdd(iNext, jNext, clusterSpin);
+  } else {
+    int iPrev = i == 0    ? Lx-1 : i-1;
+    int iNext = i == Lx-1 ? 0    : i+1;
+    int jPrev = j == 0    ? Ly-1 : j-1;
+    int jNext = j == Ly-1 ? 0    : j+1;
+
+    // if the neighbor spin does not belong to the
+    // cluster, then try to add it to the cluster
+    if (!cluster[iPrev][jPrev])
+      tryAdd(iPrev, jPrev, clusterSpin);
+    if (!cluster[iNext][jPrev])
+      tryAdd(iNext, jPrev, clusterSpin);
+    if (!cluster[i][jNext])
+      tryAdd(i, jNext, clusterSpin);
+  }
 }
 
 void tryAdd(int i, int j, int clusterSpin) {
@@ -115,14 +128,29 @@ double blockV = 0; // spin variance
 // compute block averages, useful to understand model behaviour
 void measureBlockObservables() {
 
+  // we have two honeycomb lattice, we look only at one of them
+  bool lattice = true;
+  int count = 0;
   // compute mean spin value
   int M = 0;
   for (int i = 0; i < Lx; i++) {
+    ++count;
+    if (count > 3) count = 0;
     for (int j = 0; j < Ly; j++) {
-      M += s[i][j];
+      if (count > 1) {
+        if (lattice) {
+          M += s[i][j];
+          lattice = !lattice;
+        } else lattice = !lattice;
+      } else {
+        if (!lattice) {
+          M += s[i][j];
+          lattice = !lattice;
+        } else lattice = !lattice;
+      }
     }
   }
-  blockM = fabs(double(M) / double(N));
+  blockM = fabs(double(M) / double(N / 2));
 }
 
 // declare mean spin value
@@ -130,19 +158,35 @@ double magnetization = 0;
 
 void measureObservables() {
 
+  // we have two honeycomb lattice, we look only at one of them
+  bool lattice = false;
+  int count = 0;
   // compute mean spin value
   int M = 0;
   for (int i = 0; i < Lx; i++) {
+    ++count;
+    if (count > 3) count = 0;
     for (int j = 0; j < Ly; j++) {
-      M += s[i][j];
+      if (count > 1) {
+        if (lattice) {
+          M += s[i][j];
+          lattice = !lattice;
+        } else lattice = !lattice;
+      } else {
+        if (!lattice) {
+          M += s[i][j];
+          lattice = !lattice;
+        } else lattice = !lattice;
+      }
     }
   }
-  magnetization = double(M) / double(N);
+  magnetization = double(M) / double(N / 2);
 }
 
 int main() {
 
-  Ly = Lx = 60;
+  Ly = 60; // only even numbers!
+  Lx = 61; // only odd numbers!
   N = Lx * Ly;
   int MCSteps = 10000;
   int blockSize = 1000; // suggested by Wolff is 1000
@@ -150,15 +194,15 @@ int main() {
   // if true block values will be computed and printed on stderr
   // more information, more time
   // useful to adjust parameters (steps, block size)
-  bool computeBlockValues = true;
+  bool computeBlockValues = false;
   std::vector<double> blockMvector; // magnetization averages computed on blocks
 
   if (computeBlockValues) {
     MCSteps += int(MCSteps/5);
   }
 
-  double Tc = 2 / log1p(sqrt(2));   // critical temperature
-  double Tstart = 1;                 // start temperature
+  double Tc = 1 / 0.658478;   // critical temperature
+  double Tstart = 0;                 // start temperature
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
@@ -212,11 +256,10 @@ int main() {
     }
     std::cout << magnetization << " " << T << "\n";
 
-    for (int i = 0; i < Lx; i++) {
+    for (int i = 0; i < Lx-1; i++) {
       for (int j = 0; j < Ly; j++) {
         std::cout << s[i][j] << " ";
       }
-
     }
     std::cout << "\n";
 
