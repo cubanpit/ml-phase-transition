@@ -12,16 +12,18 @@ end module configuration
 program ising
 use configuration
 implicit none
-integer(4) i, j, k, t, N, iseedd, nther, nblks, msteps
-integer(8) current_time
-real(8) :: drand1
-real(8) blk_magt, blk_E
+integer(4) i, j, k, t, N, iseedd, nther, nblks, msteps, blkOutput
+real(8) blk_magt, blk_E, drand1, usTime
+
+! if = 1 enable extra output in stderr
+blkOutput = 1
 
 ! lattice dimensions
 Nx = 30
 Ny = 30
+nh = Nx * Ny
 
-! lattice type: 1=square , 2=triangular
+! lattice type: 1 = square , 2 = triangular
 which_lattice = 2
 Jh = 1    ! coupling constant
 
@@ -35,9 +37,6 @@ Tstep = 2.0d0 * (Tc - Tstart) / (Tn - 1.0d0)
 nther = 50   ! thermalization steps
 nblks = 50      ! number of MC blocks to take measurements
 msteps = 200  ! effective MC steps
-iseedd = time()
-
-nh=Nx*Ny
 
 if(which_lattice == 1) then
   nn = 4
@@ -49,6 +48,10 @@ elseif(which_lattice == 2) then
   allocate(ivic(nh, nn), ivict(nh, 4)) !triangular
   call triangular()
 end if
+
+! use cpu time in microseconds (if possible) as seed
+call cpu_time(usTime)
+iseedd = int(usTime*1000000)
 
 !initializations
 call rand_init(iseedd)
@@ -76,14 +79,18 @@ do t = 1, Tn
   ! compute average value
   blk_magt = blk_magt / nblks
   blk_E = blk_E / nblks
-  write(0, *) temperature, blk_E, blk_magt
+  if (blkOutput == 1) then
+    write(0, *) temperature, blk_E, blk_magt
+  end if
+  write(6, *) temperature
   do i = 1, nh
     write(6, '(I2,X)', advance='no') spin(i)
   end do
   write(6, *) ""
 
   temperature = temperature + Tstep
-  iseedd = time()
+  call cpu_time(usTime)
+  iseedd = int(usTime*1000000)
 end do
 
 end program ising
