@@ -21,15 +21,14 @@ std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
 
-  s =
-    new int* [Lx];
+  s = new int* [Lx];
   for (int i = 0; i < Lx; i++) {
     s[i] = new int [Ly];
   }
   for (int i = 0; i < Lx; i++) {
-
     for (int j = 0; j < Ly; j++) {
-      s[i][j] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
+      //s[i][j] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
+      s[i][j] = 1;   // cold start
     }
   }
   steps = 0;
@@ -97,10 +96,10 @@ void growCluster(int i, int j, int clusterSpin) {
 
   // add two diagonal nearest neighbor to obtain
   // a triangular lattice
-  if (!cluster[iPrev][jNext])
+  if (!cluster[iPrev][jPrev])
     tryAdd(iPrev, jPrev, clusterSpin);
-  if (!cluster[iNext][jPrev])
-    tryAdd(iNext, iPrev, clusterSpin);
+  if (!cluster[iNext][jNext])
+    tryAdd(iNext, iNext, clusterSpin);
 }
 
 void tryAdd(int i, int j, int clusterSpin) {
@@ -162,7 +161,7 @@ int main() {
   }
 
   double Tc = 4 / log(3);   // critical temperature
-  double Tstart = 2;                 // start temperature
+  double Tstart = 1;                 // start temperature
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
@@ -220,7 +219,6 @@ int main() {
       for (int j = 0; j < Ly; j++) {
         std::cout << s[i][j] << " ";
       }
-
     }
     std::cout << "\n";
 

@@ -26,39 +26,44 @@ int main() {
   std::uniform_real_distribution<double> rndDist(0,1);
 
   // array of spins
-  int L = 60;
+  unsigned int Lx = 60;
+  unsigned int Ly = 60;
   // total spin number
-  int N = L * L;
-  std::vector<int> spins(N);
+  unsigned int N = Lx * Ly;
+  std::vector<short int> spins(N);
 
   // every step try a flip of a random spin
-  int Nstep = 5 * L * L;
-  int Nblock = 10 * L;
+  unsigned int Nstep = 100;
+  unsigned int Nblock = 100;
   bool computeBlockValues = true;
 
   double J = 1.;                     // coupling costant
   double Tc = 4 / log(3);            // critical temperature
   double Tstart = 2;                 // start temperature
-  int Tn = 40;              // number of different temperatures (even number)
+  unsigned int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
   // nearest neighbour vector
-  int nn[N][6];
+  unsigned int nn[N][6];
   // initialize nn vector
   for (int i = 0; i < N; ++i) {
-    int xRef = i % L;
-    int yRef = int(i / L);
-    int xPrev = xRef == 0 ? L-1 : xRef-1;
-    int yPrev = yRef == 0 ? L-1 : yRef-1;
-    int xNext = xRef == L-1 ? 0 : xRef+1;
-    int yNext = yRef == L-1 ? 0 : yRef+1;
-    nn[i][1] = xPrev + L * yRef;
-    nn[i][2] = xNext + L * yRef;
-    nn[i][3] = xRef + L * yPrev;
-    nn[i][4] = xRef + L * yNext;
-    nn[i][5] = xPrev + L * yPrev;
-    nn[i][6] = xNext + L * yNext;
+    unsigned int xRef = i % Lx;
+    unsigned int yRef = int(i / Lx);
+    unsigned int xPrev = xRef == 0    ? Lx-1 : xRef-1;
+    unsigned int yPrev = yRef == 0    ? Ly-1 : yRef-1;
+    unsigned int xNext = xRef == Lx-1 ? 0    : xRef+1;
+    unsigned int yNext = yRef == Ly-1 ? 0    : yRef+1;
+    nn[i][1] = xPrev + Lx * yRef;
+    nn[i][2] = xNext + Lx * yRef;
+    nn[i][3] = xRef + Lx * yPrev;
+    nn[i][4] = xRef + Lx * yNext;
+    nn[i][5] = xPrev + Lx * yPrev;
+    nn[i][6] = xNext + Lx * yNext;
+    // std::cout << i << " -> [ " << nn[i][1] << " " << nn[i][2] << " "
+    //  << nn[i][3] << " " << nn[i][4] << " " << nn[i][5] << " " << nn[i][6]
+    //  << " ]"  << std::endl;
   }
+
 
   double T = Tstart;
   for (int t = 0; t < Tn; ++t) {
@@ -67,28 +72,32 @@ int main() {
     gettimeofday(&tv,NULL);
     rndGen.seed(tv.tv_usec);
 
-    // initialize all spins
+    double beta = 1 / T;
+
+    // initialize all spins - cold start
     std::fill(spins.begin(), spins.end(), 1);
 
-    // randomize all spins
+    // randomize all spins - hot start
     //for (int i = 0; i < N; ++i) {
     //  spins[i] = int(rndDist(rndGen) + 0.5) * 2 - 1;
     //}
 
     // thermalization steps
-    for ( int i = 0; i < (5*Nstep); ++i) {
-      // random spin in vector range
-      int s = rndDist(rndGen) * N;
-      int nn_sum = 0;
-      for (int n= 0; n < 6; ++n) {
-        nn_sum += spins[nn[s][n]];
-      }
-      double cost = 2 * J * spins[s] * nn_sum;
-      if (cost < 0) {
-        spins[s] *= -1;
-      } else {
-        if (rndDist(rndGen) < exp(-cost/T)) {
+    for (int i = 0; i < (5*Nstep) and computeBlockValues; ++i) {
+      for (int s = 0; s < N; ++s) {
+        // random spin in vector range
+        //int s = rndDist(rndGen) * N;
+        int nn_sum = 0;
+        for (int n= 0; n < 6; ++n) {
+          nn_sum += spins[nn[s][n]];
+        }
+        double cost = 2 * J * spins[s] * nn_sum;
+        if (cost < 0) {
           spins[s] *= -1;
+        } else {
+          if (rndDist(rndGen) < exp(- beta * cost)) {
+            spins[s] *= -1;
+          }
         }
       }
     }
@@ -99,18 +108,20 @@ int main() {
     // effective blocks
     for (int b = 0; b < Nblock; ++b) {
       for ( int i = 0; i < (Nstep); ++i) {
-        // random spin in vector range
-        int s = rndDist(rndGen) * N;
-        int nn_sum = 0;
-        for (int n= 0; n < 6; ++n) {
-          nn_sum += spins[nn[s][n]];
-        }
-        double cost = 2 * J * spins[s] * nn_sum;
-        if (cost < 0) {
-          spins[s] *= -1;
-        } else {
-          if (rndDist(rndGen) < exp(-cost/T)) {
+        for (int s = 0; s < N; ++s) {
+          // random spin in vector range
+          //int s = rndDist(rndGen) * N;
+          int nn_sum = 0;
+          for (int n= 0; n < 6; ++n) {
+            nn_sum += spins[nn[s][n]];
+          }
+          double cost = 2 * J * spins[s] * nn_sum;
+          if (cost < 0) {
             spins[s] *= -1;
+          } else {
+            if (rndDist(rndGen) < exp(- beta * cost)) {
+              spins[s] *= -1;
+            }
           }
         }
       }
