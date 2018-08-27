@@ -12,8 +12,10 @@ end module configuration
 program ising
 use configuration
 implicit none
-integer(4) i, j, k, t, N, iseedd, nther, nblks, msteps, blkOutput
-real(8) blk_magt, blk_E, drand1, usTime
+integer(4) i, j, k, t, N, nther, nblks, msteps, blkOutput, funit, ios
+real(8) blk_magt, blk_E, drand1, rTime
+character(len=*), parameter :: RANDOM_PATH = "/dev/urandom"
+integer(8) iseedd
 
 ! if = 1 enable extra output in stderr
 blkOutput = 1
@@ -34,9 +36,9 @@ Tn = 40
 Tstep = 2.0d0 * (Tc - Tstart) / (Tn - 1.0d0)
 
 ! NOTE: every MC step cycle on every Nx*Ny lattice site
-nther = 50   ! thermalization steps
-nblks = 50      ! number of MC blocks to take measurements
-msteps = 200  ! effective MC steps
+nther = 10   ! thermalization blocks
+nblks = 100      ! number of MC blocks to take measurements
+msteps = 50  ! effective MC steps per block
 
 if(which_lattice == 1) then
   nn = 4
@@ -49,9 +51,16 @@ elseif(which_lattice == 2) then
   call triangular()
 end if
 
-! use cpu time in microseconds (if possible) as seed
-call cpu_time(usTime)
-iseedd = int(usTime*1000000)
+! use /dev/urandom as seed source
+open(newunit=funit, file=RANDOM_PATH, access="stream", form="UNFORMATTED", &
+     iostat=ios, status="old", action="read")
+if ( ios /= 0 ) stop "Error opening file: "//RANDOM_PATH
+read(funit) iseedd
+close(funit)
+
+! use seed = (time in ms) * (time in s)
+!call date_and_time(VALUES=timeV)
+!iseedd = timeV(8) * timeV(7)
 
 !initializations
 call rand_init(iseedd)
@@ -60,10 +69,12 @@ call initial()
 !# thermalization
 temperature = Tstart
 do t = 1, Tn
-  do i = 1, nther
-    beta = 1.0d0 / temperature
-    call runbin(msteps)
-  end do
+  if (blkOutput == 1) then
+    do i = 1, nther
+      beta = 1.0d0 / temperature
+      call runbin(msteps)
+    end do
+  end if
 
   !# run
   beta = 1.0d0 / temperature
@@ -89,8 +100,6 @@ do t = 1, Tn
   write(6, *) ""
 
   temperature = temperature + Tstep
-  call cpu_time(usTime)
-  iseedd = int(usTime*1000000)
 end do
 
 end program ising

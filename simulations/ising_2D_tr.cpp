@@ -11,95 +11,64 @@
 #include <iostream>
 #include <random>
 #include <algorithm>
-#include <numeric>
 #include <sys/time.h>
 
-//
-// MAIN
-//
+// lattice size
+#define Lx 30
+#define Ly 30
+#define NN_SIZE 6         // number of nearest neighbour
 
-// TODO put MC stuff in function, for more readability
+double J = 1.;                     // coupling costant
+
+// total spin number
+const unsigned int N = Lx * Ly;
+// array of spins
+std::vector<short int> spins(N);
+
+// random generator and distribution
+std::mt19937 rndGen(std::random_device{}());
+std::uniform_real_distribution<double> rndDist(0,1);
+
+double beta;
+unsigned int nn[N][NN_SIZE];            // nearest neighbour vector
+
+void init_nn();
+void metropolis(unsigned nsteps);
 
 int main() {
-  // random generator and distribution
-  std::mt19937 rndGen;
-  std::uniform_real_distribution<double> rndDist(0,1);
-
-  // array of spins
-  unsigned int Lx = 60;
-  unsigned int Ly = 60;
-  // total spin number
-  unsigned int N = Lx * Ly;
-  std::vector<short int> spins(N);
-
-  // every step try a flip of a random spin
-  unsigned int Nstep = 100;
+  // every step try a flip of a random spin N (=Lx*Ly) times
+  unsigned int Nstep = 50;  // steps per block
   unsigned int Nblock = 100;
+  unsigned int Nther = 10;   // thermalization blocks
   bool computeBlockValues = true;
 
-  double J = 1.;                     // coupling costant
   double Tc = 4 / log(3);            // critical temperature
   double Tstart = 2;                 // start temperature
   unsigned int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
-  // nearest neighbour vector
-  unsigned int nn[N][6];
-  // initialize nn vector
+  init_nn();
+
+  // initialize all spins - cold start
+  //std::fill(spins.begin(), spins.end(), 1);
+
+  // randomize all spins - hot start
   for (int i = 0; i < N; ++i) {
-    unsigned int xRef = i % Lx;
-    unsigned int yRef = int(i / Lx);
-    unsigned int xPrev = xRef == 0    ? Lx-1 : xRef-1;
-    unsigned int yPrev = yRef == 0    ? Ly-1 : yRef-1;
-    unsigned int xNext = xRef == Lx-1 ? 0    : xRef+1;
-    unsigned int yNext = yRef == Ly-1 ? 0    : yRef+1;
-    nn[i][1] = xPrev + Lx * yRef;
-    nn[i][2] = xNext + Lx * yRef;
-    nn[i][3] = xRef + Lx * yPrev;
-    nn[i][4] = xRef + Lx * yNext;
-    nn[i][5] = xPrev + Lx * yPrev;
-    nn[i][6] = xNext + Lx * yNext;
-    // std::cout << i << " -> [ " << nn[i][1] << " " << nn[i][2] << " "
-    //  << nn[i][3] << " " << nn[i][4] << " " << nn[i][5] << " " << nn[i][6]
-    //  << " ]"  << std::endl;
+    spins[i] = 2 * int(rndDist(rndGen) * 2) - 1;
   }
 
+  // get time in microseconds and use it as seed
+  //struct timeval tv;
+  //gettimeofday(&tv,NULL);
+  //rndGen.seed(tv.tv_usec);
 
   double T = Tstart;
   for (int t = 0; t < Tn; ++t) {
-    // get time in microseconds and use it as seed
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    rndGen.seed(tv.tv_usec);
-
-    double beta = 1 / T;
-
-    // initialize all spins - cold start
-    std::fill(spins.begin(), spins.end(), 1);
-
-    // randomize all spins - hot start
-    //for (int i = 0; i < N; ++i) {
-    //  spins[i] = int(rndDist(rndGen) + 0.5) * 2 - 1;
-    //}
+    beta = 1 / T;
 
     // thermalization steps
-    for (int i = 0; i < (5*Nstep) and computeBlockValues; ++i) {
-      for (int s = 0; s < N; ++s) {
-        // random spin in vector range
-        //int s = rndDist(rndGen) * N;
-        int nn_sum = 0;
-        for (int n= 0; n < 6; ++n) {
-          nn_sum += spins[nn[s][n]];
-        }
-        double cost = 2 * J * spins[s] * nn_sum;
-        if (cost < 0) {
-          spins[s] *= -1;
-        } else {
-          if (rndDist(rndGen) < exp(- beta * cost)) {
-            spins[s] *= -1;
-          }
-        }
-      }
+    if (computeBlockValues) {
+      metropolis(Nther*Nstep);
     }
 
     // vector of block measured values
@@ -107,24 +76,7 @@ int main() {
 
     // effective blocks
     for (int b = 0; b < Nblock; ++b) {
-      for ( int i = 0; i < (Nstep); ++i) {
-        for (int s = 0; s < N; ++s) {
-          // random spin in vector range
-          //int s = rndDist(rndGen) * N;
-          int nn_sum = 0;
-          for (int n= 0; n < 6; ++n) {
-            nn_sum += spins[nn[s][n]];
-          }
-          double cost = 2 * J * spins[s] * nn_sum;
-          if (cost < 0) {
-            spins[s] *= -1;
-          } else {
-            if (rndDist(rndGen) < exp(- beta * cost)) {
-              spins[s] *= -1;
-            }
-          }
-        }
-      }
+      metropolis(Nstep);
       block_spin_avgs[b] =
         fabs(std::accumulate(std::begin(spins), std::end(spins), 0.0) / spins.size());
     }
@@ -160,4 +112,47 @@ int main() {
   }
 
   return 0;
+}
+
+
+void init_nn() {
+  // initialize nn vector
+  for (int i = 0; i < N; ++i) {
+    unsigned int xRef = i % Lx;
+    unsigned int yRef = int(i / Lx);
+    unsigned int xPrev = xRef == 0    ? Lx-1 : xRef-1;
+    unsigned int yPrev = yRef == 0    ? Ly-1 : yRef-1;
+    unsigned int xNext = xRef == Lx-1 ? 0    : xRef+1;
+    unsigned int yNext = yRef == Ly-1 ? 0    : yRef+1;
+    nn[i][0] = xPrev + Lx * yRef;
+    nn[i][1] = xNext + Lx * yRef;
+    nn[i][2] = xRef + Lx * yPrev;
+    nn[i][3] = xRef + Lx * yNext;
+    nn[i][4] = xPrev + Lx * yPrev;
+    nn[i][5] = xNext + Lx * yNext;
+    // std::cout << i << " -> [ " << nn[i][1] << " " << nn[i][2] << " "
+    //  << nn[i][3] << " " << nn[i][4] << " " << nn[i][5] << " " << nn[i][6]
+    //  << " ]"  << std::endl;
+  }
+}
+
+void metropolis(unsigned nsteps) {
+  for (int i = 0; i < nsteps; ++i) {
+    for (int j = 0; j < N; ++j) {
+      // random spin in vector range
+      int s = int(rndDist(rndGen) * N);
+      int nn_sum = 0;
+      for (int n= 0; n < 6; ++n) {
+        nn_sum += spins[nn[s][n]];
+      }
+      double cost = 2 * J * spins[s] * nn_sum;
+      if (cost < 0) {
+        spins[s] *= -1;
+      } else {
+        if (rndDist(rndGen) < exp(- beta * cost)) {
+          spins[s] *= -1;
+        }
+      }
+    }
+  }
 }

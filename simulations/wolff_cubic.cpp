@@ -16,7 +16,7 @@ int ***s;                        // the spins
 double T;                       // temperature
 int steps;                      // number of Monte Carlo steps
 
-std::mt19937 rndGen;
+std::mt19937 rndGen(std::random_device{}());
 std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
@@ -181,13 +181,13 @@ int main() {
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
+  // get time in microseconds and use it as seed
+  //struct timeval tv;
+  //gettimeofday(&tv,NULL);
+  //rndGen.seed(tv.tv_usec);
+
   T = Tstart;
   for (int t = 0; t < Tn; ++t) {
-
-    // get time in microseconds and use it as seed
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    rndGen.seed(tv.tv_usec);
 
     initialize();
     initializeClusterVariables();
