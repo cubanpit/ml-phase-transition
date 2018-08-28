@@ -37,6 +37,7 @@ void metropolis(unsigned nsteps);
 short int binGen();
 
 int main() {
+  
   // every step try a flip of a random spin N (=Lx*Ly) times
   unsigned int Nstep = 50;  // steps per block
   unsigned int Nblock = 100;

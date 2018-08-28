@@ -8,6 +8,7 @@
 *.debug
 # vim swap files
 .*.swp
+trash/*
 # compilated object extension
 *.o
 # compilated Fortran module extension

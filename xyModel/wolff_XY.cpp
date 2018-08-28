@@ -1,4 +1,4 @@
-// Wolff cluster algorithm for the 2-D Ising Model
+// Wolff cluster algorithm for the 2-D XY Model
 
 #include <cmath>
 #include <cstdlib>
@@ -10,114 +10,132 @@
 #include <sys/time.h>// time in microseconds
 
 double J = +1;                  // ferromagnetic coupling
-int Lx, Ly, Lz;                 // number of spins in x, y, z
+int Lx, Ly;                     // number of spins in x and y
 int N;                          // number of spins
-int ***s;                        // the spins
+double **s;                        // the spins
 double T;                       // temperature
 int steps;                      // number of Monte Carlo steps
+double alpha; 					// random angle
+double oldClusterSpin;
+double newClusterSpin;
 
-std::mt19937 rndGen(std::random_device{}());
+double mx, my, MAG;
+
+std::mt19937 rndGen;
 std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
 
-  s = new int** [Lx];
+  s =
+    new double* [Lx];
   for (int i = 0; i < Lx; i++) {
-    s[i] = new int* [Ly];
-    for (int j = 0; j < Ly; j++) {
-      s[i][j] = new int [Lz];
-    }
+    s[i] = new double [Ly];
   }
   for (int i = 0; i < Lx; i++) {
+
     for (int j = 0; j < Ly; j++) {
-      for (int k = 0; k < Lz; k++) {
-        //s[i][j][k] = rndDist(rndGen) < 0.5 ? +1 : -1;   // hot start
-        s[i][j][k] = +1;   // cold start
-      }
+      s[i][j] = rndDist(rndGen) * 2 * M_PI; // random start
     }
+  }
+  
+  mx = 0.0;
+  my = 0.0;	
+  
+  for (int i = 0; i < Lx; i++) {
+
+    for (int j = 0; j < Ly; j++) {
+    	mx += cos(s[i][j]);
+		my += sin(s[i][j]);
+	}
   }
   steps = 0;
 }
 
-bool ***cluster;                     // cluster[i][j] = true if i,j belongs
-double addProbability;              // 1 - e^(-2J/kT)
+bool **cluster;                     // cluster[i][j] = true if i,j belongs
+double addProbability;             
 
 void initializeClusterVariables() {
 
   // allocate 2-D array for spin cluster labels
-  cluster = new bool** [Lx];
+  cluster = new bool* [Lx];
   for (int i = 0; i < Lx; i++) {
-    cluster[i] = new bool* [Ly];
-    for (int j = 0; j < Ly; j++) {
-      cluster[i][j] = new bool [Lz];
-    }
+    cluster[i] = new bool [Ly];
   }
-
-  // compute the probability to add a like spin to the cluster
-  addProbability = 1 - exp(-2*J/T);
 }
 
 // declare functions to implement Wolff algorithm
-void growCluster(int i, int j, int k, int clusterSpin);
-void tryAdd(int i, int j, int k, int clusterSpin);
+void growCluster(int i, int j);
+void tryAdd(int i, int j, double oldClusterSpin, double newClusterSpin);
 
 void oneMonteCarloStep() {
-
+  //
   //no cluster defined so clear the cluster array
   for (int i = 0; i < Lx; i++) {
-    for (int j = 0; j < Ly; j++) {
-      for (int k = 0; k < Lz; k++) {
-        cluster[i][j][k] = false;
-      }
+    for (int j = 0; j < Lx; j++) {
+      cluster[i][j] = false;
+
     }
   }
+
+  alpha = rndDist(rndGen)*M_PI;	
 
   // choose a random spin and grow a cluster
   int i = int(rndDist(rndGen) * Lx);
   int j = int(rndDist(rndGen) * Ly);
-  int k = int(rndDist(rndGen) * Lz);
-  growCluster(i, j, k, s[i][j][k]);
+  growCluster(i, j);
 
   ++steps;
 }
 
-void growCluster(int i, int j, int k, int clusterSpin) {
+void growCluster(int i, int j) {
 
   // mark the spin as belonging to the cluster and flip it
-  cluster[i][j][k] = true;
-  s[i][j][k] = -s[i][j][k];
+  cluster[i][j] = true;
+  oldClusterSpin = s[i][j];
+  
+  mx -= cos(oldClusterSpin);
+  my -= sin(oldClusterSpin);
 
+  double tmpSpin = 2 * alpha - s[i][j];
+  if (tmpSpin < 0) {
+    s[i][j] = 2 * M_PI + tmpSpin;
+  } else {
+    s[i][j] = fmod(tmpSpin, 2*M_PI);
+  }
+
+  
+  newClusterSpin = s[i][j];
+  
+  mx += cos(newClusterSpin);
+  my += sin(newClusterSpin);
+	
+
+  
   // find the indices of the 4 neighbors
   // assuming periodic boundary conditions
   int iPrev = i == 0    ? Lx-1 : i-1;
   int iNext = i == Lx-1 ? 0    : i+1;
   int jPrev = j == 0    ? Ly-1 : j-1;
   int jNext = j == Ly-1 ? 0    : j+1;
-  int kPrev = k == 0    ? Lz-1 : k-1;
-  int kNext = k == Lz-1 ? 0    : k+1;
 
   // if the neighbor spin does not belong to the
   // cluster, then try to add it to the cluster
-  if (!cluster[iPrev][j][k])
-    tryAdd(iPrev, j, k, clusterSpin);
-  if (!cluster[iNext][j][k])
-    tryAdd(iNext, j, k, clusterSpin);
-  if (!cluster[i][jPrev][k])
-    tryAdd(i, jPrev, k, clusterSpin);
-  if (!cluster[i][jNext][k])
-    tryAdd(i, jNext, k, clusterSpin);
-  if (!cluster[i][j][kPrev])
-    tryAdd(i, j, kPrev, clusterSpin);
-  if (!cluster[i][j][kNext])
-    tryAdd(i, j, kNext, clusterSpin);
+  if (!cluster[iPrev][j])
+    tryAdd(iPrev, j, oldClusterSpin, newClusterSpin);
+  if (!cluster[iNext][j])
+    tryAdd(iNext, j, oldClusterSpin, newClusterSpin);
+  if (!cluster[i][jPrev])
+    tryAdd(i, jPrev, oldClusterSpin, newClusterSpin);
+  if (!cluster[i][jNext])
+    tryAdd(i, jNext, oldClusterSpin, newClusterSpin);
 }
 
-void tryAdd(int i, int j, int k, int clusterSpin) {
+void tryAdd(int i, int j, double oldClusterSpin, double newClusterSpin) {
 
-  if (s[i][j][k] == clusterSpin) {
-    if (rndDist(rndGen) < addProbability) {
-      growCluster(i, j, k, clusterSpin);
-    }
+  addProbability = 1 - std::min(1., exp(-J * (cos(oldClusterSpin-s[i][j]) - cos(newClusterSpin-s[i][j])) / T));
+
+  if (rndDist(rndGen) < addProbability) {
+    growCluster(i, j);
   }
 }
 
@@ -127,17 +145,7 @@ double blockV = 0; // spin variance
 
 // compute block averages, useful to understand model behaviour
 void measureBlockObservables() {
-
-  // compute mean spin value
-  int M = 0;
-  for (int i = 0; i < Lx; i++) {
-    for (int j = 0; j < Ly; j++) {
-      for (int k = 0; k < Lz; k++) {
-        M += s[i][j][k];
-      }
-    }
-  }
-  blockM = fabs(double(M) / double(N));
+  blockM = sqrt(mx*mx+my*my)/(Lx*Ly); 
 }
 
 // declare mean spin value
@@ -149,9 +157,7 @@ void measureObservables() {
   int M = 0;
   for (int i = 0; i < Lx; i++) {
     for (int j = 0; j < Ly; j++) {
-      for (int k = 0; k < Lz; k++) {
-        M += s[i][j][k];
-      }
+      M += s[i][j];
     }
   }
   magnetization = double(M) / double(N);
@@ -159,35 +165,33 @@ void measureObservables() {
 
 int main() {
 
-  Lx = 10;
-  Ly = 10;
-  Lz = 9;
-  N = Lx * Ly * Lz;
-  int MCSteps = 20000;
+  Ly = Lx = 32;
+  N = Lx * Ly;
+  int MCSteps = 100000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
   // if true block values will be computed and printed on stderr
   // more information, more time
   // useful to adjust parameters (steps, block size)
-  bool computeBlockValues = false;
+  bool computeBlockValues = true;
   std::vector<double> blockMvector; // magnetization averages computed on blocks
 
   if (computeBlockValues) {
     MCSteps += int(MCSteps/5);
   }
 
-  double Tc = 1/0.221654;   // critical temperature
-  double Tstart = 1;                 // start temperature
+  double Tc = 0.89;   // critical temperature
+  double Tstart = 0.01;                 // start temperature
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
-  // get time in microseconds and use it as seed
-  //struct timeval tv;
-  //gettimeofday(&tv,NULL);
-  //rndGen.seed(tv.tv_usec);
-
   T = Tstart;
   for (int t = 0; t < Tn; ++t) {
+
+    // get time in microseconds and use it as seed
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    rndGen.seed(tv.tv_usec);
 
     initialize();
     initializeClusterVariables();
@@ -206,7 +210,6 @@ int main() {
         blockMvector.push_back(blockM);
       }
     }
-    measureObservables();
 
     if (computeBlockValues) {
       // compute mean value of block avgs vector
@@ -229,17 +232,20 @@ int main() {
 
       std::cerr << T << " " << meanM << " " << meanV << std::endl;
     }
-    std::cout << magnetization << " " << T << "\n";
+
+	
+	std::cout << T << "\n"; 
 
     for (int i = 0; i < Lx; i++) {
       for (int j = 0; j < Ly; j++) {
-        for (int k = 0; k < Lz; k++) {
-          std::cout << s[i][j][k] << " ";
-        }
+        std::cout << s[i][j] << " ";
       }
+
     }
     std::cout << "\n";
 
     T += Tstep;
   }
+
+  return 0;
 }

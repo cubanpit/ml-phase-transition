@@ -1,7 +1,7 @@
 #!/bin/bash
 
-for i in {1..300}; do
-  for j in {1..6}; do
+for i in {1..125}; do
+  for j in {1..2}; do
     ./a.out >> out$j.dat &
   done
   wait

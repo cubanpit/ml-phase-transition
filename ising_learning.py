@@ -71,11 +71,14 @@ def critical_temp(input_lattice):
     square_temp = 2/np.log(1+np.sqrt(2))
     triangular_temp = 4/np.log(3)
     cubic_temp = 1/0.221654
-    
+    honeycomb_temp = 1/0.658478
+
     if input_lattice == "sq":
       test_temp = square_temp
     elif input_lattice == "tr":
         test_temp = triangular_temp
+    elif input_lattice == "hc":
+        test_temp = honeycomb_temp
     elif input_lattice == "cb":
         test_temp = cubic_temp
     else:
@@ -111,7 +114,7 @@ def build_model(data_shape, neurons_number):
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.05),
+            kernel_regularizer=keras.regularizers.l2(0.01),
             input_shape=(data_shape,)),
         # keras.layers.Dropout(0.2),
         keras.layers.Dense(
@@ -128,10 +131,16 @@ def build_model(data_shape, neurons_number):
     model.compile(
             loss='binary_crossentropy',
             optimizer=optimizer,
-            metrics=['accuracy', 'binary_crossentropy'])
+            metrics=['accuracy', 'binary_crossentropy']
+            )
+        
     return model
 
-
+if len(sys.argv) != 4:
+    raise SyntaxError(
+            "This program requires three arguments: "
+            "training_set_file test_set_file lattice_shape\n"
+            "lattice_shape : sq (square), tr (triangular), hc (honeycomb), cb (cubic)")
 
 input_temp = sys.argv[3]
 test_temp = critical_temp(input_temp)
@@ -144,9 +153,10 @@ test_magns, test_bin_temps, test_real_temps, test_configs = read_data(test_set, 
 
 
 
-neurons_number = 150
+neurons_number = 100
 model = build_model(train_configs.shape[1], neurons_number)
 model.summary()
+
 
 # Calculate number of training set configurations
 # to give to validation set (80%-20%)
@@ -158,10 +168,20 @@ config_train_part = train_configs[val_perc:]
 temp_val = train_bin_temps[:val_perc]
 temp_train_part = train_bin_temps[val_perc:]
 
+
+earlystop = keras.callbacks.EarlyStopping(monitor='val_acc', 
+                  min_delta=0.0001,
+                  patience=5,
+                  verbose=1,
+                  mode='auto'
+                 )
+callbacks_list = [earlystop]
+
 history = model.fit(
         config_train_part,
         temp_train_part,
-        epochs=15,
+        epochs=100,
+        callbacks=callbacks_list,
         batch_size=100,
         validation_data=(config_val, temp_val),
         verbose=1)
