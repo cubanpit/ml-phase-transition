@@ -16,7 +16,7 @@ int **s;                        // the spins
 double T;                       // temperature
 int steps;                      // number of Monte Carlo steps
 
-std::mt19937 rndGen;
+std::mt19937 rndGen(std::random_device{}());
 std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
@@ -142,15 +142,15 @@ void measureObservables() {
 
 int main() {
 
-  Ly = Lx = 30;
+  Ly = Lx = 60;
   N = Lx * Ly;
-  int MCSteps = 5000;
+  int MCSteps = 10000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
   // if true block values will be computed and printed on stderr
   // more information, more time
   // useful to adjust parameters (steps, block size)
-  bool computeBlockValues = false;
+  bool computeBlockValues = true;
   std::vector<double> blockMvector; // magnetization averages computed on blocks
 
   if (computeBlockValues) {
@@ -162,13 +162,13 @@ int main() {
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
+  // get time in microseconds and use it as seed
+  //struct timeval tv;
+  //gettimeofday(&tv,NULL);
+  //rndGen.seed(tv.tv_usec);
+
   T = Tstart;
   for (int t = 0; t < Tn; ++t) {
-
-    // get time in microseconds and use it as seed
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    rndGen.seed(tv.tv_usec);
 
     initialize();
     initializeClusterVariables();

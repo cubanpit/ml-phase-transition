@@ -16,7 +16,7 @@ int ***s;                        // the spins
 double T;                       // temperature
 int steps;                      // number of Monte Carlo steps
 
-std::mt19937 rndGen;
+std::mt19937 rndGen(std::random_device{}());
 std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
@@ -163,7 +163,7 @@ int main() {
   Ly = 10;
   Lz = 9;
   N = Lx * Ly * Lz;
-  int MCSteps = 10000;
+  int MCSteps = 20000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
   // if true block values will be computed and printed on stderr
@@ -177,17 +177,17 @@ int main() {
   }
 
   double Tc = 1/0.221654;   // critical temperature
-  double Tstart = 3;                 // start temperature
+  double Tstart = 1;                 // start temperature
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
 
+  // get time in microseconds and use it as seed
+  //struct timeval tv;
+  //gettimeofday(&tv,NULL);
+  //rndGen.seed(tv.tv_usec);
+
   T = Tstart;
   for (int t = 0; t < Tn; ++t) {
-
-    // get time in microseconds and use it as seed
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    rndGen.seed(tv.tv_usec);
 
     initialize();
     initializeClusterVariables();

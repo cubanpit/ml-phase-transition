@@ -1,6 +1,15 @@
 # file to ignore in commit
+
+# default executable extension 'a.out'
 *.out
+# data files
 *.dat
+# output files for simulation debug
 *.debug
+# vim swap files
 .*.swp
 trash/*
+# compilated object extension
+*.o
+# compilated Fortran module extension
+*.mod
