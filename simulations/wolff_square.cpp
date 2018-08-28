@@ -100,8 +100,7 @@ void growCluster(int i, int j, int clusterSpin) {
 
 void tryAdd(int i, int j, int clusterSpin) {
 
-  if
-    (s[i][j] == clusterSpin) {
+  if (s[i][j] == clusterSpin) {
     if (rndDist(rndGen) < addProbability) {
       growCluster(i, j, clusterSpin);
     }
@@ -142,7 +141,7 @@ void measureObservables() {
 
 int main() {
 
-  Ly = Lx = 60;
+  Ly = Lx = 80;
   N = Lx * Ly;
   int MCSteps = 10000;
   int blockSize = 1000; // suggested by Wolff is 1000
