@@ -11,7 +11,7 @@
 #include <iostream>
 #include <random>
 #include <algorithm>
-#include <sys/time.h>
+#include <array>
 
 // lattice size
 #define Lx 30
@@ -23,17 +23,18 @@ double J = 1.;                     // coupling costant
 // total spin number
 const unsigned int N = Lx * Ly;
 // array of spins
-std::vector<short int> spins(N);
+std::array<short int, N> spins;
 
 // random generator and distribution
 std::mt19937 rndGen(std::random_device{}());
 std::uniform_real_distribution<double> rndDist(0,1);
 
 double beta;
-unsigned int nn[N][NN_SIZE];            // nearest neighbour vector
+std::array<std::array<unsigned int, NN_SIZE>, N> nn;  // nearest neighbour array
 
 void init_nn();
 void metropolis(unsigned nsteps);
+short int binGen();
 
 int main() {
   
@@ -54,14 +55,7 @@ int main() {
   //std::fill(spins.begin(), spins.end(), 1);
 
   // randomize all spins - hot start
-  for (int i = 0; i < N; ++i) {
-    spins[i] = 2 * int(rndDist(rndGen) * 2) - 1;
-  }
-
-  // get time in microseconds and use it as seed
-  //struct timeval tv;
-  //gettimeofday(&tv,NULL);
-  //rndGen.seed(tv.tv_usec);
+  std::generate(spins.begin(), spins.end(), binGen);
 
   double T = Tstart;
   for (int t = 0; t < Tn; ++t) {
@@ -72,7 +66,7 @@ int main() {
       metropolis(Nther*Nstep);
     }
 
-    // vector of block measured values
+    // array of block measured values
     std::vector<double> block_spin_avgs(Nblock);
 
     // effective blocks
@@ -95,8 +89,7 @@ int main() {
       // compute variance of block avgs vector
       double accum = 0.;
       std::for_each (
-          std::begin(block_spin_avgs),
-          std::end(block_spin_avgs),
+          std::begin(block_spin_avgs), std::end(block_spin_avgs),
           [&](const double d) { accum += (d - meanM) * (d - meanM); });
       double meanV = accum / block_spin_avgs.size();
 
@@ -117,8 +110,8 @@ int main() {
 
 
 void init_nn() {
-  // initialize nn vector
-  for (int i = 0; i < N; ++i) {
+  // initialize nn array
+  for (unsigned int i = 0; i < N; ++i) {
     unsigned int xRef = i % Lx;
     unsigned int yRef = int(i / Lx);
     unsigned int xPrev = xRef == 0    ? Lx-1 : xRef-1;
@@ -137,15 +130,15 @@ void init_nn() {
   }
 }
 
-void metropolis(unsigned nsteps) {
-  for (int i = 0; i < nsteps; ++i) {
-    for (int j = 0; j < N; ++j) {
-      // random spin in vector range
-      int s = int(rndDist(rndGen) * N);
+void metropolis(unsigned int nsteps) {
+  for (unsigned int i = 0; i < nsteps; ++i) {
+    for (unsigned int j = 0; j < N; ++j) {
+      // random spin in array range
+      unsigned int s = int(rndDist(rndGen) * N);
       int nn_sum = 0;
-      for (int n= 0; n < 6; ++n) {
-        nn_sum += spins[nn[s][n]];
-      }
+      std::for_each (
+          std::begin(nn[s]), std::end(nn[s]),
+          [&](const unsigned int n) { nn_sum += spins[n]; });
       double cost = 2 * J * spins[s] * nn_sum;
       if (cost < 0) {
         spins[s] *= -1;
@@ -156,4 +149,8 @@ void metropolis(unsigned nsteps) {
       }
     }
   }
+}
+
+short int binGen() {
+    return 2 * int(rndDist(rndGen) * 2) - 1;
 }
