@@ -165,7 +165,7 @@ void measureObservables() {
 
 int main() {
 
-  Ly = Lx = 32;
+  Ly = Lx = 16;
   N = Lx * Ly;
   int MCSteps = 100000;
   int blockSize = 1000; // suggested by Wolff is 1000
@@ -173,14 +173,14 @@ int main() {
   // if true block values will be computed and printed on stderr
   // more information, more time
   // useful to adjust parameters (steps, block size)
-  bool computeBlockValues = true;
+  bool computeBlockValues = false;
   std::vector<double> blockMvector; // magnetization averages computed on blocks
 
   if (computeBlockValues) {
     MCSteps += int(MCSteps/5);
   }
 
-  double Tc = 0.89;   // critical temperature
+  double Tc = 0.893;   // critical temperature
   double Tstart = 0.01;                 // start temperature
   int Tn = 40;              // number of different temperatures (even number)
   double Tstep = 2 * (Tc - Tstart) / (Tn - 1); // step amplitude
