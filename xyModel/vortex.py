@@ -16,15 +16,17 @@ def saw(x):
         return x
     elif np.pi <= x:
         return x - 2 * np.pi
+def column(matrix, i):
+        return [row[i] for row in matrix]
 
 input_set = sys.argv[1]
 
-L = 32    # Size
+L = 16    # Size
 s = 2     # Submatrix size
 i = 0     
 v = []    # Vorticity vector
 
-graph = False   # Set True if you want to create vortex graphics
+graph = True   # Set True if you want to create vortex graphics
 
 vortex_conf = open('vortex_L'+str(L)+'.dat', "a")
 
@@ -39,23 +41,31 @@ with open(input_set, 'r') as infile:
             XY = lol(line.split(), L)      # Store configuration
             XY = np.array(XY, dtype=float)
 
+            # Create L+1xL+1 matrix with PBC
+            XY_P = np.column_stack((XY, column(XY, 0)))
+            XY_P = np.vstack((XY_P, XY_P[0]))
+            
             # Something to divide the LxL matrix in all the sxs submatrix
-            P = L - s + 1
+            P = L + 1 - s + 1
             x = np.arange(P).repeat(s)
             y = np.tile(np.arange(s), P) + x
-            a = XY
+            a = XY_P
+            
             b = a[np.newaxis].repeat(P, axis=0)
             c = b[x, y]
             
-            d = c.reshape(P, s, L)
+            # Create submatrix
+            d = c.reshape(P, s, L+1)
             e = d[:, np.newaxis].repeat(P, axis=1)
             f = e[:, x, :, y]
             g = f.reshape(P, s, P, s)
             h = g.transpose(2, 0, 3, 1)
-            
+           
+#            print h
+
             # Calculate vorticity for each sxs submatrix
-            for l in range(0, L-1):
-                for j in range (0, L-1):
+            for l in range(0, L):
+                for j in range (0, L):
                     wn = np.round(saw(h[l][j].item((0,0))-h[l][j].item((0,1)))\
                             +saw(h[l][j].item((0,1))-h[l][j].item((1,1)))\
                             +saw(h[l][j].item((1,1))-h[l][j].item((1,0)))\
@@ -82,15 +92,12 @@ with open(input_set, 'r') as infile:
                        wn = 0.0
                     
                     v.append(wn)        # Create vorticity array
-           
             vortex_conf.write(str(" ".join( repr(e) for e in v))+'\n')
  
             if graph :
                 # Convert array in LxL matrix (work only for square)
-                V = lol(v, L-1)            
+                V = lol(v, L)            
                 V = np.array(V, dtype=float)
-                V = np.column_stack((V,np.zeros(L-1))) 
-                V = np.vstack((V,np.zeros(L)))
 
                 # Plot configuration and save it on .pdf
                 [X, Y] = np.mgrid[0:L, 0:L]
