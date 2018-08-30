@@ -143,9 +143,9 @@ def build_model(data_shape, neurons_number):
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.01),
+            kernel_regularizer=keras.regularizers.l2(0.001),
             input_shape=(data_shape,)),
-        # keras.layers.Dropout(0.2),
+ #       keras.layers.Dropout(0.05),
         keras.layers.Dense(
             2,
             activation=tf.nn.softmax,
@@ -211,14 +211,14 @@ if train:
 
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
-            monitor='val_acc', min_delta=0.001,
-            patience=5, verbose=1, mode='auto')
+            monitor='val_acc', min_delta=0.0001,
+            patience=6, verbose=1)
     callbacks_list = [earlystop]
 
     # fit model on training data
     history = model.fit(
-            config_train, temp_train, epochs=100,
-            batch_size=64,
+            config_train, temp_train, epochs=500,
+            callbacks=callbacks_list, batch_size=50,
             validation_data=(config_val, temp_val), verbose=1)
 
     if save:

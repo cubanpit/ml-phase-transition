@@ -26,7 +26,7 @@ s = 2     # Submatrix size
 i = 0     
 v = []    # Vorticity vector
 
-graph = True   # Set True if you want to create vortex graphics
+graph = False   # Set True if you want to create vortex graphics
 
 vortex_conf = open('vortex_L'+str(L)+'.dat', "a")
 
