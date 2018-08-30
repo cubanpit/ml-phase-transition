@@ -36,7 +36,6 @@ args = parser.parse_args()
 
 
 def read_data(input_set, critical_temp):
-
     """Read data from file.
 
     Only argument is the path to the data file.
@@ -88,7 +87,6 @@ def read_data(input_set, critical_temp):
 
 
 def critical_temp(input_lattice):
-
     """Returns critical temperature for different lattice.
     """
 
@@ -112,7 +110,6 @@ def critical_temp(input_lattice):
 
 
 def unique_elements(complete_array):
-
     """Returns a list of different elements in an array.
     """
 
@@ -122,7 +119,7 @@ def unique_elements(complete_array):
             uniques.append(elem)
 
     uniques = np.array(uniques)
-    np.sort(uniques)
+    uniques.sort(kind='stable')
 
     return uniques
 
@@ -133,8 +130,30 @@ def unison_shuffled_copies(a, b):
     return a[p], b[p]
 
 
-def build_model(data_shape, neurons_number):
+def line_eq(p1, p2):
+    """Returns coefficient of a line equation given two points.
+    """
+    A = (p1[1] - p2[1])
+    B = (p2[0] - p1[0])
+    C = (p1[0]*p2[1] - p2[0]*p1[1])
+    return A, B, -C
 
+
+def intersection_pt(L1, L2):
+    """Returns intersection point coordinates given two lines.
+    """
+    D  = L1[0] * L2[1] - L1[1] * L2[0]
+    Dx = L1[2] * L2[1] - L1[1] * L2[2]
+    Dy = L1[0] * L2[2] - L1[2] * L2[0]
+    if D != 0:
+        x = Dx / D
+        y = Dy / D
+        return x, y
+    else:
+        return False
+
+
+def build_model(data_shape, neurons_number):
     """Build neural network model.
     """
 
@@ -185,9 +204,8 @@ else:
         train = False
         save = False
 
-# read lattice type from cli arguments
-lattice_type = args.lattice_type
-test_temp = critical_temp(lattice_type)
+# set test critical temperature based on lattice type
+test_temp = critical_temp(args.lattice_type)
 
 # if there is a training set load it, otherwise load the trained model
 if train:
@@ -232,49 +250,95 @@ else:
     print("Loading trained model from:", args.load_model)
     model = keras.models.load_model(args.load_model)
 
+# print summary of neural network
+model.summary()
+
 # load test set
 test_set = args.test_set
 test_magns, test_bin_temps, test_real_temps, test_configs \
         = read_data(test_set, test_temp)
 
-# print summary of neural network
-model.summary()
+# split test set in n_split sets, to compute statistical accuracy
+n_split = 10
+n_elem = int(len(test_bin_temps) / n_split) * n_split
+many_test_bin_t = np.split(test_bin_temps[:n_elem], n_split)
+many_test_real_t = np.split(test_real_temps[:n_elem], n_split)
+many_test_configs = np.split(test_configs[:n_elem], n_split)
+tc_predictions = []
 
-# evaluate model using test dataset
-results = model.evaluate(test_configs, test_bin_temps)
-print("\nTest loss = " + str(results[0]) + "\nTest accuracy = " + str(results[1]))
+for i in range(len(many_test_bin_t)):
 
-# predict label on test dataset
-predictions = model.predict(test_configs)
+    print("")
+    # evaluate model using test dataset
+    results = model.evaluate(many_test_configs[i], many_test_bin_t[i])
+    print("Test loss = " + str(results[0]) + "\nTest accuracy = " + str(results[1]))
 
-single_real_temps = unique_elements(test_real_temps)
-predictions_t1 = []
-predictions_t2 = []
+    # predict label on test dataset
+    predictions = model.predict(many_test_configs[i])
 
-# divide data for equal real temperatures
-for temp in single_real_temps:
-    tmp_array = np.extract(test_real_temps == temp, predictions[:, 0])
-    predictions_t1.append(
-            np.array([np.mean(tmp_array),
-            np.std(tmp_array) / np.sqrt(len(tmp_array))]))
-    tmp_array = np.extract(test_real_temps == temp, predictions[:, 1])
-    predictions_t2.append(
-            np.array([np.mean(tmp_array),
-            np.std(tmp_array) / np.sqrt(len(tmp_array))]))
+    # get a list of every temperature in complete test set
+    single_real_temps = unique_elements(many_test_real_t[i])
+    predictions_t1 = []
+    predictions_t2 = []
 
-predictions_t1 = np.array(predictions_t1)
-predictions_t2 = np.array(predictions_t2)
+    # divide data for equal real temperatures
+    for temp in single_real_temps:
+        tmp_array = np.extract(many_test_real_t[i] == temp, predictions[:, 0])
+        predictions_t1.append(
+                np.array([np.mean(tmp_array),
+                np.std(tmp_array) / np.sqrt(len(tmp_array) - 1)]))
+        tmp_array = np.extract(many_test_real_t[i] == temp, predictions[:, 1])
+        predictions_t2.append(
+                np.array([np.mean(tmp_array),
+                np.std(tmp_array) / np.sqrt(len(tmp_array) - 1)]))
 
-x = single_real_temps
-y1 = predictions_t1[:, 0]
-y1_e = predictions_t1[:, 1]
-y2 = predictions_t2[:, 0]
-y2_e = predictions_t2[:, 1]
-plt.axvline(x=test_temp, marker='|', c='g', label='Trans temp')
-plt.errorbar(x, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-plt.errorbar(x, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-plt.legend()
-plt.show()
+    predictions_t1 = np.array(predictions_t1)
+    predictions_t2 = np.array(predictions_t2)
+    xt = single_real_temps
+    y1 = predictions_t1[:, 0]
+    y2 = predictions_t2[:, 0]
+    #y1_e = predictions_t1[:, 1]
+    #y2_e = predictions_t2[:, 1]
+    #plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+    #plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+    #plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+    #plt.legend()
+    #plt.show()
+
+    # find first element greater than critical temp
+    index_tc = next(x[0] for x in enumerate(single_real_temps) if x[1] > test_temp)
+
+    # compute intersection of two lines passing for two given points each
+    line1 = line_eq([xt[index_tc-1], y1[index_tc-1]], [xt[index_tc], y1[index_tc]])
+    line2 = line_eq([xt[index_tc-1], y2[index_tc-1]], [xt[index_tc], y2[index_tc]])
+    inters_point = intersection_pt(line1, line2)
+
+    # if successful add it to the predictions array
+    if not inters_point:
+        print("No intersection found between lines.")
+    elif inters_point[0] > xt[index_tc] or inters_point[0] < xt[index_tc-1]:
+        print("Intersection of lines is outside allowed range.")
+    else:
+        tc_predictions.append(inters_point[0])
+
+# compute mean and stdev
+print("\nNumber of elements =", len(tc_predictions))
+tc_predictions = np.array(tc_predictions)
+tc_mean = np.round(np.mean(tc_predictions), decimals=4)
+tc_stdev = np.round(np.std(tc_predictions), decimals=4)
+print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
+print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
+
+
+
+
+#y1_e = predictions_t1[:, 1]
+#y2_e = predictions_t2[:, 1]
+#plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+#plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+#plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+#plt.legend()
+#plt.show()
 
 # weights = model.layers[0].get_weights()[0]
 # bias = model.layers[0].get_weights()[1]
