@@ -75,14 +75,14 @@ def read_data(input_set, critical_temp):
                 odd = False
 
             else:
-                configuration = np.fromstring(line, dtype=int, sep=' ')
+                configuration = np.fromstring(line, dtype=np.int8, sep=' ')
                 configurations.append(configuration)
                 odd = True
 
-    magnetizations = np.array(magnetizations)
-    binary_temperatures = np.array(binary_temperatures)
-    real_temperatures = np.array(real_temperatures)
-    configurations = np.array(configurations)
+    magnetizations = np.array(magnetizations).astype(np.float32)
+    binary_temperatures = np.array(binary_temperatures).astype(np.uint8)
+    real_temperatures = np.array(real_temperatures).astype(np.float32)
+    configurations = np.array(configurations).astype(np.int8)
 
     return magnetizations, binary_temperatures, real_temperatures, configurations
 
@@ -125,6 +125,12 @@ def unique_elements(complete_array):
     np.sort(uniques)
 
     return uniques
+
+
+def unison_shuffled_copies(a, b):
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p]
 
 
 def build_model(data_shape, neurons_number):
@@ -185,6 +191,8 @@ test_temp = critical_temp(lattice_type)
 
 # if there is a training set load it, otherwise load the trained model
 if train:
+    print("Training a new model using as training set:", args.training_set)
+
     train_set = args.training_set
     train_magns, train_bin_temps, train_real_temps, train_configs \
             = read_data(train_set, critical_temp("sq"))
@@ -195,10 +203,14 @@ if train:
     val_size = int(train_configs.shape[0]*20/100)
 
     config_val = train_configs[:val_size]
-    config_train_part = train_configs[val_size:]
+    config_train = train_configs[val_size:]
 
     temp_val = train_bin_temps[:val_size]
-    temp_train_part = train_bin_temps[val_size:]
+    temp_train = train_bin_temps[val_size:]
+    config_val, temp_val \
+            = unison_shuffled_copies(config_val, temp_val)
+    config_train, temp_train \
+            = unison_shuffled_copies(config_train, temp_train)
 
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
@@ -208,14 +220,16 @@ if train:
 
     # fit model on training data
     history = model.fit(
-            config_train_part, temp_train_part, epochs=100,
+            config_train, temp_train, epochs=100,
             callbacks=callbacks_list, batch_size=100,
             validation_data=(config_val, temp_val), verbose=1)
 
     if save:
+        print("Saving trained model to:", args.save_model)
         model.save(args.save_model)
 
 else:
+    print("Loading trained model from:", args.load_model)
     model = keras.models.load_model(args.load_model)
 
 # load test set
