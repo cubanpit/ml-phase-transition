@@ -150,7 +150,7 @@ def build_model(data_shape, neurons_number):
             bias_initializer=keras.initializers.RandomNormal(stddev=1))
         ])
 
-    optimizer = tf.train.AdamOptimizer(0.0001)
+    optimizer = tf.keras.optimizers.Adam(lr=0.0001)
 
     model.compile(
             loss='binary_crossentropy',
@@ -213,19 +213,10 @@ if train:
             validation_data=(config_val, temp_val), verbose=1)
 
     if save:
-        with tf.Session(graph=tf.Graph()) as session:
-            tf.saved_model.simple_save(session,
-            args.save_model,
-            inputs = {
-                "train_configs": train_configs,
-                "train_bin_temps": train_bin_temps},
-            outputs={"outputs": outputs})
+        model.save(args.save_model)
 
 else:
-    with tf.Session(graph=tf.Graph()) as session:
-        tf.saved_model.loader.load(
-                sess, [tag_constants.TRAINING], args.load_model)
-
+    model = keras.models.load_model(args.load_model)
 
 # load test set
 test_set = args.test_set

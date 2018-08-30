@@ -37,10 +37,10 @@ void initialize ( ) {
       s[i][j] = rndDist(rndGen) * 2 * M_PI; // random start
     }
   }
-  
+
   mx = 0.0;
-  my = 0.0;	
-  
+  my = 0.0;
+
   for (int i = 0; i < Lx; i++) {
 
     for (int j = 0; j < Ly; j++) {
@@ -52,7 +52,7 @@ void initialize ( ) {
 }
 
 bool **cluster;                     // cluster[i][j] = true if i,j belongs
-double addProbability;             
+double addProbability;
 
 void initializeClusterVariables() {
 
@@ -77,7 +77,7 @@ void oneMonteCarloStep() {
     }
   }
 
-  alpha = rndDist(rndGen)*M_PI;	
+  alpha = rndDist(rndGen)*M_PI;
 
   // choose a random spin and grow a cluster
   int i = int(rndDist(rndGen) * Lx);
@@ -92,7 +92,7 @@ void growCluster(int i, int j) {
   // mark the spin as belonging to the cluster and flip it
   cluster[i][j] = true;
   oldClusterSpin = s[i][j];
-  
+
   mx -= cos(oldClusterSpin);
   my -= sin(oldClusterSpin);
 
@@ -103,14 +103,14 @@ void growCluster(int i, int j) {
     s[i][j] = fmod(tmpSpin, 2*M_PI);
   }
 
-  
+
   newClusterSpin = s[i][j];
-  
+
   mx += cos(newClusterSpin);
   my += sin(newClusterSpin);
-	
 
-  
+
+
   // find the indices of the 4 neighbors
   // assuming periodic boundary conditions
   int iPrev = i == 0    ? Lx-1 : i-1;
@@ -142,25 +142,12 @@ void tryAdd(int i, int j, double oldClusterSpin, double newClusterSpin) {
 // various block interesting values
 double blockM = 0; // magnetization, spin average
 double blockV = 0; // spin variance
-
-// compute block averages, useful to understand model behaviour
-void measureBlockObservables() {
-  blockM = sqrt(mx*mx+my*my)/(Lx*Ly); 
-}
-
 // declare mean spin value
 double magnetization = 0;
 
-void measureObservables() {
-
-  // compute mean spin value
-  int M = 0;
-  for (int i = 0; i < Lx; i++) {
-    for (int j = 0; j < Ly; j++) {
-      M += s[i][j];
-    }
-  }
-  magnetization = double(M) / double(N);
+// compute block averages, useful to understand model behaviour
+void measureBlockObservables() {
+  blockM = sqrt(mx*mx+my*my)/(Lx*Ly);
 }
 
 int main() {
@@ -233,14 +220,13 @@ int main() {
       std::cerr << T << " " << meanM << " " << meanV << std::endl;
     }
 
-	
-	std::cout << T << "\n"; 
+
+    std::cout << T << "\n";
 
     for (int i = 0; i < Lx; i++) {
       for (int j = 0; j < Ly; j++) {
         std::cout << s[i][j] << " ";
       }
-
     }
     std::cout << "\n";
 
