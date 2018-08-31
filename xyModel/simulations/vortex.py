@@ -21,7 +21,7 @@ def column(matrix, i):
 
 input_set = sys.argv[1]
 
-L = 16    # Size
+L = 32    # Size
 s = 2     # Submatrix size
 i = 0     
 v = []    # Vorticity vector
