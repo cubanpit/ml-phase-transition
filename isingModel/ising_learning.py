@@ -154,7 +154,7 @@ def intersection_pt(L1, L2):
 
 
 def build_model(data_shape, neurons_number):
-    """Build neural network model.
+    """Build neural network model with given data shape and neurons number.
     """
 
     model = keras.Sequential([
@@ -316,7 +316,7 @@ for i in range(len(many_test_bin_t)):
 
 # compute mean and stdev
 print("\nNumber of elements =", len(tc_predictions))
-if tc_predictions > 0:
+if len(tc_predictions) > 0:
     tc_predictions = np.array(tc_predictions)
     tc_mean = np.round(np.mean(tc_predictions), decimals=4)
     tc_stdev = np.round(np.std(tc_predictions), decimals=4)
