@@ -163,6 +163,7 @@ int main() {
 
       std::cerr << T << " " << meanM << " " << meanV << std::endl;
     }
+    measureObservables();
     std::cout << magnetization << " " << T << "\n";
 
     // print full spin lattice
