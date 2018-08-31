@@ -154,7 +154,7 @@ def intersection_pt(L1, L2):
 
 
 def build_model(data_shape, neurons_number):
-    """Build neural network model.
+    """Build neural network model with given data shape and neurons number.
     """
 
     model = keras.Sequential([
@@ -297,15 +297,8 @@ for i in range(len(many_test_bin_t)):
     xt = single_real_temps
     y1 = predictions_t1[:, 0]
     y2 = predictions_t2[:, 0]
-    #y1_e = predictions_t1[:, 1]
-    #y2_e = predictions_t2[:, 1]
-    #plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
-    #plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-    #plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-    #plt.legend()
-    #plt.show()
 
-    # find first element greater than critical temp
+     # find first element greater than critical temp
     index_tc = next(x[0] for x in enumerate(single_real_temps) if x[1] > test_temp)
 
     # compute intersection of two lines passing for two given points each
@@ -323,12 +316,15 @@ for i in range(len(many_test_bin_t)):
 
 # compute mean and stdev
 print("\nNumber of elements =", len(tc_predictions))
-tc_predictions = np.array(tc_predictions)
-tc_mean = np.round(np.mean(tc_predictions), decimals=4)
-tc_stdev = np.round(np.std(tc_predictions), decimals=4)
-print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
-print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
-
+if len(tc_predictions) > 0:
+    tc_predictions = np.array(tc_predictions)
+    tc_mean = np.round(np.mean(tc_predictions), decimals=4)
+    tc_stdev = np.round(np.std(tc_predictions), decimals=4)
+    print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
+    print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
+else:
+    print("There are no useful data,\
+            impossible to compute critical temperature")
 
 
 
@@ -392,3 +388,25 @@ if train:
     plt.legend()
 
     plt.show()
+
+# Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
+#                Martina Crippa    <martina.crippa2@studenti.unimi.it>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#

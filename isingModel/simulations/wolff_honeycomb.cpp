@@ -7,9 +7,22 @@
 #include <array> // std::array
 #include <algorithm> // std::for_each
 
-#define Lx 31 // ONLY ODD NUMBER
-#define Ly 30 // ONLY EVEN NUMBER
+// On a square lattice there are two honeycomb lattice, we connect them with
+//  boundary conditions in one direction (up-down).
+// The only downside is that not all Ly values are allowed, some values connect
+//  with boundary conditions only one honeycomb lattice and they can develop
+//  different phases at low temperature.
+//
+// Working Ly are 30, 42, 50, 62, 70, 82
+// It is necessary to check the cycle printing spins array at the end of the
+//  main(), if you want to output a number of spin compatible with other square
+//  lattice. (40x40, 60x60, etc.)
+#define Lx 40
+#define Ly 42
 const unsigned int N = Lx * Ly;   // number of spins
+
+// Here we approx at power of 10, for personal project
+unsigned int Ly_d = (Ly / 10) * 10;
 
 std::array<std::array<short int, Ly>, Lx> s;     // the spins
 std::array<std::array<bool, Ly>, Lx> cluster;    // cluster[i][j] = true if i,j belongs
@@ -104,37 +117,16 @@ double magnetization = 0;
 
 void measureObservables() {
 
-  // We have two honeycomb lattice, we look only at one of them.
-  // An honeycomb lattice on a square grid has only half spins on every line,
-  //  there are two different type of lines, one begin with a lattice site,
-  //  one with an empty site.
-  //
-  //     *   *   *
-  //   *   *   *   *
-  //   *   *   *   *
-  //     *   *   *
-  bool lattice = false;
-  int count = 0;
+  // We have two honeycomb lattice, we look at both of them.
+
   // compute mean spin value
   int M = 0;
-  for (int i = 0; i < Lx; i++) {
-    ++count;
-    if (count > 3) count = 0;
-    for (int j = 0; j < Ly; j++) {
-      if (count > 1) {
-        if (lattice) {
-          M += s[i][j];
-          lattice = !lattice;
-        } else lattice = !lattice;
-      } else {
-        if (!lattice) {
-          M += s[i][j];
-          lattice = !lattice;
-        } else lattice = !lattice;
-      }
+  for (int j = 0; j < Ly_d; j++) {
+    for (int i = 0; i < Lx; i++) {
+      M += s[i][j];
     }
   }
-  magnetization = double(M) / double(N / 2);
+  magnetization = double(M) / double(N);
 }
 
 int main() {
@@ -182,6 +174,9 @@ int main() {
 
     if (computeBlockValues) {
       // compute mean value of block avgs vector
+      for (int i = 0; i < blockMvector.size(); ++i) {
+        blockMvector[i] = fabs(blockMvector[i]);
+      }
       double sum = std::accumulate(
           std::begin(blockMvector),
           std::end(blockMvector),
@@ -201,11 +196,14 @@ int main() {
 
       std::cerr << T << " " << meanM << " " << meanV << std::endl;
     }
+    measureObservables();
     std::cout << magnetization << " " << T << "\n";
 
-    // print full spin lattice
-    for (int i = 0; i < Lx-1; i++) {
-      for (int j = 0; j < Ly; j++) {
+    // Print (quasi)full spin lattice, we want a square lattice to compare
+    //  spins array to other models. (40x40, 60x60, etc.)
+    // For further information see head of file.
+    for (int j = 0; j < Ly_d; j++) {
+      for (int i = 0; i < Lx; i++) {
         std::cout << s[i][j] << " ";
       }
     }
@@ -216,3 +214,25 @@ int main() {
 
   return 0;
 }
+
+/* Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
+ *                Martina Crippa    <martina.crippa2@studenti.unimi.it>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+*/
