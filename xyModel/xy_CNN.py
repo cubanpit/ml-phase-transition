@@ -154,13 +154,13 @@ def build_model(data_shape):
     """Build neural network model.
     """
     model = keras.models.Sequential()
-    model.add(keras.layers.Conv2D(32, kernel_size=(3, 3),
+    model.add(keras.layers.Conv2D(8, kernel_size=(3, 3),
                      activation='relu',
                      input_shape=data_shape,
-                     data_format='channels_first'))
-    model.add(keras.layers.Conv2D(64, (3, 3),
+                     data_format='channels_last'))
+    model.add(keras.layers.Conv2D(16, (3, 3),
                     activation='relu',
-                    data_format='channels_first'))
+                    data_format='channels_last'))
     model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
     model.add(keras.layers.Dropout(0.25))
     model.add(keras.layers.Flatten())
@@ -207,9 +207,9 @@ if train:
     tmp = []
     for i in range(len(train_configs)):
         tmp.append(train_configs[i].reshape(
-                1,
                 int(np.sqrt(train_configs[i].shape[0])),
-                int(np.sqrt(train_configs[i].shape[0]))))
+                int(np.sqrt(train_configs[i].shape[0])),
+                1))
     train_configs = np.array(tmp)
 
     train_configs = train_configs / (2 * np.float32(np.pi))
@@ -235,13 +235,13 @@ if train:
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=6, verbose=1, mode='auto')
+            patience=2, verbose=1, mode='auto')
     callbacks_list = [earlystop]
 
     # fit model on training data
     history = model.fit(
             config_train, temp_train, epochs=500,
-            callbacks=callbacks_list, batch_size=50,
+            callbacks=callbacks_list, batch_size=100,
             validation_data=(config_val, temp_val), verbose=1)
 
     if save:
@@ -263,9 +263,9 @@ test_magns, test_bin_temps, test_real_temps, test_configs \
 tmp = []
 for i in range(len(train_configs)):
     tmp.append(test_configs[i].reshape(
-            1,
             int(np.sqrt(test_configs[i].shape[0])),
-            int(np.sqrt(test_configs[i].shape[0]))))
+            int(np.sqrt(test_configs[i].shape[0])),
+            1))
 test_configs = np.array(tmp)
 
 test_configs = test_configs / (2 * np.float32(np.pi))
