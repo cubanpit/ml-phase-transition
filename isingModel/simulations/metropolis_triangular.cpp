@@ -10,8 +10,8 @@
 #include <array>
 
 // lattice size
-#define Lx 30
-#define Ly 30
+#define Lx 60
+#define Ly 60
 #define NN_SIZE 6         // number of nearest neighbour
 
 double J = 1.;                     // coupling costant

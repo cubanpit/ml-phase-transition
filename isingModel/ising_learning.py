@@ -119,7 +119,7 @@ def unique_elements(complete_array):
             uniques.append(elem)
 
     uniques = np.array(uniques)
-    uniques.sort(kind='stable')
+    uniques.sort()
 
     return uniques
 
@@ -319,8 +319,10 @@ print("\nNumber of elements =", len(tc_predictions))
 if len(tc_predictions) > 0:
     tc_predictions = np.array(tc_predictions)
     tc_mean = np.round(np.mean(tc_predictions), decimals=4)
-    tc_stdev = np.round(np.std(tc_predictions), decimals=4)
-    print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
+    tc_stdev = \
+            np.round(np.std(tc_predictions)/np.sqrt(len(tc_predictions) - 1),
+                    decimals=5)
+    print("Predicted critical temperature: mean =", tc_mean," +-", tc_stdev)
     print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 else:
     print("There are no useful data,\
