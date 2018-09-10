@@ -312,11 +312,11 @@ for i in range(len(many_test_bin_t)):
     y2 = predictions_t2[:, 0]
     y1_e = predictions_t1[:, 1]
     y2_e = predictions_t2[:, 1]
-    plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
-    plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-    plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-    plt.legend()
-    plt.show()
+#    plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+#    plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+#    plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+#    plt.legend()
+#    plt.show()
 
     # find first element greater than critical temp
     index_tc = next(x[0] for x in enumerate(single_real_temps) if x[1] > test_temp)
@@ -364,44 +364,44 @@ print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 
 # plt.show()
 
-if train:
-    acc = history.history['acc']
-    val_acc = history.history['val_acc']
-    loss = history.history['loss']
-    val_loss = history.history['val_loss']
-    binary_crossentropy = history.history['binary_crossentropy']
-    val_binary_crossentropy = history.history['val_binary_crossentropy']
-
-    epochs = range(1, len(acc) + 1)
-
-    plt.plot(epochs, acc, 'g', label='Training acc')
-    plt.plot(epochs, val_acc, 'g--', label='Validation acc')
-    plt.xlabel('Epochs')
-    plt.ylabel('Accuracy')
-    plt.legend()
-
-    plt.show()
-
-    plt.plot(epochs, loss, 'b', label='Training loss')
-    plt.plot(epochs, val_loss, 'b--', label='Validation loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.legend()
-
-    plt.show()
-
-    plt.plot(
-            epochs,
-            binary_crossentropy,
-            'r',
-            label='Training crossentropy')
-    plt.plot(
-            epochs,
-            val_binary_crossentropy,
-            'r--',
-            label='Validation crossentropy')
-    plt.xlabel('Epochs')
-    plt.ylabel('Binary_crossentropy')
-    plt.legend()
-
-    plt.show()
+#if train:
+#    acc = history.history['acc']
+#    val_acc = history.history['val_acc']
+#    loss = history.history['loss']
+#    val_loss = history.history['val_loss']
+#    binary_crossentropy = history.history['binary_crossentropy']
+#    val_binary_crossentropy = history.history['val_binary_crossentropy']
+#
+#    epochs = range(1, len(acc) + 1)
+#
+#    plt.plot(epochs, acc, 'g', label='Training acc')
+#    plt.plot(epochs, val_acc, 'g--', label='Validation acc')
+#    plt.xlabel('Epochs')
+#    plt.ylabel('Accuracy')
+#    plt.legend()
+#
+#    plt.show()
+#
+#    plt.plot(epochs, loss, 'b', label='Training loss')
+#    plt.plot(epochs, val_loss, 'b--', label='Validation loss')
+#    plt.xlabel('Epochs')
+#    plt.ylabel('Loss')
+#    plt.legend()
+#
+#    plt.show()
+#
+#    plt.plot(
+#            epochs,
+#            binary_crossentropy,
+#            'r',
+#            label='Training crossentropy')
+#    plt.plot(
+#            epochs,
+#            val_binary_crossentropy,
+#            'r--',
+#            label='Validation crossentropy')
+#    plt.xlabel('Epochs')
+#    plt.ylabel('Binary_crossentropy')
+#    plt.legend()
+#
+#    plt.show()
