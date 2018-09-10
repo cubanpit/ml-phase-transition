@@ -249,7 +249,7 @@ if train:
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=3, verbose=1, mode='auto')
+            patience=4, verbose=1, mode='auto')
     callbacks_list = [earlystop]
 
     # fit model on training data
@@ -275,7 +275,7 @@ test_magns, test_bin_temps, test_real_temps, test_configs \
         = read_data(test_set, test_temp)
 
 tmp = []
-for i in range(len(train_configs)):
+for i in range(len(test_configs)):
     tmp.append(test_configs[i].reshape(
             int(np.sqrt(test_configs[i].shape[0])),
             int(np.sqrt(test_configs[i].shape[0])),
@@ -422,3 +422,25 @@ if train and not args.no_plot:
     plt.legend()
 
     plt.show()
+
+# Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
+#                Martina Crippa    <martina.crippa2@studenti.unimi.it>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#

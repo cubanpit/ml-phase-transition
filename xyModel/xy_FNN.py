@@ -32,6 +32,11 @@ parser.add_argument(
 parser.add_argument(
         "-sm", "--save_model",
         help="File '.h5' to save trained model", required=False)
+parser.add_argument(
+        "-np", "--no_plot",
+        help="Disable every plotting part, \
+                useful if using on headless servers.",
+        required=False, action='store_true')
 args = parser.parse_args()
 
 
@@ -190,19 +195,28 @@ def build_model(data_shape, neurons_number):
 #   MAIN
 #
 
-if args.training_set != None:
+if args.training_set is not None:
     train = True
-    if args.save_model == None:
+
+    if args.save_model is None:
         save = False
     else:
         save = True
+
+    if args.load_model is not None:
+        raise SyntaxError("You can not load a model and train a new one, choose\
+                between the two options.")
 else:
-    if args.load_model == None:
+    if args.load_model is None:
         raise SyntaxError("You must have a training set or \
                             a previously trained model.")
     else:
         train = False
         save = False
+
+        if args.save_model is not None:
+            raise SyntaxError("You can not load a saved model and save it, it\
+                    does not make any sense.")
 
 # set test critical temperature based on lattice type
 test_temp = critical_temp(args.lattice_type)
@@ -299,11 +313,11 @@ for i in range(len(many_test_bin_t)):
     y2 = predictions_t2[:, 0]
     y1_e = predictions_t1[:, 1]
     y2_e = predictions_t2[:, 1]
-    plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
-    plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-    plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-    plt.legend()
-    plt.show()
+#    plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+#    plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+#    plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+#    plt.legend()
+#    plt.show()
 
     # find first element greater than critical temp
     index_tc = next(x[0] for x in enumerate(single_real_temps) if x[1] > test_temp)
@@ -323,14 +337,17 @@ for i in range(len(many_test_bin_t)):
 
 # compute mean and stdev
 print("\nNumber of elements =", len(tc_predictions))
-tc_predictions = np.array(tc_predictions)
-tc_mean = np.round(np.mean(tc_predictions), decimals=4)
-tc_stdev = np.round(np.std(tc_predictions), decimals=4)
-print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
-print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
-
-
-
+if len(tc_predictions) > 0:
+    tc_predictions = np.array(tc_predictions)
+    tc_mean = np.round(np.mean(tc_predictions), decimals=4)
+    tc_stdev = \
+            np.round(np.std(tc_predictions)/np.sqrt(len(tc_predictions) - 1),
+                    decimals=5)
+    print("Predicted critical temperature: mean =", tc_mean, "+-", tc_stdev)
+    print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
+else:
+    print("There are no useful data,\
+            impossible to compute critical temperature")
 
 #y1_e = predictions_t1[:, 1]
 #y2_e = predictions_t2[:, 1]
@@ -351,7 +368,7 @@ print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 
 # plt.show()
 
-if train:
+if train and not args.no_plot:
     acc = history.history['acc']
     val_acc = history.history['val_acc']
     loss = history.history['loss']
