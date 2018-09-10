@@ -6,7 +6,6 @@
 #  neural network, without feeding it with the order parameter.
 
 import numpy as np
-import sys
 import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
@@ -32,6 +31,11 @@ parser.add_argument(
 parser.add_argument(
         "-sm", "--save_model",
         help="File '.h5' to save trained model", required=False)
+parser.add_argument(
+        "-np", "--no_plot",
+        help="Disable every plotting part, \
+                useful if using on headless servers.",
+        required=False, action='store_true')
 args = parser.parse_args()
 
 
@@ -55,9 +59,9 @@ def read_data(input_set, critical_temp):
         for line in infile:
             if odd is True:
                 infos = line.split()
-                if len(infos) == 2:
+                if len(infos) is 2:
                     magnetization, temperature = infos[:]
-                elif len(infos) == 1:
+                elif len(infos) is 1:
                     temperature = infos[0]
                     magnetization = 0.0
                 else:
@@ -96,7 +100,7 @@ def critical_temp(input_lattice):
     honeycomb_temp = 1/0.658478
 
     if input_lattice == "sq":
-      test_temp = square_temp
+        test_temp = square_temp
     elif input_lattice == "tr":
         test_temp = triangular_temp
     elif input_lattice == "hc":
@@ -119,7 +123,7 @@ def unique_elements(complete_array):
             uniques.append(elem)
 
     uniques = np.array(uniques)
-    uniques.sort(kind='stable')
+    uniques.sort()
 
     return uniques
 
@@ -142,7 +146,7 @@ def line_eq(p1, p2):
 def intersection_pt(L1, L2):
     """Returns intersection point coordinates given two lines.
     """
-    D  = L1[0] * L2[1] - L1[1] * L2[0]
+    D = L1[0] * L2[1] - L1[1] * L2[0]
     Dx = L1[2] * L2[1] - L1[1] * L2[2]
     Dy = L1[0] * L2[2] - L1[2] * L2[0]
     if D != 0:
@@ -163,9 +167,9 @@ def build_model(data_shape, neurons_number):
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.01),
+            #kernel_regularizer=keras.regularizers.l2(0.01),
             input_shape=(data_shape,)),
-        # keras.layers.Dropout(0.2),
+        keras.layers.Dropout(0.30),
         keras.layers.Dense(
             2,
             activation=tf.nn.softmax,
@@ -190,19 +194,28 @@ def build_model(data_shape, neurons_number):
 #   MAIN
 #
 
-if args.training_set != None:
+if args.training_set is not None:
     train = True
-    if args.save_model == None:
+
+    if args.save_model is None:
         save = False
     else:
         save = True
+
+    if args.load_model is not None:
+        raise SyntaxError("You can not load a model and train a new one, choose\
+                between the two options.")
 else:
-    if args.load_model == None:
+    if args.load_model is None:
         raise SyntaxError("You must have a training set or \
                             a previously trained model.")
     else:
         train = False
         save = False
+
+        if args.save_model is not None:
+            raise SyntaxError("You can not load a saved model and save it, it\
+                    does not make any sense.")
 
 # set test critical temperature based on lattice type
 test_temp = critical_temp(args.lattice_type)
@@ -233,19 +246,18 @@ if train:
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=5, verbose=1, mode='auto')
+            patience=20, verbose=1, mode='auto')
     callbacks_list = [earlystop]
 
     # fit model on training data
     history = model.fit(
-            config_train, temp_train, epochs=100,
+            config_train, temp_train, epochs=500,
             callbacks=callbacks_list, batch_size=100,
             validation_data=(config_val, temp_val), verbose=1)
 
     if save:
         print("Saving trained model to:", args.save_model)
         model.save(args.save_model)
-
 else:
     print("Loading trained model from:", args.load_model)
     model = keras.models.load_model(args.load_model)
@@ -267,8 +279,7 @@ many_test_configs = np.split(test_configs[:n_elem], n_split)
 tc_predictions = []
 
 for i in range(len(many_test_bin_t)):
-
-    print("")
+    print("")  # simple newline
     # evaluate model using test dataset
     results = model.evaluate(many_test_configs[i], many_test_bin_t[i])
     print("Test loss = " + str(results[0]) + "\nTest accuracy = " + str(results[1]))
@@ -298,7 +309,7 @@ for i in range(len(many_test_bin_t)):
     y1 = predictions_t1[:, 0]
     y2 = predictions_t2[:, 0]
 
-     # find first element greater than critical temp
+    # find first element greater than critical temp
     index_tc = next(x[0] for x in enumerate(single_real_temps) if x[1] > test_temp)
 
     # compute intersection of two lines passing for two given points each
@@ -319,22 +330,22 @@ print("\nNumber of elements =", len(tc_predictions))
 if len(tc_predictions) > 0:
     tc_predictions = np.array(tc_predictions)
     tc_mean = np.round(np.mean(tc_predictions), decimals=4)
-    tc_stdev = np.round(np.std(tc_predictions), decimals=4)
-    print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
+    tc_stdev = \
+            np.round(np.std(tc_predictions)/np.sqrt(len(tc_predictions) - 1),
+                    decimals=5)
+    print("Predicted critical temperature: mean =", tc_mean, "+-", tc_stdev)
     print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 else:
     print("There are no useful data,\
             impossible to compute critical temperature")
 
-
-
-#y1_e = predictions_t1[:, 1]
-#y2_e = predictions_t2[:, 1]
-#plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
-#plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-#plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-#plt.legend()
-#plt.show()
+# y1_e = predictions_t1[:, 1]
+# y2_e = predictions_t2[:, 1]
+# plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+# plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+# plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+# plt.legend()
+# plt.show()
 
 # weights = model.layers[0].get_weights()[0]
 # bias = model.layers[0].get_weights()[1]
@@ -347,7 +358,7 @@ else:
 
 # plt.show()
 
-if train:
+if train and not args.no_plot:
     acc = history.history['acc']
     val_acc = history.history['val_acc']
     loss = history.history['loss']
