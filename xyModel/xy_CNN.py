@@ -29,6 +29,11 @@ parser.add_argument(
 parser.add_argument(
         "-sm", "--save_model",
         help="File '.h5' to save trained model", required=False)
+parser.add_argument(
+        "-np", "--no_plot",
+        help="Disable every plotting part, \
+                useful if using on headless servers.",
+        required=False, action='store_true')
 args = parser.parse_args()
 
 
@@ -179,19 +184,28 @@ def build_model(data_shape):
 #   MAIN
 #
 
-if args.training_set != None:
+if args.training_set is not None:
     train = True
-    if args.save_model == None:
+
+    if args.save_model is None:
         save = False
     else:
         save = True
+
+    if args.load_model is not None:
+        raise SyntaxError("You can not load a model and train a new one, choose\
+                between the two options.")
 else:
-    if args.load_model == None:
+    if args.load_model is None:
         raise SyntaxError("You must have a training set or \
                             a previously trained model.")
     else:
         train = False
         save = False
+
+        if args.save_model is not None:
+            raise SyntaxError("You can not load a saved model and save it, it\
+                    does not make any sense.")
 
 # set test critical temperature based on lattice type
 test_temp = critical_temp(args.lattice_type)
@@ -235,7 +249,7 @@ if train:
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=2, verbose=1, mode='auto')
+            patience=3, verbose=1, mode='auto')
     callbacks_list = [earlystop]
 
     # fit model on training data
@@ -336,14 +350,17 @@ for i in range(len(many_test_bin_t)):
 
 # compute mean and stdev
 print("\nNumber of elements =", len(tc_predictions))
-tc_predictions = np.array(tc_predictions)
-tc_mean = np.round(np.mean(tc_predictions), decimals=4)
-tc_stdev = np.round(np.std(tc_predictions), decimals=4)
-print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
-print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
-
-
-
+if len(tc_predictions) > 0:
+    tc_predictions = np.array(tc_predictions)
+    tc_mean = np.round(np.mean(tc_predictions), decimals=4)
+    tc_stdev = \
+            np.round(np.std(tc_predictions)/np.sqrt(len(tc_predictions) - 1),
+                    decimals=5)
+    print("Predicted critical temperature: mean =", tc_mean, "+-", tc_stdev)
+    print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
+else:
+    print("There are no useful data,\
+            impossible to compute critical temperature")
 
 #y1_e = predictions_t1[:, 1]
 #y2_e = predictions_t2[:, 1]
@@ -364,44 +381,44 @@ print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 
 # plt.show()
 
-#if train:
-#    acc = history.history['acc']
-#    val_acc = history.history['val_acc']
-#    loss = history.history['loss']
-#    val_loss = history.history['val_loss']
-#    binary_crossentropy = history.history['binary_crossentropy']
-#    val_binary_crossentropy = history.history['val_binary_crossentropy']
-#
-#    epochs = range(1, len(acc) + 1)
-#
-#    plt.plot(epochs, acc, 'g', label='Training acc')
-#    plt.plot(epochs, val_acc, 'g--', label='Validation acc')
-#    plt.xlabel('Epochs')
-#    plt.ylabel('Accuracy')
-#    plt.legend()
-#
-#    plt.show()
-#
-#    plt.plot(epochs, loss, 'b', label='Training loss')
-#    plt.plot(epochs, val_loss, 'b--', label='Validation loss')
-#    plt.xlabel('Epochs')
-#    plt.ylabel('Loss')
-#    plt.legend()
-#
-#    plt.show()
-#
-#    plt.plot(
-#            epochs,
-#            binary_crossentropy,
-#            'r',
-#            label='Training crossentropy')
-#    plt.plot(
-#            epochs,
-#            val_binary_crossentropy,
-#            'r--',
-#            label='Validation crossentropy')
-#    plt.xlabel('Epochs')
-#    plt.ylabel('Binary_crossentropy')
-#    plt.legend()
-#
-#    plt.show()
+if train and not args.no_plot:
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    binary_crossentropy = history.history['binary_crossentropy']
+    val_binary_crossentropy = history.history['val_binary_crossentropy']
+
+    epochs = range(1, len(acc) + 1)
+
+    plt.plot(epochs, acc, 'g', label='Training acc')
+    plt.plot(epochs, val_acc, 'g--', label='Validation acc')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+
+    plt.show()
+
+    plt.plot(epochs, loss, 'b', label='Training loss')
+    plt.plot(epochs, val_loss, 'b--', label='Validation loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    plt.show()
+
+    plt.plot(
+            epochs,
+            binary_crossentropy,
+            'r',
+            label='Training crossentropy')
+    plt.plot(
+            epochs,
+            val_binary_crossentropy,
+            'r--',
+            label='Validation crossentropy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Binary_crossentropy')
+    plt.legend()
+
+    plt.show()
