@@ -59,9 +59,9 @@ def read_data(input_set, critical_temp):
         for line in infile:
             if odd is True:
                 infos = line.split()
-                if len(infos) is 2:
+                if len(infos) == 2:
                     magnetization, temperature = infos[:]
-                elif len(infos) is 1:
+                elif len(infos) == 1:
                     temperature = infos[0]
                     magnetization = 0.0
                 else:
@@ -129,6 +129,9 @@ def unique_elements(complete_array):
 
 
 def unison_shuffled_copies(a, b):
+    """Shuffle two arrays with corresponding elements.
+        High memory usage, makes entire copy of arrays.
+    """
     assert len(a) == len(b)
     p = np.random.permutation(len(a))
     return a[p], b[p]
@@ -146,7 +149,7 @@ def line_eq(p1, p2):
 def intersection_pt(L1, L2):
     """Returns intersection point coordinates given two lines.
     """
-    D = L1[0] * L2[1] - L1[1] * L2[0]
+    D  = L1[0] * L2[1] - L1[1] * L2[0]
     Dx = L1[2] * L2[1] - L1[1] * L2[2]
     Dy = L1[0] * L2[2] - L1[2] * L2[0]
     if D != 0:
@@ -229,20 +232,6 @@ if train:
             = read_data(train_set, critical_temp("sq"))
     model = build_model(train_configs.shape[1], args.neurons_number)
 
-    # Calculate number of training set configurations
-    # to give to validation set (80%-20%)
-    val_size = int(train_configs.shape[0]*20/100)
-
-    config_val = train_configs[:val_size]
-    config_train = train_configs[val_size:]
-
-    temp_val = train_bin_temps[:val_size]
-    temp_train = train_bin_temps[val_size:]
-    config_val, temp_val \
-            = unison_shuffled_copies(config_val, temp_val)
-    config_train, temp_train \
-            = unison_shuffled_copies(config_train, temp_train)
-
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
@@ -251,13 +240,15 @@ if train:
 
     # fit model on training data
     history = model.fit(
-            config_train, temp_train, epochs=500,
+            train_configs, train_bin_temps,
+            validation_split=0.2, epochs=500,
             callbacks=callbacks_list, batch_size=100,
-            validation_data=(config_val, temp_val), verbose=1)
+            shuffle=True, verbose=1)
 
     if save:
         print("Saving trained model to:", args.save_model)
         model.save(args.save_model)
+
 else:
     print("Loading trained model from:", args.load_model)
     model = keras.models.load_model(args.load_model)
@@ -308,6 +299,13 @@ for i in range(len(many_test_bin_t)):
     xt = single_real_temps
     y1 = predictions_t1[:, 0]
     y2 = predictions_t2[:, 0]
+#    y1_e = predictions_t1[:, 1]
+#    y2_e = predictions_t2[:, 1]
+#    plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+#    plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+#    plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+#    plt.legend()
+#    plt.show()
 
     # find first element greater than critical temp
     index_tc = next(x[0] for x in enumerate(single_real_temps) if x[1] > test_temp)

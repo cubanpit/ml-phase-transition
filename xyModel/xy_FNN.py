@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # Machine Learning programm written using TensorFlow
-# Data used to train the neural network come from a computer simulated XY 
+# Data used to train the neural network come from a computer simulated XY
 #  model, the purpose is to identify critical phase transitions using a trained
 #  neural network, without feeding it with the order parameter.
 
@@ -32,6 +32,11 @@ parser.add_argument(
 parser.add_argument(
         "-sm", "--save_model",
         help="File '.h5' to save trained model", required=False)
+parser.add_argument(
+        "-np", "--no_plot",
+        help="Disable every plotting part, \
+                useful if using on headless servers.",
+        required=False, action='store_true')
 args = parser.parse_args()
 
 
@@ -125,6 +130,9 @@ def unique_elements(complete_array):
 
 
 def unison_shuffled_copies(a, b):
+    """Shuffle two arrays with corresponding elements.
+        High memory usage, makes entire copy of arrays.
+    """
     assert len(a) == len(b)
     p = np.random.permutation(len(a))
     return a[p], b[p]
@@ -190,19 +198,28 @@ def build_model(data_shape, neurons_number):
 #   MAIN
 #
 
-if args.training_set != None:
+if args.training_set is not None:
     train = True
-    if args.save_model == None:
+
+    if args.save_model is None:
         save = False
     else:
         save = True
+
+    if args.load_model is not None:
+        raise SyntaxError("You can not load a model and train a new one, choose\
+                between the two options.")
 else:
-    if args.load_model == None:
+    if args.load_model is None:
         raise SyntaxError("You must have a training set or \
                             a previously trained model.")
     else:
         train = False
         save = False
+
+        if args.save_model is not None:
+            raise SyntaxError("You can not load a saved model and save it, it\
+                    does not make any sense.")
 
 # set test critical temperature based on lattice type
 test_temp = critical_temp(args.lattice_type)
@@ -216,20 +233,6 @@ if train:
             = read_data(train_set, critical_temp("sq"))
     model = build_model(train_configs.shape[1], args.neurons_number)
 
-    # Calculate number of training set configurations
-    # to give to validation set (80%-20%)
-    val_size = int(train_configs.shape[0]*20/100)
-
-    config_val = train_configs[:val_size]
-    config_train = train_configs[val_size:]
-
-    temp_val = train_bin_temps[:val_size]
-    temp_train = train_bin_temps[val_size:]
-    config_val, temp_val \
-            = unison_shuffled_copies(config_val, temp_val)
-    config_train, temp_train \
-            = unison_shuffled_copies(config_train, temp_train)
-
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
@@ -238,9 +241,10 @@ if train:
 
     # fit model on training data
     history = model.fit(
-            config_train, temp_train, epochs=500,
-            callbacks=callbacks_list, batch_size=50,
-            validation_data=(config_val, temp_val), verbose=1)
+            train_configs, train_bin_temps,
+            validation_split=0.2, epochs=500,
+            callbacks=callbacks_list, batch_size=100,
+            shuffle=True, verbose=1)
 
     if save:
         print("Saving trained model to:", args.save_model)
@@ -267,8 +271,7 @@ many_test_configs = np.split(test_configs[:n_elem], n_split)
 tc_predictions = []
 
 for i in range(len(many_test_bin_t)):
-
-    print("")
+    print("")  # simple newline
     # evaluate model using test dataset
     results = model.evaluate(many_test_configs[i], many_test_bin_t[i])
     print("Test loss = " + str(results[0]) + "\nTest accuracy = " + str(results[1]))
@@ -297,13 +300,13 @@ for i in range(len(many_test_bin_t)):
     xt = single_real_temps
     y1 = predictions_t1[:, 0]
     y2 = predictions_t2[:, 0]
-    y1_e = predictions_t1[:, 1]
-    y2_e = predictions_t2[:, 1]
-    plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
-    plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-    plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-    plt.legend()
-    plt.show()
+#    y1_e = predictions_t1[:, 1]
+#    y2_e = predictions_t2[:, 1]
+#    plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+#    plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+#    plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+#    plt.legend()
+#    plt.show()
 
     # find first element greater than critical temp
     index_tc = next(x[0] for x in enumerate(single_real_temps) if x[1] > test_temp)
@@ -323,22 +326,25 @@ for i in range(len(many_test_bin_t)):
 
 # compute mean and stdev
 print("\nNumber of elements =", len(tc_predictions))
-tc_predictions = np.array(tc_predictions)
-tc_mean = np.round(np.mean(tc_predictions), decimals=4)
-tc_stdev = np.round(np.std(tc_predictions), decimals=4)
-print("Predicted critical temperature: mean =", tc_mean,"stdev =", tc_stdev)
-print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
+if len(tc_predictions) > 0:
+    tc_predictions = np.array(tc_predictions)
+    tc_mean = np.round(np.mean(tc_predictions), decimals=4)
+    tc_stdev = \
+            np.round(np.std(tc_predictions)/np.sqrt(len(tc_predictions) - 1),
+                    decimals=5)
+    print("Predicted critical temperature: mean =", tc_mean, "+-", tc_stdev)
+    print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
+else:
+    print("There are no useful data,\
+            impossible to compute critical temperature")
 
-
-
-
-#y1_e = predictions_t1[:, 1]
-#y2_e = predictions_t2[:, 1]
-#plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
-#plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-#plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-#plt.legend()
-#plt.show()
+# y1_e = predictions_t1[:, 1]
+# y2_e = predictions_t2[:, 1]
+# plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
+# plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
+# plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
+# plt.legend()
+# plt.show()
 
 # weights = model.layers[0].get_weights()[0]
 # bias = model.layers[0].get_weights()[1]
@@ -351,7 +357,7 @@ print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 
 # plt.show()
 
-if train:
+if train and not args.no_plot:
     acc = history.history['acc']
     val_acc = history.history['val_acc']
     loss = history.history['loss']
