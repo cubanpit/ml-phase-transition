@@ -451,7 +451,7 @@ for m in range(n_models):
 
 # compute mean and stdev
 print("\nTotal number of elements =", len(tc_predictions))
-if len(tc_predictions) > 0:
+if len(tc_predictions) > 1:
     tc_predictions = np.array(tc_predictions)
     tc_mean = np.round(np.mean(tc_predictions), decimals=4)
     tc_stdev = \
