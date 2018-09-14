@@ -176,9 +176,9 @@ def build_model(data_shape, neurons_number):
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.001),
+            kernel_regularizer=keras.regularizers.l2(0.01),
             input_shape=(data_shape,)),
-    #   keras.layers.Dropout(0.30),
+        # keras.layers.Dropout(0.30),
         keras.layers.Dense(
             2,
             activation=tf.nn.softmax,
@@ -250,63 +250,42 @@ if train:
     print("Training new model(s) using as training set:", args.training_set)
     train_set = args.training_set
     train_magns, train_bin_temps, train_real_temps, train_configs \
-            = read_data(train_set, critical_temp("sq"))
-    model = build_model(train_configs.shape[1], args.neurons_number)
-    
-    folds = list(KFold(n_splits=10, shuffle=True, random_state=1).split(train_configs, train_bin_temps))
-    
-    # define callback to stop when accuracy is stable
-    earlystop = keras.callbacks.EarlyStopping(
-            monitor='val_acc', min_delta=0.0001,
-            patience=6, verbose=1, mode='auto')
-    
-    callbacks_list = [earlystop]
-    
-    for j, (train_idx, val_idx) in enumerate(folds):
-        
-        print ('\nFold', j)
-        config_train = train_configs[train_idx]
-        config_val = train_configs[val_idx]
+        = read_data(train_set, critical_temp("sq"))
 
-        temp_train = train_bin_temps[train_idx]
-        temp_val = train_bin_temps[val_idx]
+    # number of training iterations
+    n_models = 10
+
+    for m in range(n_models):
+        print("\nTraining model", m, ". . .")
+        models.append(build_model(train_configs.shape[1], args.neurons_number))
 
         # fit model on training data
-        history = model.fit(
-                        config_train, 
-                        temp_train, 
-                        epochs=30,
-                        callbacks=callbacks_list, 
-                        batch_size=100,
-                        validation_data=(config_val, temp_val), 
-                        verbose=1)
-        
-        if train and not args.no_plot:
+        history = train_model(models[m], train_configs, train_bin_temps)
+
+        if train and args.debug:
             acc = history.history['acc']
             val_acc = history.history['val_acc']
             loss = history.history['loss']
             val_loss = history.history['val_loss']
             binary_crossentropy = history.history['binary_crossentropy']
             val_binary_crossentropy = history.history['val_binary_crossentropy']
-        
+
             epochs = range(1, len(acc) + 1)
-        
+
             plt.plot(epochs, acc, 'g', label='Training acc')
             plt.plot(epochs, val_acc, 'g--', label='Validation acc')
             plt.xlabel('Epochs')
             plt.ylabel('Accuracy')
             plt.legend()
-        
             plt.show()
-        
+
             plt.plot(epochs, loss, 'b', label='Training loss')
             plt.plot(epochs, val_loss, 'b--', label='Validation loss')
             plt.xlabel('Epochs')
             plt.ylabel('Loss')
             plt.legend()
-        
             plt.show()
-        
+
             plt.plot(
                     epochs,
                     binary_crossentropy,
@@ -320,11 +299,15 @@ if train:
             plt.xlabel('Epochs')
             plt.ylabel('Binary_crossentropy')
             plt.legend()
-        
             plt.show()
-    if save:
-        print("Saving trained model to:", args.save_model)
-        model.save(args.save_model)
+
+        if save:
+            # remove '.h5' extension from filename if already present
+            newname = (args.save_model).replace(".h5", "")
+            filename = newname + "_" + str(m) + ".h5"
+            print("Saving trained model to:", filename)
+            models[m].save(str(filename))
+
 else:
     print("Loading trained model(s) from:", args.load_models, "\n")
     for mf in args.load_models:
@@ -480,66 +463,6 @@ else:
     print("There are no useful data,\
             impossible to compute critical temperature")
 
-#y1_e = predictions_t1[:, 1]
-#y2_e = predictions_t2[:, 1]
-#plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
-#plt.errorbar(xt, y1, y1_e, c='b', marker='.', linewidth=2, label='No.1')
-#plt.errorbar(xt, y2, y2_e, c='r', marker='.', linewidth=2, label='No.2')
-#plt.legend()
-#plt.show()
-#
-#weights = model.layers[0].get_weights()[0]
-#bias = model.layers[0].get_weights()[1]
-#
-#y = np.matmul(test_configs, weights)+bias
-#x = test_magns
-#
-#for i in range(0, neurons_number):
-#    plt.scatter(x, y[:,i], c=np.random.rand(3,1), marker='_')
-#
-#plt.show()
-
-if train and not args.no_plot:
-    acc = history.history['acc']
-    val_acc = history.history['val_acc']
-    loss = history.history['loss']
-    val_loss = history.history['val_loss']
-    binary_crossentropy = history.history['binary_crossentropy']
-    val_binary_crossentropy = history.history['val_binary_crossentropy']
-
-    epochs = range(1, len(acc) + 1)
-
-    plt.plot(epochs, acc, 'g', label='Training acc')
-    plt.plot(epochs, val_acc, 'g--', label='Validation acc')
-    plt.xlabel('Epochs')
-    plt.ylabel('Accuracy')
-    plt.legend()
-
-    plt.show()
-
-    plt.plot(epochs, loss, 'b', label='Training loss')
-    plt.plot(epochs, val_loss, 'b--', label='Validation loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.legend()
-
-    plt.show()
-
-    plt.plot(
-            epochs,
-            binary_crossentropy,
-            'r',
-            label='Training crossentropy')
-    plt.plot(
-            epochs,
-            val_binary_crossentropy,
-            'r--',
-            label='Validation crossentropy')
-    plt.xlabel('Epochs')
-    plt.ylabel('Binary_crossentropy')
-    plt.legend()
-
-    plt.show()
 
 # Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
 #                Martina Crippa    <martina.crippa2@studenti.unimi.it>
