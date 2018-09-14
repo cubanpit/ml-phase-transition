@@ -255,7 +255,7 @@ if train:
     # fit model on training data
     history = model.fit(
             config_train, temp_train, epochs=500,
-            callbacks=callbacks_list, batch_size=100,
+            callbacks=callbacks_list, batch_size=150,
             validation_data=(config_val, temp_val), verbose=1)
 
     if save:
@@ -350,7 +350,7 @@ for i in range(len(many_test_bin_t)):
 
 # compute mean and stdev
 print("\nNumber of elements =", len(tc_predictions))
-if len(tc_predictions) > 0:
+if len(tc_predictions) > 1:
     tc_predictions = np.array(tc_predictions)
     tc_mean = np.round(np.mean(tc_predictions), decimals=4)
     tc_stdev = \
@@ -359,7 +359,7 @@ if len(tc_predictions) > 0:
     print("Predicted critical temperature: mean =", tc_mean, "+-", tc_stdev)
     print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 else:
-    print("There are no useful data,\
+    print("There are not enough useful data,\
             impossible to compute critical temperature")
 
 #y1_e = predictions_t1[:, 1]
