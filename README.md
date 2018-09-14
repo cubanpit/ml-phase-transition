@@ -1,6 +1,6 @@
 # Ising Learning
 
-### Analyse phase transition with neural networks
+### Analyse phase transitions with neural networks
 
 This is an exam project for a master course on ''Statistical Methods for Learning''.
 
@@ -13,7 +13,7 @@ Simulated physical systems:
  - Ising on triangular lattice, with 6 nearest neighbours (Metropolis algorithm)
  - XY model on square lattice, with 4 nearest neighbours (Wolff algorithm)
 
-### Source and References
+### Sources and References
 
 [Carrasquilla J, Melko RG. 2017. ''Machine learning phases of matter''. Nature Physics.](https://doi.org/10.1038/nphys4035)
 
