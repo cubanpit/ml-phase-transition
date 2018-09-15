@@ -10,7 +10,6 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 import argparse
-from sklearn.model_selection import train_test_split, KFold
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
