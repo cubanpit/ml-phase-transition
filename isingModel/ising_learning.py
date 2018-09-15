@@ -252,7 +252,7 @@ if train:
         = read_data(train_set, critical_temp("sq"))
 
     # number of training iterations
-    n_models = 15
+    n_models = 4
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
