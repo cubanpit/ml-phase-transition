@@ -252,7 +252,7 @@ if train:
         = read_data(train_set, critical_temp("sq"))
 
     # number of training iterations
-    n_models = 10
+    n_models = 15
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
@@ -331,11 +331,14 @@ many_test_bin_t = np.split(test_bin_temps[:n_elem], n_split)
 many_test_real_t = np.split(test_real_temps[:n_elem], n_split)
 many_test_configs = np.split(test_configs[:n_elem], n_split)
 tc_predictions = []
+accuracies = []
+losses = []
+
 
 for m in range(n_models):
     print("\nEvaluating model", m, ". . .")
-    accuracies = []
-    losses = []
+    m_accuracies = []
+    m_losses = []
     n_miss = 0
     miss = False
     for t in range(n_split):
@@ -344,7 +347,9 @@ for m in range(n_models):
                                      many_test_configs[t],
                                      many_test_bin_t[t],
                                      verbose=0)
+        m_accuracies.append(results[1])
         accuracies.append(results[1])
+        m_losses.append(results[0])
         losses.append(results[0])
 
         # predict label on test dataset
@@ -436,19 +441,31 @@ for m in range(n_models):
 
     print(
           "Average accuracy =",
-          np.round(np.mean(accuracies), decimals=4),
+          np.round(np.mean(m_accuracies), decimals=4),
           "+-",
-          np.round(np.std(accuracies)/np.sqrt(len(accuracies) - 1), decimals=5)
+          np.round(np.std(m_accuracies)/np.sqrt(len(m_accuracies) - 1), decimals=5)
           )
     print(
           "Average loss =",
-          np.round(np.mean(losses), decimals=4),
+          np.round(np.mean(m_losses), decimals=4),
           "+-",
-          np.round(np.std(losses)/np.sqrt(len(losses) - 1), decimals=5)
+          np.round(np.std(m_losses)/np.sqrt(len(m_losses) - 1), decimals=5)
           )
     print("Number of missed temperatures =", n_miss)
 
 # compute mean and stdev
+print(
+      "Average accuracy =",
+      np.round(np.mean(accuracies), decimals=4),
+      "+-",
+      np.round(np.std(accuracies)/np.sqrt(len(accuracies) - 1), decimals=5)
+      )
+print(
+      "Average loss =",
+      np.round(np.mean(losses), decimals=4),
+      "+-",
+      np.round(np.std(losses)/np.sqrt(len(losses) - 1), decimals=5)
+      )
 print("\nTotal number of elements =", len(tc_predictions))
 if len(tc_predictions) > 1:
     tc_predictions = np.array(tc_predictions)
