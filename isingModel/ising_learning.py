@@ -210,7 +210,7 @@ def train_model(model, training_inputs, training_labels):
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=4, verbose=args.verbose, mode='auto')
+            patience=8, verbose=args.verbose, mode='auto')
     callbacks_list = [earlystop]
 
     return model.fit(
@@ -256,7 +256,7 @@ if train:
         = read_data(train_set, critical_temp("sq"))
 
     # number of training iterations
-    n_models = 4
+    n_models = 10
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
