@@ -10,7 +10,6 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 import argparse
-from sklearn.model_selection import train_test_split, KFold
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -42,6 +41,10 @@ parser.add_argument(
         help="Enable every plot and every output, useful to follow \
                 network training and performance.",
         required=False, action='store_true')
+parser.add_argument(
+        "-v", "--verbose",
+        help="Make output verbose",
+        required=False, action='store_const', const=1, default=0)
 args = parser.parse_args()
 
 
@@ -207,14 +210,14 @@ def train_model(model, training_inputs, training_labels):
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=4, verbose=1, mode='auto')
+            patience=4, verbose=args.verbose, mode='auto')
     callbacks_list = [earlystop]
 
     return model.fit(
             training_inputs, training_labels,
             validation_split=0.2, epochs=500,
             callbacks=callbacks_list, batch_size=100,
-            shuffle=True, verbose=0)
+            shuffle=True, verbose=args.verbose)
 
 
 #
@@ -253,7 +256,7 @@ if train:
         = read_data(train_set, critical_temp("sq"))
 
     # number of training iterations
-    n_models = 10
+    n_models = 14
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
@@ -344,7 +347,7 @@ for m in range(n_models):
         results = models[m].evaluate(
                                      many_test_configs[t],
                                      many_test_bin_t[t],
-                                     verbose=0)
+                                     verbose=args.verbose)
         accuracies.append(results[1])
         losses.append(results[0])
 
