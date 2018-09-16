@@ -21,10 +21,10 @@
 
 \documentclass{article}
 
-\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+
 \usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
 \usepackage{graphicx} % Required for the inclusion of images
-\usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
 \usepackage[italian]{babel}
 \usepackage{booktabs}% Better table spacing
@@ -37,11 +37,27 @@
 
 %\usepackage{times} % Uncomment to use the Times New Roman font
 
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\tikzset{%
+  every neuron/.style={
+    circle,
+    draw,
+    minimum size=1cm
+  },
+  neuron missing/.style={
+    draw=none, 
+    scale=4,
+    text height=0.333cm,
+    execute at begin node=\color{black}$\vdots$
+  },
+}
+
 %----------------------------------------------------------------------------------------
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Ising and XY neural net} % Title
+\title{Ising and XY neural network} % Title
 
 \author{Martina \textsc{Crippa}, Pietro Francesco \textsc{Fontana}} % Author name
 
@@ -71,6 +87,7 @@
 
 \section{Introduzione}
 Alcuni sistemi fisici presentano diverse fasi e al variare della temperatura transiscono da una fase all'altra. La temperatura a cui avviene questo passaggio di fase viene detta temperatura critica. In generale la transizione di fase è descritta da un parametro d'ordine, ad esempio la magnetizzazione nel modello di Ising. L'obiettivo del progetto è implementare e studiare una rete neuronale in grado di apprendere il parametro d'ordine e quindi classificare correttamente la fase di diverse configurazioni di un sistema, individuando infine la temperatura critica. Successivamente si è provato ad eseguire una procedura analoga nel caso di un sistema che non presenta una transizione di fase descrivibile attraverso un parametro d'ordine, quindi dove la rete neuronale apprende altre caratteristiche del sistema per classificarne la fase.
+Il lavoro prende spunto da diversi articoli pubblicati negli ultimi due anni che affrontano la stessa tematica \cite{carrasqu,melko,wessel}.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 2
@@ -149,16 +166,91 @@ honeycomb & $3$ & $1/\!0.658478$ & $1.5187$ & $0.0$\\
 \label{tab:lt}
 \end{table}\\
 Per ciascuna tipologia di reticolo è stata variata la lunghezza del lato del reticolo (in numero di spin) da $20$ a $90$. La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo, equilibrando il sistema a temperatura fissata, in un range di $40$ temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:lt}.
+
 \subsection{Modello XY}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 3
+%----------------------------------------------------------------------------------------
+
+\section{Metodi di apprendimento}
+
+A partire dai sistemi fisici simulati, descritti nella sezione precedente, sono stati sviluppati diversi metodi di apprendimento con l'obiettivo di classificare automaticamente la fase in cui si trova il sistema.
+I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici analizzati, il modello di Ising e il modello XY, seguendo la stessa strada di altri lavori.
+%TODO citazioni!
+
+\subsection{Modello di Ising}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth]
+
+\foreach \m/\l [count=\y] in {1,2,3,missing,4}
+  \node [every neuron/.try, neuron \m/.try] (input-\m) at (0,2.5-\y) {};
+
+\foreach \m [count=\y] in {1,missing,2}
+  \node [every neuron/.try, neuron \m/.try ] (hidden-\m) at (2,2.15-\y*1.35) {};
+
+\foreach \m [count=\y] in {1,2}
+  \node [every neuron/.try, neuron \m/.try ] (output-\m) at (4,1-\y) {};
+
+\foreach \l [count=\i] in {1,2,3,n}
+  \draw [<-] (input-\i) -- ++(-1,0)
+    node [above, midway] {$I_\l$};
+
+\foreach \l [count=\i] in {1,n}
+  \node [above] at (hidden-\i.north) {$H_\l$};
+
+\foreach \l [count=\i] in {1,2}
+  \draw [->] (output-\i) -- ++(1,0)
+    node [above, midway] {$O_\l$};
+
+\foreach \i in {1,...,4}
+  \foreach \j in {1,...,2}
+    \draw [->] (input-\i) -- (hidden-\j);
+
+\foreach \i in {1,...,2}
+  \foreach \j in {1,...,2}
+    \draw [->] (hidden-\i) -- (output-\j);
+
+\foreach \l [count=\x from 0] in {di Input, nascosto, di Ouput}
+  \node [align=center, above] at (\x*2,2) {Layer \\ \l};
+
+\end{tikzpicture}
+\caption{Schema di una rete neuronale \emph{feed forward} a singolo layer nascosto \emph{fully connected}.}
+\label{fig:ffn}
+\end{figure}
+
+Per classificare le configurazioni di un modello di Ising è stata utilizzata una rete neuronale \emph{feed forward} a singolo layer nascosto, uno schema generico della rete è rappresentato in Figura \ref{fig:ffn}.
+Al layer di input vengono fornite le configurazioni degli spin del sistema fisico nella forma di un vettore di elementi $\{+1;-1\}$, la dimensione di questo vettore dipende ovviamente dalla dimensione del reticolo di Ising utilizzato, nel caso del presente lavoro spazia da un minimo di 400 elementi (reticolo $20\times20$) ad un massimo di 8100 elementi (reticolo $90\times90$).
+Si tratta di un problema di classificazione binaria, è quindi possibile utilizzare uno o due nodi nel layer di output, per una questione di comodità nell'analisi dei risultati fisici è stato utilizzato un layer di output a due nodi.
+I nodi di output restituiscono la probabilità che la configurazione fisica sia in una fase ferromagnetica o in quella paramagnetica, le due probabilità sommano quindi a 1.
+
+\subsection{Modello XY}
+
+\begin{figure}
+ \centerline{\includegraphics[scale=0.4]{cnn.png}}
+ \label{fig:cnn}
+ \caption{Schema di una rete convoluzionale effettivamente utilizzata per l'analisi di un sistema XY su reticolo $32\times32$, sono stati tralasciati i layer \emph{dropout}.}
+\end{figure}
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION 4
+%----------------------------------------------------------------------------------------
+
+\section{Risultati e conclusioni}
+
+The atomic weight of magnesium is concluded to be \SI{24}{\gram\per\mol}, as determined by the stoichiometry of its chemical combination with oxygen. This result is in agreement with the accepted value.
 
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
-\bibliographystyle{apalike}
+\bibliographystyle{ieeetr}
 
-\bibliography{sample}
+\bibliography{relazione}
 
 %----------------------------------------------------------------------------------------
 

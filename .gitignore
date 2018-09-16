@@ -20,5 +20,7 @@
 # LaTeX useless files
 *.aux
 *.log
+*.bbl
+*.blg
 # compressed archive
 *.gz
