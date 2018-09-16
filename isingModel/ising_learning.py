@@ -392,52 +392,42 @@ for m in range(n_models):
         index_tc = next(
                         x[0] for x in enumerate(single_real_temps)
                         if x[1] > test_temp)
+        orig_index_tc = index_tc
+        miss = True
+        i = 0
 
-        # compute intersection of two lines passing for two given points each
-        line1 = line_eq(
-                [xt[index_tc-1], y1[index_tc-1]],
-                [xt[index_tc], y1[index_tc]])
-        line2 = line_eq(
-                [xt[index_tc-1], y2[index_tc-1]],
-                [xt[index_tc], y2[index_tc]])
-        inters_point = intersection_pt(line1, line2)
+        while miss:
+            index_tc = orig_index_tc + i
 
-        # if successful add it to the predictions array
-        if not inters_point:
-            miss = True
-        elif inters_point[0] > xt[index_tc] or inters_point[0] < xt[index_tc-1]:
-            miss = True
-        else:
-            tc_predictions.append(inters_point[0])
-            miss = False
+            # compute intersection of two lines passing for two given points each
+            line1 = line_eq(
+                    [xt[index_tc-1], y1[index_tc-1]],
+                    [xt[index_tc], y1[index_tc]])
+            line2 = line_eq(
+                    [xt[index_tc-1], y2[index_tc-1]],
+                    [xt[index_tc], y2[index_tc]])
+            inters_point = intersection_pt(line1, line2)
 
-        if miss:
-            n_miss += 1
-            orig_index_tc = index_tc
-
-            for i in range(-5, 5):
-                if i == 0:
-                    continue
-                index_tc = orig_index_tc + i
-
-                # compute intersection of two lines passing for two given points each
-                line1 = line_eq(
-                        [xt[index_tc-1], y1[index_tc-1]],
-                        [xt[index_tc], y1[index_tc]])
-                line2 = line_eq(
-                        [xt[index_tc-1], y2[index_tc-1]],
-                        [xt[index_tc], y2[index_tc]])
-                inters_point = intersection_pt(line1, line2)
-
-                # if successful add it to the predictions array
-                if inters_point and inters_point[0] < xt[index_tc] \
-                        and inters_point[0] > xt[index_tc-1]:
-                    tc_predictions.append(inters_point[0])
-                    miss = False
-                    break
-
-            if miss:
-                print("No intersection near critical point!")
+            # if successful add it to the predictions array
+            if inters_point and inters_point[0] < xt[index_tc] \
+                    and inters_point[0] > xt[index_tc-1]:
+                tc_predictions.append(inters_point[0])
+                miss = False
+                if i != 0:
+                    n_miss += 1
+            else:
+                if i <= 0:
+                    i = 1 - i
+                    if i >= (len(single_real_temps) - orig_index_tc):
+                        n_miss += 1
+                        print("WARNING: No intersection found!")
+                        break
+                else:
+                    i *= -1
+                    if (orig_index_tc - i) < 0:
+                        n_miss += 1
+                        print("WARNING: No intersection found!")
+                        break
 
     print(
           "Average accuracy =",
@@ -451,7 +441,8 @@ for m in range(n_models):
           "+-",
           np.round(np.std(m_losses)/np.sqrt(len(m_losses) - 1), decimals=5)
           )
-    print("Number of missed temperatures =", n_miss)
+    if n_miss > 0:
+        print("Missed temperatures =", n_miss)
 
 # compute mean and stdev
 print(
