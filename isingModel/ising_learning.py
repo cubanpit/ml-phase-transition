@@ -451,13 +451,13 @@ for m in range(n_models):
 # print final statistics
 print("")     # simple newline
 print(
-      "Average accuracy =",
+      "Total average accuracy =",
       np.round(np.mean(accuracies), decimals=4),
       "+-",
       np.round(np.std(accuracies)/np.sqrt(len(accuracies) - 1), decimals=5)
       )
 print(
-      "Average loss =",
+      "Total average loss =",
       np.round(np.mean(losses), decimals=4),
       "+-",
       np.round(np.std(losses)/np.sqrt(len(losses) - 1), decimals=5)

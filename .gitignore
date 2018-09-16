@@ -17,3 +17,8 @@
 *.mod
 # Vortex image and other pdf
 *.pdf
+# LaTeX useless files
+*.aux
+*.log
+# compressed archive
+*.gz
