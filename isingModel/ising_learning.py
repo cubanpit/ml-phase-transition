@@ -448,7 +448,8 @@ for m in range(n_models):
     if n_miss > 0:
         print("Missed temperatures =", n_miss)
 
-# compute mean and stdev
+# print final statistics
+print("")     # simple newline
 print(
       "Average accuracy =",
       np.round(np.mean(accuracies), decimals=4),
@@ -461,7 +462,7 @@ print(
       "+-",
       np.round(np.std(losses)/np.sqrt(len(losses) - 1), decimals=5)
       )
-print("\nTotal number of elements =", len(tc_predictions))
+print("Total number of elements =", len(tc_predictions))
 if len(tc_predictions) > 1:
     tc_predictions = np.array(tc_predictions)
     tc_mean = np.round(np.mean(tc_predictions), decimals=4)
