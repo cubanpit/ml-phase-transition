@@ -28,7 +28,7 @@
 \usepackage{amsmath} % Required for some math elements
 \usepackage[italian]{babel}
 \usepackage{booktabs}% Better table spacing
-\usepackage{subcaption}
+\usepackage{subfig}
 \usepackage{tikz}
 \usepackage{pgfplots}
 
@@ -107,7 +107,7 @@ Ad alte temperature il contributo entropico fa si che il sistema si trovi in uno
 Abbassando la temperatura prevale il contributo energetico quindi al di sotto della temperatura critica gli spin tendono ad allinearsi e il sistema transisce alla fase ferromagnetica \ref{fig:isingF}: tale transizione di fase è detta del \emph{secondo ordine}.
 \begin{figure}[ht]
 \centering
-\begin{subfigure}[b]{0.4\linewidth}
+\subfloat[Paramagnetico]{
 \centering
 \begin{tikzpicture}[> = stealth, scale=0.8]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(5cm,5cm);
@@ -115,29 +115,29 @@ Abbassando la temperatura prevale il contributo energetico quindi al di sotto de
         \foreach \x in {0,1,2}
             \node[shape = rectangle, minimum width = 0.75cm, minimum height = 0.75cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
 
-   \draw[ultra thick,blue, ->]  (dot_0_0.south) -- (dot_0_0.north);
-   \draw[ultra thick,red, ->]  (dot_1_1.south) -- (dot_1_1.north);
-   \draw[ultra thick,red, ->]  (dot_2_1.south) -- (dot_2_1.north);
-   \draw[ultra thick,blue, ->]  (dot_1_2.south) -- (dot_1_2.north);
-   \draw[ultra thick,red, ->]  (dot_2_2.south) -- (dot_2_2.north);
-   \draw[ultra thick,red, ->]  (dot_0_2.south) -- (dot_0_2.north);
-   \draw[ultra thick,blue, ->]  (dot_2_0.south) -- (dot_2_0.north);
-   \draw[ultra thick,blue, ->]  (dot_0_1.south) -- (dot_0_1.north);
-   \draw[ultra thick,red, ->]  (dot_1_0.south) -- (dot_1_0.north);
+   \draw[ultra thick, ->]  (dot_0_0.south) -- (dot_0_0.north);
+   \draw[ultra thick, <-]  (dot_1_1.south) -- (dot_1_1.north);
+   \draw[ultra thick, <-]  (dot_2_1.south) -- (dot_2_1.north);
+   \draw[ultra thick, ->]  (dot_1_2.south) -- (dot_1_2.north);
+   \draw[ultra thick, <-]  (dot_2_2.south) -- (dot_2_2.north);
+   \draw[ultra thick, <-]  (dot_0_2.south) -- (dot_0_2.north);
+   \draw[ultra thick, ->]  (dot_2_0.south) -- (dot_2_0.north);
+   \draw[ultra thick, ->]  (dot_0_1.south) -- (dot_0_1.north);
+   \draw[ultra thick, <-]  (dot_1_0.south) -- (dot_1_0.north);
 \end{tikzpicture}
-\caption{Paramagnetico} \label{fig:isingP}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\linewidth}
+\label{fig:isingP}
+}
+\subfloat[Ferromagnetico]{
 \centering
 \begin{tikzpicture}[> = stealth, scale=0.8]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(5cm,5cm);
     \foreach \y in {0,1,2}
         \foreach \x in {0,1,2}
             {\node[shape = rectangle, minimum width = 0.75cm, minimum height = 0.75cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
-            \draw[ultra thick,blue, ->]  (dot_\y_\x.south) -- (dot_\y_\x.north);}
+            \draw[ultra thick, ->]  (dot_\y_\x.south) -- (dot_\y_\x.north);}
 \end{tikzpicture}
-\caption{Ferromagnetico} \label{fig:isingF}
-\end{subfigure}
+\label{fig:isingF}
+}
 \caption{Ising 2D}
 \end{figure}
 
@@ -148,7 +148,7 @@ M=\sum_i \sigma_i
 
 Sono stati studiati sistemi con geometrie di reticolo differenti e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica divera, i cui valori sono riportati in tabella \ref{tab:ltI}.
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \begin{center}
 \begin{tabular}{lllll}
 \toprule
@@ -189,9 +189,9 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \caption{Reticoli studiati}
 \label{tab:ltXY}
 \end{table}
-\begin{figure}[ht]
+\begin{figure}[!ht]
 \centering
-\begin{subfigure}[b]{0.45\linewidth}
+\subfloat[Modello XY vicino alla temperatura critica]{
 \centering
 \begin{tikzpicture}[> = stealth, scale=0.7]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9cm,9cm);
@@ -239,9 +239,8 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     \node[draw, blue, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*2.5){};
     \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*1.5){};
 \end{tikzpicture}
-\caption{Modello XY vicino alla temperatura critica.}
-\end{subfigure}
-\begin{subfigure}[b]{0.45\linewidth}
+}
+\subfloat[Modello XY sopra la temperatura critica]{
 \centering
 \begin{tikzpicture}[> = stealth, scale=0.7]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9cm,9cm);
@@ -291,8 +290,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*1.5){};
     \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*2.5,1.5*0.5){};
 \end{tikzpicture}
-\caption{Modello XY sopra la temperatura critica.}
-\end{subfigure}
+}
 \caption{Modello XY a due diverse temperature, i vortici sono indicati in blu, gli antivortici in rosso. Si può notare una chiara coppia vortice-antivortice nella figura di sinistra, mentre nella figura di destra non è presente alcuna coppia.}
 \label{fig:xy}
 \end{figure}
@@ -309,7 +307,7 @@ I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici an
 
 \subsection{Modello di Ising}
 
-\begin{figure}
+\begin{figure}[!ht]
 \centering
 \begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth]
 
@@ -356,7 +354,7 @@ I nodi di output restituiscono la probabilità che la configurazione fisica sia 
 
 \subsection{Modello XY}
 
-\begin{figure}
+\begin{figure}[!ht]
  \centerline{\includegraphics[scale=0.35]{cnn.png}}
  \caption{Schema di una rete convoluzionale effettivamente utilizzata per l'analisi di un sistema XY su reticolo $32\times32$, sono stati tralasciati i layer \emph{dropout}.}
  \label{fig:cnn}
@@ -375,38 +373,75 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 \subsection{Stima della temperatura critica}
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione. Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo. Per stimare il valore teorico è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare della lato del reticolo (in numero di spin) da $20$ a $90$, ogni $10$, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$.
 %TODO provare a cercare la legge
-La rete è stata allenata su set di almeno $100000$ configurazioni (prendendo un sottoinsieme di configurazioni pari al $10\%$ del training set per la validazione) a reticolo quadrato, e testata su set di $10000$ a reticolo sia triangolare che honeycomb: ciascun valore di temperatura riportato è dati dalla media di $10$ temperature, i cui valori sono classificati da $10$ diverse reti scelte in modo da avere una \emph{test accuracy} alta e una \emph{test loss} bassa. I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
+La rete è stata allenata su set di almeno $100000$ configurazioni (prendendo un sottoinsieme di configurazioni pari al $10\%$ del training set per la validazione) a reticolo quadrato, e testata su set di $10000$ a reticolo sia triangolare che honeycomb: ciascun valore di temperatura riportato è dato dalla media di $10$ temperature, i cui valori sono classificati da $10$ diverse reti scelte in modo da avere una \emph{test accuracy} alta e una \emph{test loss} bassa. I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}.
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{llllllll}
 \toprule
-Rete & Layer & Neuroni & Batch size & w e b init & Attivazione & Earlystop & Rego\\
+Rete & Layer & Neuroni & Batch size & w e b init & Attivazione & Earlystop & Regolar\\
 \midrule
-FeedForward & $1$ & $100$ & $100$ & Random & Sigmoidale & si & L$2$ $0.01$\\
+FeedFw & $1$ & $100$ & $100$ & Random & Sigmoidale & si & L$2$ $0.01$\\
 \bottomrule
 \end{tabular}
 \end{center}
 \caption{Parametri}
 \label{tab:ffnnpar}
 \end{table}
-
+Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature $T_L$ al variare del lato del reticolo, con le relative barre d'errore date dalla deviazione standard della media. Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e la retta che interpola tali temperature.
 \begin{figure}
 \centering
+\subfloat{
+\centering
+\resizebox{0.5\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
+title={Triangolare},
 xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
 ylabel={$T$ [\si{K}]},
+yticklabel style={/pgf/number format/fixed,
+                  /pgf/number format/precision=3},
 grid=major,
 major grid style={line width=.1pt, dashed, draw=gray!30},
+legend pos=north west
 ]
-\addplot[mark=none, red, thick] coordinates {(0.001,1.5187) (0.055,1.5187)};
-\addlegendentry{Temperatura critica}
+\addplot[mark=none, red, thick] coordinates {(0.005,3.6410) (0.055,3.6410)};
+\addlegendentry{$T_c$}
+\addplot [only marks, blue]
+plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
+table [ y error index=2] {dati/triangular_pgf};
+\addlegendentry{$T_L$} 
+\addplot [domain=0.01:0.055, samples=101]{0.3994*x+ 3.635};
+\end{axis} 
+\end{tikzpicture}
+}
+}
+\subfloat{
+\centering
+\resizebox{0.5\textwidth}{!}{
+\begin{tikzpicture}
+\begin{axis}[
+title={Honeycomb},
+xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+ylabel={$T$ [\si{K}]},
+yticklabel style={/pgf/number format/fixed,
+                  /pgf/number format/precision=3},
+grid=major,
+major grid style={line width=.1pt, dashed, draw=gray!30},
+legend pos=north west
+]
+\addplot[mark=none, red, thick] coordinates {(0.005,1.5187) (0.055,1.5187)};
+\addlegendentry{$T_c$}
 \addplot [only marks, blue]
 plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
 table [ y error index=2] {dati/honeycomb_pgf};
-\addlegendentry{Temperatura} 
+\addlegendentry{$T_L$} 
+\addplot [domain=0.01:0.055, samples=101]{0.2939*x + 1.515};
 \end{axis} 
 \end{tikzpicture}
+}
+}
+\caption{Interpolazione temperatura}
+\label{fig:Tlimit}
 \end{figure}
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY

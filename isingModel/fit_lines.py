@@ -46,7 +46,7 @@ print(
         "Predicted critical temperature : ",
         np.round(line[0], decimals=4), " +- ",
         np.round(np.sqrt(cov[0,0]), decimals=4))
-
+print(line)
 plt.errorbar(inv_sizes, temps, yerr=temps_e, linestyle='', marker='o')
 plt.hlines(y=tc_theo, xmin=0, xmax=(np.max(inv_sizes)), color='r', label="critical temperature")
 plt.plot(inv_sizes, line(inv_sizes), '-', color='y', label="data fit line")
