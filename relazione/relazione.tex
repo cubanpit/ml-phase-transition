@@ -94,7 +94,7 @@ Il lavoro prende spunto da diversi articoli pubblicati negli ultimi due anni che
 %	SECTION 2
 %----------------------------------------------------------------------------------------
 
-\section{Sistemi fisici e simulaizoni}
+\section{Sistemi fisici e simulazioni}
 In questo lavoro sono stati simulati e studiati due sistemi matematici su reticolo bidimensionale:  il modello di Ising e il modello XY.
 \subsection{Modello di Ising}
 Il modello di Ising descrive il comportamento di spin su reticolo che possono assumere valori $\{+1;-1\}$ interagendo tra loro. L'hamiltoniana di interazione che è stata utilizzata in questo lavoro è
@@ -108,19 +108,19 @@ dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin. L
 \centering
 \begin{tikzpicture}[> = stealth, scale=0.8]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(5cm,5cm);
-    \draw[ultra thick,red, <-]  (0,-0.50) -- (0,0.50);
-    \draw[ultra thick,blue, ->]  (0,1) -- (0,2);
-    \draw[ultra thick,blue, ->]  (0,2.5) -- (0,3.5);
-
-
-    \draw[ultra thick,blue, ->]  (1.5,-0.50) -- (1.5,0.50);
-    \draw[ultra thick,red, <-]  (1.5,1) -- (1.5,2);
-    \draw[ultra thick,red, <-]  (1.5,2.5) -- (1.5,3.5);
-
-
-    \draw[ultra thick,blue, ->]  (3,-0.50) -- (3,0.50);
-    \draw[ultra thick,red, <-]  (3,1) -- (3,2);
-    \draw[ultra thick,blue, ->]  (3,2.5) -- (3,3.5);
+    \foreach \y in {0,1,2} 
+        \foreach \x in {0,1,2}
+            \node[shape = rectangle, minimum width = 0.75cm, minimum height = 0.75cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
+    
+   \draw[ultra thick,blue, ->]  (dot_0_0.south) -- (dot_0_0.north);
+   \draw[ultra thick,red, ->]  (dot_1_1.south) -- (dot_1_1.north);
+   \draw[ultra thick,red, ->]  (dot_2_1.south) -- (dot_2_1.north);
+   \draw[ultra thick,blue, ->]  (dot_1_2.south) -- (dot_1_2.north);
+   \draw[ultra thick,red, ->]  (dot_2_2.south) -- (dot_2_2.north);
+   \draw[ultra thick,red, ->]  (dot_0_2.south) -- (dot_0_2.north);
+   \draw[ultra thick,blue, ->]  (dot_2_0.south) -- (dot_2_0.north);
+   \draw[ultra thick,blue, ->]  (dot_0_1.south) -- (dot_0_1.north);
+   \draw[ultra thick,red, ->]  (dot_1_0.south) -- (dot_1_0.north);
 \end{tikzpicture}
 \caption{Paramagnetico} \label{fig:isingP}  
 \end{subfigure}
@@ -128,19 +128,10 @@ dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin. L
 \centering
 \begin{tikzpicture}[> = stealth, scale=0.8]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(5cm,5cm);
-    \draw[ultra thick,blue, ->]  (0,-0.50) -- (0,0.50);
-    \draw[ultra thick,blue, ->]  (0,1) -- (0,2);
-    \draw[ultra thick,blue, ->]  (0,2.5) -- (0,3.5);
-
-
-    \draw[ultra thick,blue, ->]  (1.5,-0.50) -- (1.5,0.50);
-    \draw[ultra thick,blue, ->]  (1.5,1) -- (1.5,2);
-    \draw[ultra thick,blue, ->]  (1.5,2.5) -- (1.5,3.5);
-
-
-    \draw[ultra thick,blue, ->]  (3,-0.50) -- (3,0.50);
-    \draw[ultra thick,blue, ->]  (3,1) -- (3,2);
-    \draw[ultra thick,blue, ->]  (3,2.5) -- (3,3.5);
+    \foreach \y in {0,1,2} 
+        \foreach \x in {0,1,2}
+            {\node[shape = rectangle, minimum width = 0.75cm, minimum height = 0.75cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
+            \draw[ultra thick,blue, ->]  (dot_\y_\x.south) -- (dot_\y_\x.north);}
 \end{tikzpicture}
 \caption{Ferromagnetico} \label{fig:isingF}  
 \end{subfigure}
@@ -189,6 +180,68 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \caption{Reticoli studiati}
 \label{tab:ltXY}
 \end{table}
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.45\linewidth}
+\centering
+\begin{tikzpicture}[> = stealth, scale=0.7]
+\draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9cm,9cm);
+    \foreach \y in {0,1,2,3,4,5} 
+        \foreach \x in {0,1,2,3,4,5}
+            \node[shape = circle, minimum size = 0.8cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
+    \draw[ultra thick,blue, ->] (dot_0_0.2.29 r) -- (dot_0_0.pi r + 2.29 r);
+    \draw[ultra thick,blue, ->] (dot_0_1.3.38 r) -- (dot_0_1.pi r + 3.38 r);
+    \draw[ultra thick,blue, ->] (dot_0_2.2.82 r) -- (dot_0_2.pi r + 2.82 r);
+    \draw[ultra thick,blue, ->] (dot_0_3.1.62 r) -- (dot_0_3.pi r + 1.62 r);
+    \draw[ultra thick,blue, ->] (dot_0_4.2.19 r) -- (dot_0_4.pi r + 2.19 r);
+    \draw[ultra thick,blue, ->] (dot_0_5.4.52 r) -- (dot_0_5.pi r + 4.52 r);
+    \draw[ultra thick,blue, ->] (dot_1_0.3.24 r) -- (dot_1_0.pi r + 3.24 r);
+    \draw[ultra thick,blue, ->] (dot_1_1.2.81 r) -- (dot_1_1.pi r + 2.81 r);
+    \draw[ultra thick,blue, ->] (dot_1_2.3.68 r) -- (dot_1_2.pi r + 3.68 r);
+    \draw[ultra thick,blue, ->] (dot_1_3.3.74 r) -- (dot_1_3.pi r + 3.74 r);
+    \draw[ultra thick,blue, ->] (dot_1_4.3.31 r) -- (dot_1_4.pi r + 3.31 r);
+    \draw[ultra thick,blue, ->] (dot_1_5.0.78 r) -- (dot_1_5.pi r + 0.78 r);
+    \draw[ultra thick,blue, ->] (dot_2_0.2.24 r) -- (dot_2_0.pi r + 2.24 r);
+    \draw[ultra thick,blue, ->] (dot_2_1.3.17 r) -- (dot_2_1.pi r + 3.17 r);
+    \draw[ultra thick,blue, ->] (dot_2_2.2.86 r) -- (dot_2_2.pi r + 2.86 r);
+    \draw[ultra thick,blue, ->] (dot_2_3.2.93 r) -- (dot_2_3.pi r + 2.93 r);
+    \draw[ultra thick,blue, ->] (dot_2_4.3.16 r) -- (dot_2_4.pi r + 3.16 r);
+    \draw[ultra thick,blue, ->] (dot_2_5.3.12 r) -- (dot_2_5.pi r + 3.12 r);
+    \draw[ultra thick,blue, ->] (dot_3_0.2.79 r) -- (dot_3_0.pi r + 2.79 r);
+    \draw[ultra thick,blue, ->] (dot_3_1.2.89 r) -- (dot_3_1.pi r + 2.89 r);
+    \draw[ultra thick,blue, ->] (dot_3_2.3.30 r) -- (dot_3_2.pi r + 3.30 r);
+    \draw[ultra thick,blue, ->] (dot_3_3.2.76 r) -- (dot_3_3.pi r + 2.76 r);
+    \draw[ultra thick,blue, ->] (dot_3_4.2.53 r) -- (dot_3_4.pi r + 2.53 r);
+    \draw[ultra thick,blue, ->] (dot_3_5.2.91 r) -- (dot_3_5.pi r + 2.91 r);
+    \draw[ultra thick,blue, ->] (dot_4_0.2.79 r) -- (dot_4_0.pi r + 2.79 r);
+    \draw[ultra thick,blue, ->] (dot_4_1.3.38 r) -- (dot_4_1.pi r + 3.38 r);
+    \draw[ultra thick,blue, ->] (dot_4_2.3.50 r) -- (dot_4_2.pi r + 3.50 r);
+    \draw[ultra thick,blue, ->] (dot_4_3.2.99 r) -- (dot_4_3.pi r + 2.99 r);
+    \draw[ultra thick,blue, ->] (dot_4_4.2.51 r) -- (dot_4_4.pi r + 2.51 r);
+    \draw[ultra thick,blue, ->] (dot_4_5.2.63 r) -- (dot_4_5.pi r + 2.63 r);
+    \draw[ultra thick,blue, ->] (dot_5_0.3.46 r) -- (dot_5_0.pi r + 3.46 r);
+    \draw[ultra thick,blue, ->] (dot_5_1.2.45 r) -- (dot_5_1.pi r + 2.45 r);
+    \draw[ultra thick,blue, ->] (dot_5_2.2.67 r) -- (dot_5_2.pi r + 2.67 r);
+    \draw[ultra thick,blue, ->] (dot_5_3.2.63 r) -- (dot_5_3.pi r + 2.63 r);
+    \draw[ultra thick,blue, ->] (dot_5_4.2.07 r) -- (dot_5_4.pi r + 2.07 r);
+    \draw[ultra thick,blue, ->] (dot_5_5.3.50 r) -- (dot_5_5.pi r + 3.50 r);
+\end{tikzpicture}
+\caption{Modello XY a temperatura nulla.}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\linewidth}
+\centering
+\begin{tikzpicture}[> = stealth, scale=0.7]
+\draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9cm,9cm);
+    \foreach \y in {0,1,2,3,4,5} 
+        \foreach \x in {0,1,2,3,4,5}
+            \node[shape = circle, minimum size = 0.8cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
+            
+    \draw[ultra thick,blue, ->] (dot_0_0.pi/5 r) -- (dot_0_0.pi r + pi/5 r);
+\end{tikzpicture}
+\caption{Modello XY sopra la temperatura critica.}
+\end{subfigure}
+\label{fig:xy}  
+\end{figure}
 %----------------------------------------------------------------------------------------
 %	SECTION 3
 %----------------------------------------------------------------------------------------
