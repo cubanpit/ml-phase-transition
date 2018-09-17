@@ -57,7 +57,7 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Ising and XY neural network} % Title
+\title{Rete neuronale per Ising e XY} % Title
 
 \author{Martina \textsc{Crippa}, Pietro Francesco \textsc{Fontana}} % Author name
 
@@ -144,12 +144,12 @@ dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin. L
 \caption{Ferromagnetico} \label{fig:isingF}  
 \end{subfigure}
 \caption{Ising 2D}
-\end{figure}  \\
+\end{figure} 
 Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione totale del sistema:
 \begin{equation}
 M=\sum_i \sigma_i
 \end{equation}
-Sono stati studiati sistemi caratterizzati da tre distinte tipologie di reticolo, e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica divera, i cui valori sono riportati in tabella \ref{tab:lt}:
+Sono stati studiati sistemi caratterizzati da tre distinte tipologie di reticolo, e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica divera, i cui valori sono riportati in tabella \ref{tab:lt}.
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{lllll}
@@ -164,8 +164,9 @@ honeycomb & $3$ & $1/\!0.658478$ & $1.5187$ & $0.0$\\
 \end{center}
 \caption{Reticoli studiati}
 \label{tab:lt}
-\end{table}\\
+\end{table}
 Per ciascuna tipologia di reticolo è stata variata la lunghezza del lato del reticolo (in numero di spin) da $20$ a $90$. La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo, equilibrando il sistema a temperatura fissata, in un range di $40$ temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:lt}.
+%TODO approfondire metodi simulazione numerica
 
 \subsection{Modello XY}
 
