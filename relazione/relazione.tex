@@ -342,11 +342,14 @@ FeedForward & $1$ & $100$ & $100$ & Random & Sigmoidale & si & L$2$ $0.01$\\
 xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]}, 
 ylabel={$T$ [\si{K}]},
 grid=major,
-major grid style={line width=.1pt, dashed, draw=gray!30}
+major grid style={line width=.1pt, dashed, draw=gray!30},
 ]
-\addplot [only marks, blue] 
+\addplot[mark=none, red, thick] coordinates {(0.001,1.5187) (0.055,1.5187)};
+\addlegendentry{Temperatura critica}
+\addplot [only marks, blue]
 plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
- table [ y error index=2] {dati/honeycomb_pgf.dat};
+table [ y error index=2] {dati/honeycomb_pgf};
+\addlegendentry{Temperatura} 
 \end{axis} 
 \end{tikzpicture}
 \end{figure}
