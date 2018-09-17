@@ -7,8 +7,8 @@
 *.data
 # output files for simulation debug
 *.debug
-# vim swap files
-.*.swp
+# editor swap files
+.*swp
 # various trash files
 *trash*
 # compilated object extension

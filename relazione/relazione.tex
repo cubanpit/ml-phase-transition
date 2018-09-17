@@ -100,8 +100,12 @@ Il modello di Ising descrive il comportamento di spin su reticolo che possono as
 \begin{equation}
 H(\sigma) =- \sum_{\langle i~j\rangle} \sigma_i\sigma_j
 \end{equation} 
-dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin. L'energia di interazione è costante fra tutti gli spin e posta pari a $1$. Ad alte temperature il contributo entropico fa si che il sistema si trovi in uno stato di disordine, ovvero nella fase paramagnetica \ref{fig:isingP}. Abbassando la temperatura prevale il contributo energetico quindi al di sotto della temperatura critica gli spin tendono ad allinearsi e il sistema transisce alla fase ferromagnetica \ref{fig:isingF}.
-\begin{figure}[h]
+dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin.
+La costante di accoppiamento è costante fra tutti gli spin e posta pari a $1$.
+Ad alte temperature il contributo entropico fa si che il sistema si trovi in uno stato di disordine, ovvero nella fase paramagnetica \ref{fig:isingP}.
+Abbassando la temperatura prevale il contributo energetico quindi al di sotto della temperatura critica gli spin tendono ad allinearsi e il sistema transisce alla fase ferromagnetica \ref{fig:isingF}.
+
+\begin{figure}[ht]
 \centering
 \begin{subfigure}[b]{0.4\linewidth}
 \centering
@@ -136,12 +140,14 @@ dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin. L
 \end{subfigure}
 \caption{Ising 2D}
 \end{figure} 
+
 Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione totale del sistema:
 \begin{equation}
 M=\sum_i \sigma_i
 \end{equation}
 Sono stati studiati sistemi caratterizzati da tre distinte tipologie di reticolo, e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica divera, i cui valori sono riportati in tabella \ref{tab:lt}.
-\begin{table}[h]
+
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{lllll}
 \toprule
@@ -156,12 +162,14 @@ honeycomb & $3$ & $1/\!0.658478$ & $1.5187$ & $0.0$\\
 \caption{Reticoli studiati}
 \label{tab:lt}
 \end{table}
-Per ciascuna tipologia di reticolo è stata variata la lunghezza del lato del reticolo (in numero di spin) da $20$ a $90$. La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo, equilibrando il sistema a temperatura fissata, in un range di $40$ temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:lt}.
-%TODO approfondire metodi simulazione numerica
+
+Per ciascuna tipologia di reticolo è stata variata la lunghezza del lato del reticolo (in numero di spin) da $20$ a $90$.
+La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo, equilibrando il sistema a temperatura fissata, in un range di $40$ temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:lt}.
+I modelli di Ising su reticolo quadrato e honeycomb sono stati simulati tramite l'algoritmo di Wolff \cite{wolff}, quindi eseguendo mosse a cluster, mentre il modello su reticolo triangolare è stato simulato con un algoritmo di Metropolis, ad ogni mossa viene provata l'inversione di un singolo spin.
 
 \subsection{Modello XY}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \begin{subfigure}[b]{0.45\linewidth}
 \centering
@@ -169,45 +177,49 @@ Per ciascuna tipologia di reticolo è stata variata la lunghezza del lato del re
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9cm,9cm);
     \foreach \y in {0,1,2,3,4,5} 
         \foreach \x in {0,1,2,3,4,5}
-            \node[shape = circle, minimum size = 0.8cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
-    \draw[ultra thick,blue, ->] (dot_0_0.2.29 r) -- (dot_0_0.pi r + 2.29 r);
-    \draw[ultra thick,blue, ->] (dot_0_1.3.38 r) -- (dot_0_1.pi r + 3.38 r);
-    \draw[ultra thick,blue, ->] (dot_0_2.2.82 r) -- (dot_0_2.pi r + 2.82 r);
-    \draw[ultra thick,blue, ->] (dot_0_3.1.62 r) -- (dot_0_3.pi r + 1.62 r);
-    \draw[ultra thick,blue, ->] (dot_0_4.2.19 r) -- (dot_0_4.pi r + 2.19 r);
-    \draw[ultra thick,blue, ->] (dot_0_5.4.52 r) -- (dot_0_5.pi r + 4.52 r);
-    \draw[ultra thick,blue, ->] (dot_1_0.3.24 r) -- (dot_1_0.pi r + 3.24 r);
-    \draw[ultra thick,blue, ->] (dot_1_1.2.81 r) -- (dot_1_1.pi r + 2.81 r);
-    \draw[ultra thick,blue, ->] (dot_1_2.3.68 r) -- (dot_1_2.pi r + 3.68 r);
-    \draw[ultra thick,blue, ->] (dot_1_3.3.74 r) -- (dot_1_3.pi r + 3.74 r);
-    \draw[ultra thick,blue, ->] (dot_1_4.3.31 r) -- (dot_1_4.pi r + 3.31 r);
-    \draw[ultra thick,blue, ->] (dot_1_5.0.78 r) -- (dot_1_5.pi r + 0.78 r);
-    \draw[ultra thick,blue, ->] (dot_2_0.2.24 r) -- (dot_2_0.pi r + 2.24 r);
-    \draw[ultra thick,blue, ->] (dot_2_1.3.17 r) -- (dot_2_1.pi r + 3.17 r);
-    \draw[ultra thick,blue, ->] (dot_2_2.2.86 r) -- (dot_2_2.pi r + 2.86 r);
-    \draw[ultra thick,blue, ->] (dot_2_3.2.93 r) -- (dot_2_3.pi r + 2.93 r);
-    \draw[ultra thick,blue, ->] (dot_2_4.3.16 r) -- (dot_2_4.pi r + 3.16 r);
-    \draw[ultra thick,blue, ->] (dot_2_5.3.12 r) -- (dot_2_5.pi r + 3.12 r);
-    \draw[ultra thick,blue, ->] (dot_3_0.2.79 r) -- (dot_3_0.pi r + 2.79 r);
-    \draw[ultra thick,blue, ->] (dot_3_1.2.89 r) -- (dot_3_1.pi r + 2.89 r);
-    \draw[ultra thick,blue, ->] (dot_3_2.3.30 r) -- (dot_3_2.pi r + 3.30 r);
-    \draw[ultra thick,blue, ->] (dot_3_3.2.76 r) -- (dot_3_3.pi r + 2.76 r);
-    \draw[ultra thick,blue, ->] (dot_3_4.2.53 r) -- (dot_3_4.pi r + 2.53 r);
-    \draw[ultra thick,blue, ->] (dot_3_5.2.91 r) -- (dot_3_5.pi r + 2.91 r);
-    \draw[ultra thick,blue, ->] (dot_4_0.2.79 r) -- (dot_4_0.pi r + 2.79 r);
-    \draw[ultra thick,blue, ->] (dot_4_1.3.38 r) -- (dot_4_1.pi r + 3.38 r);
-    \draw[ultra thick,blue, ->] (dot_4_2.3.50 r) -- (dot_4_2.pi r + 3.50 r);
-    \draw[ultra thick,blue, ->] (dot_4_3.2.99 r) -- (dot_4_3.pi r + 2.99 r);
-    \draw[ultra thick,blue, ->] (dot_4_4.2.51 r) -- (dot_4_4.pi r + 2.51 r);
-    \draw[ultra thick,blue, ->] (dot_4_5.2.63 r) -- (dot_4_5.pi r + 2.63 r);
-    \draw[ultra thick,blue, ->] (dot_5_0.3.46 r) -- (dot_5_0.pi r + 3.46 r);
-    \draw[ultra thick,blue, ->] (dot_5_1.2.45 r) -- (dot_5_1.pi r + 2.45 r);
-    \draw[ultra thick,blue, ->] (dot_5_2.2.67 r) -- (dot_5_2.pi r + 2.67 r);
-    \draw[ultra thick,blue, ->] (dot_5_3.2.63 r) -- (dot_5_3.pi r + 2.63 r);
-    \draw[ultra thick,blue, ->] (dot_5_4.2.07 r) -- (dot_5_4.pi r + 2.07 r);
-    \draw[ultra thick,blue, ->] (dot_5_5.3.50 r) -- (dot_5_5.pi r + 3.50 r);
+            \node[shape = circle, minimum size = 0.6cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
+    
+    \draw[ultra thick,black, ->] (dot_0_0.2.79 r) -- (dot_0_0.pi r + 2.79 r);
+    \draw[ultra thick,black, ->] (dot_0_1.3.38 r) -- (dot_0_1.pi r + 3.38 r);
+    \draw[ultra thick,black, ->] (dot_0_2.3.50 r) -- (dot_0_2.pi r + 3.50 r);
+    \draw[ultra thick,black, ->] (dot_0_3.2.99 r) -- (dot_0_3.pi r + 2.99 r);
+    \draw[ultra thick,black, ->] (dot_0_4.2.51 r) -- (dot_0_4.pi r + 2.51 r);
+    \draw[ultra thick,black, ->] (dot_0_5.2.63 r) -- (dot_0_5.pi r + 2.63 r);
+    \draw[ultra thick,black, ->] (dot_1_0.3.46 r) -- (dot_1_0.pi r + 3.46 r);
+    \draw[ultra thick,black, ->] (dot_1_1.2.45 r) -- (dot_1_1.pi r + 2.45 r);
+    \draw[ultra thick,black, ->] (dot_1_2.2.67 r) -- (dot_1_2.pi r + 2.67 r);
+    \draw[ultra thick,black, ->] (dot_1_3.2.63 r) -- (dot_1_3.pi r + 2.63 r);
+    \draw[ultra thick,black, ->] (dot_1_4.2.07 r) -- (dot_1_4.pi r + 2.07 r);
+    \draw[ultra thick,black, ->] (dot_1_5.1.50 r) -- (dot_1_5.pi r + 1.50 r);
+    \draw[ultra thick,black, ->] (dot_2_0.2.29 r) -- (dot_2_0.pi r + 2.29 r);
+    \draw[ultra thick,black, ->] (dot_2_1.3.38 r) -- (dot_2_1.pi r + 3.38 r);
+    \draw[ultra thick,black, ->] (dot_2_2.2.82 r) -- (dot_2_2.pi r + 2.82 r);
+    \draw[ultra thick,black, ->] (dot_2_3.1.92 r) -- (dot_2_3.pi r + 1.92 r);
+    \draw[ultra thick,black, ->] (dot_2_4.3.19 r) -- (dot_2_4.pi r + 3.19 r);
+    \draw[ultra thick,black, ->] (dot_2_5.5.22 r) -- (dot_2_5.pi r + 5.22 r);
+    \draw[ultra thick,black, ->] (dot_3_0.3.24 r) -- (dot_3_0.pi r + 3.24 r);
+    \draw[ultra thick,black, ->] (dot_3_1.2.81 r) -- (dot_3_1.pi r + 2.81 r);
+    \draw[ultra thick,black, ->] (dot_3_2.3.68 r) -- (dot_3_2.pi r + 3.68 r);
+    \draw[ultra thick,black, ->] (dot_3_3.3.74 r) -- (dot_3_3.pi r + 3.74 r);
+    \draw[ultra thick,black, ->] (dot_3_4.2.65 r) -- (dot_3_4.pi r + 2.65 r);
+    \draw[ultra thick,black, ->] (dot_3_5.0.78 r) -- (dot_3_5.pi r + 0.78 r);
+    \draw[ultra thick,black, ->] (dot_4_0.2.24 r) -- (dot_4_0.pi r + 2.24 r);
+    \draw[ultra thick,black, ->] (dot_4_1.3.17 r) -- (dot_4_1.pi r + 3.17 r);
+    \draw[ultra thick,black, ->] (dot_4_2.2.86 r) -- (dot_4_2.pi r + 2.86 r);
+    \draw[ultra thick,black, ->] (dot_4_3.2.93 r) -- (dot_4_3.pi r + 2.93 r);
+    \draw[ultra thick,black, ->] (dot_4_4.3.16 r) -- (dot_4_4.pi r + 3.16 r);
+    \draw[ultra thick,black, ->] (dot_4_5.3.12 r) -- (dot_4_5.pi r + 3.12 r);
+    \draw[ultra thick,black, ->] (dot_5_0.2.79 r) -- (dot_5_0.pi r + 2.79 r);
+    \draw[ultra thick,black, ->] (dot_5_1.2.89 r) -- (dot_5_1.pi r + 2.89 r);
+    \draw[ultra thick,black, ->] (dot_5_2.3.30 r) -- (dot_5_2.pi r + 3.30 r);
+    \draw[ultra thick,black, ->] (dot_5_3.2.76 r) -- (dot_5_3.pi r + 2.76 r);
+    \draw[ultra thick,black, ->] (dot_5_4.2.53 r) -- (dot_5_4.pi r + 2.53 r);
+    \draw[ultra thick,black, ->] (dot_5_5.2.91 r) -- (dot_5_5.pi r + 2.91 r);
+    
+    \node[draw, blue, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*2.5){};
+    \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*1.5){};
 \end{tikzpicture}
-\caption{Modello XY a temperatura nulla.}
+\caption{Modello XY vicino alla temperatura critica.}
 \end{subfigure}
 \begin{subfigure}[b]{0.45\linewidth}
 \centering
@@ -215,12 +227,53 @@ Per ciascuna tipologia di reticolo è stata variata la lunghezza del lato del re
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9cm,9cm);
     \foreach \y in {0,1,2,3,4,5} 
         \foreach \x in {0,1,2,3,4,5}
-            \node[shape = circle, minimum size = 0.8cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
+            \node[shape = circle, minimum size = 0.6cm] (dot_\y_\x) at (1.5*\x,1.5*\y){};
             
-    \draw[ultra thick,blue, ->] (dot_0_0.pi/5 r) -- (dot_0_0.pi r + pi/5 r);
+    \draw[ultra thick,black, ->] (dot_0_0.5.05 r) -- (dot_0_0.pi r + 5.05 r);
+    \draw[ultra thick,black, ->] (dot_0_1.4.26 r) -- (dot_0_1.pi r + 4.26 r);
+    \draw[ultra thick,black, ->] (dot_0_2.4.36 r) -- (dot_0_2.pi r + 4.36 r);
+    \draw[ultra thick,black, ->] (dot_0_3.3.22 r) -- (dot_0_3.pi r + 3.22 r);
+    \draw[ultra thick,black, ->] (dot_0_4.2.15 r) -- (dot_0_4.pi r + 2.15 r);
+    \draw[ultra thick,black, ->] (dot_0_5.2.22 r) -- (dot_0_5.pi r + 2.22 r);
+    \draw[ultra thick,black, ->] (dot_1_0.5.04 r) -- (dot_1_0.pi r + 5.04 r);
+    \draw[ultra thick,black, ->] (dot_1_1.5.15 r) -- (dot_1_1.pi r + 5.15 r);
+    \draw[ultra thick,black, ->] (dot_1_2.5.38 r) -- (dot_1_2.pi r + 5.38 r);
+    \draw[ultra thick,black, ->] (dot_1_3.1.31 r) -- (dot_1_3.pi r + 1.31 r);
+    \draw[ultra thick,black, ->] (dot_1_4.3.55 r) -- (dot_1_4.pi r + 3.55 r);
+    \draw[ultra thick,black, ->] (dot_1_5.1.98 r) -- (dot_1_5.pi r + 1.98 r);
+    \draw[ultra thick,black, ->] (dot_2_0.4.08 r) -- (dot_2_0.pi r + 4.08 r);
+    \draw[ultra thick,black, ->] (dot_2_1.5.87 r) -- (dot_2_1.pi r + 5.87 r);
+    \draw[ultra thick,black, ->] (dot_2_2.0.30 r) -- (dot_2_2.pi r + 0.30 r);
+    \draw[ultra thick,black, ->] (dot_2_3.4.95 r) -- (dot_2_3.pi r + 4.95 r);
+    \draw[ultra thick,black, ->] (dot_2_4.5.95 r) -- (dot_2_4.pi r + 5.95 r);
+    \draw[ultra thick,black, ->] (dot_2_5.1.60 r) -- (dot_2_5.pi r + 1.60 r);
+    \draw[ultra thick,black, ->] (dot_3_0.2.28 r) -- (dot_3_0.pi r + 2.28 r);
+    \draw[ultra thick,black, ->] (dot_3_1.0.76 r) -- (dot_3_1.pi r + 0.76 r);
+    \draw[ultra thick,black, ->] (dot_3_2.5.55 r) -- (dot_3_2.pi r + 5.55 r);
+    \draw[ultra thick,black, ->] (dot_3_3.5.54 r) -- (dot_3_3.pi r + 5.54 r);
+    \draw[ultra thick,black, ->] (dot_3_4.5.77 r) -- (dot_3_4.pi r + 5.77 r);
+    \draw[ultra thick,black, ->] (dot_3_5.5.86 r) -- (dot_3_5.pi r + 5.86 r);
+    \draw[ultra thick,black, ->] (dot_4_0.1.68 r) -- (dot_4_0.pi r + 1.68 r);
+    \draw[ultra thick,black, ->] (dot_4_1.0.32 r) -- (dot_4_1.pi r + 0.32 r);
+    \draw[ultra thick,black, ->] (dot_4_2.4.10 r) -- (dot_4_2.pi r + 4.10 r);
+    \draw[ultra thick,black, ->] (dot_4_3.5.35 r) -- (dot_4_3.pi r + 5.35 r);
+    \draw[ultra thick,black, ->] (dot_4_4.0.97 r) -- (dot_4_4.pi r + 0.97 r);
+    \draw[ultra thick,black, ->] (dot_4_5.1.40 r) -- (dot_4_5.pi r + 1.40 r);
+    \draw[ultra thick,black, ->] (dot_5_0.6.19 r) -- (dot_5_0.pi r + 6.19 r);
+    \draw[ultra thick,black, ->] (dot_5_1.0.50 r) -- (dot_5_1.pi r + 0.50 r);
+    \draw[ultra thick,black, ->] (dot_5_2.1.56 r) -- (dot_5_2.pi r + 1.56 r);
+    \draw[ultra thick,black, ->] (dot_5_3.0.56 r) -- (dot_5_3.pi r + 0.56 r);
+    \draw[ultra thick,black, ->] (dot_5_4.0.81 r) -- (dot_5_4.pi r + 0.81 r);
+    \draw[ultra thick,black, ->] (dot_5_5.1.47 r) -- (dot_5_5.pi r + 1.47 r);
+    
+    \node[draw, blue, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*2.5,1.5*4.5){};
+    \node[draw, blue, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*0.5,1.5*2.5){};
+    \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*1.5){};
+    \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*2.5,1.5*0.5){};
 \end{tikzpicture}
 \caption{Modello XY sopra la temperatura critica.}
 \end{subfigure}
+\caption{Modello XY a due diverse temperature, i vortici sono indicati in blu, gli antivortici in rosso. Si può notare una chiara coppia vortice-antivortice nella figura di sinistra, mentre nella figura di destra non è presente alcuna coppia.}
 \label{fig:xy}  
 \end{figure}
 %----------------------------------------------------------------------------------------
@@ -284,8 +337,8 @@ I nodi di output restituiscono la probabilità che la configurazione fisica sia 
 
 \begin{figure}
  \centerline{\includegraphics[scale=0.35]{cnn.png}}
- \label{fig:cnn}
  \caption{Schema di una rete convoluzionale effettivamente utilizzata per l'analisi di un sistema XY su reticolo $32\times32$, sono stati tralasciati i layer \emph{dropout}.}
+ \label{fig:cnn}
 \end{figure}
 
 Il metodo migliore per classificare un modello XY risulta essere una rete convoluzionale \cite{melko}, uno schema di una rete di questo tipo effettivamente utilizzata in questo lavoro è rappresentato in Figura \ref{fig:cnn}.
