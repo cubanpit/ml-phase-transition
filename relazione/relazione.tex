@@ -230,10 +230,13 @@ I nodi di output restituiscono la probabilità che la configurazione fisica sia 
 \subsection{Modello XY}
 
 \begin{figure}
- \centerline{\includegraphics[scale=0.4]{cnn.png}}
+ \centerline{\includegraphics[scale=0.35]{cnn.png}}
  \label{fig:cnn}
  \caption{Schema di una rete convoluzionale effettivamente utilizzata per l'analisi di un sistema XY su reticolo $32\times32$, sono stati tralasciati i layer \emph{dropout}.}
 \end{figure}
+
+Il metodo migliore per classificare un modello XY risulta essere una rete convoluzionale \cite{melko}, uno schema di una rete di questo tipo effettivamente utilizzata in questo lavoro è rappresentato in Figura \ref{fig:cnn}.
+Il layer di input può ricevere come argomento la semplice configurazione degli spin, quindi una matrice di valori reali nell'intervallo $[0,2\pi]$, oppure la configurazione espressa in vortici e antivortici, che appare come una matrice con valori $\{-1;0;+1\}$.
 
 
 %----------------------------------------------------------------------------------------
