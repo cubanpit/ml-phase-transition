@@ -30,6 +30,7 @@
 \usepackage{booktabs}% Better table spacing
 \usepackage{subcaption}
 \usepackage{tikz}
+\usepackage{pgfplots}
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -96,11 +97,11 @@ Il lavoro prende spunto da diversi articoli pubblicati negli ultimi due anni che
 \section{Sistemi fisici e simulaizoni}
 In questo lavoro sono stati simulati e studiati due sistemi matematici su reticolo bidimensionale:  il modello di Ising e il modello XY.
 \subsection{Modello di Ising}
-Il modello di Ising descrive il comportamento di spin su reticolo che possono assumere valori $+1$ o $-1$ ed interagiscono tra loro secondo un'hamiltoniana, la cui versione più semplice da trattare assume la forma
+Il modello di Ising descrive il comportamento di spin su reticolo che possono assumere valori $\{+1;-1\}$ interagendo tra loro. L'hamiltoniana di interazione che è stata utilizzata in questo lavoro è
 \begin{equation}
-H(\sigma) =- \sum_{\langle i~j\rangle} \sigma_i\sigma_j
+H=- \sum_{\langle i~j\rangle} \sigma_i\sigma_j
 \end{equation} 
-dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin. L'energia di interazione è costante fra tutti gli spin e posta pari a $1$. Ad alte temperature il contributo entropico fa si che il sistema si trovi in uno stato di disordine, ovvero nella fase paramagnetica \ref{fig:isingP}. Abbassando la temperatura prevale il contributo energetico quindi al di sotto della temperatura critica gli spin tendono ad allinearsi e il sistema transisce alla fase ferromagnetica \ref{fig:isingF}.
+dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin. L'energia di interazione è costante fra tutti gli spin e posta pari a $1$. Ad alte temperature il contributo entropico fa si che il sistema si trovi in uno stato di disordine, ovvero nella fase paramagnetica \ref{fig:isingP}. Abbassando la temperatura prevale il contributo energetico quindi al di sotto della temperatura critica gli spin tendono ad allinearsi e il sistema transisce alla fase ferromagnetica \ref{fig:isingF}: tale transizione di fase è detta del \emph{secondo ordine}.
 \begin{figure}[h]
 \centering
 \begin{subfigure}[b]{0.4\linewidth}
@@ -149,7 +150,7 @@ Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione
 \begin{equation}
 M=\sum_i \sigma_i
 \end{equation}
-Sono stati studiati sistemi caratterizzati da tre distinte tipologie di reticolo, e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica divera, i cui valori sono riportati in tabella \ref{tab:lt}.
+Sono stati studiati sistemi con geometrie di reticolo differenti e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica divera, i cui valori sono riportati in tabella \ref{tab:ltI}.
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{lllll}
@@ -158,18 +159,36 @@ reticolo & nn & $T_c$ & $T_c$ approx $[$\si{K}$]$ & $T_{init}$ $[$\si{K}$]$\\
 \midrule
 quadrato & $4$ & $2/ \!\ln{(1+\sqrt{2})}$ & $2.2692$ & $1.0$\\
 triangolare & $6$ & $4/\!\ln{3}$ & $3.6410 $ & $2.0$\\
-honeycomb & $3$ & $1/\!0.658478$ & $1.5187$ & $0.0$\\
+honeycomb & $3$ & --- & $1.5187$ & $0.0$\\
 \bottomrule
 \end{tabular}
 \end{center}
 \caption{Reticoli studiati}
-\label{tab:lt}
+\label{tab:ltI}
 \end{table}
-Per ciascuna tipologia di reticolo è stata variata la lunghezza del lato del reticolo (in numero di spin) da $20$ a $90$. La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo, equilibrando il sistema a temperatura fissata, in un range di $40$ temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:lt}.
-%TODO approfondire metodi simulazione numerica
-
+La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo, equilibrando il sistema a temperatura fissata, in un range di $40$ temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:ltI}.
+%TODO approfondire metodi simulazione numerica, condizioni al contorno
 \subsection{Modello XY}
-
+Il modello XY descrive il comportamento di spin su reticolo in grado di ruotare assumendo valori nell'intervallo $[0,2\pi)$, interagendo a primi vicini tramite l'hamiltoniana
+\begin{equation}
+H=-\sum_{\langle i~j\rangle} \cos(\theta_i-\theta_j)
+\end{equation}
+dove l'energia di interazione è stata posta costante pari ad $1$. Nel modello XY,  secondo il teorema di Mermin-Wagner, non è prevista alcuna transizioni di fase del secondo ordine. Tuttavia presenta una transizione di fase \emph{topologica}, ovvero la transizione BKT\cite{kosterlitz}: al di sopra della temperatura di transizione gli spin tendono a creare vortici e antivortici, ovvero configurazioni topologicametne stabili.
+Appena sotto la temperatura di transizione si osserva la formazione di coppie vortice-antivortice mentre i vortici e gli antivortici singoli tendono a disgregarsi e gli spin ad orientarsi parallelamente tra loro.
+Anche questo sistema è stato simulato tramite Monte Carlo seguendo una procedura analoga a quella usata per simulare il modello di Ising, con i valori riportati in tabella \ref{tab:ltXY}.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+reticolo & nn & $T_t$ & $T_t$ approx $[$\si{K}$]$ & $T_{init}$ $[$\si{K}$]$\\
+\midrule
+quadrato & $4$ & --- & $0.893$ & $0.01$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Reticoli studiati}
+\label{tab:ltXY}
+\end{table}
 %----------------------------------------------------------------------------------------
 %	SECTION 3
 %----------------------------------------------------------------------------------------
@@ -236,7 +255,7 @@ I nodi di output restituiscono la probabilità che la configurazione fisica sia 
 \end{figure}
 
 Il metodo migliore per classificare un modello XY risulta essere una rete convoluzionale \cite{melko}, uno schema di una rete di questo tipo effettivamente utilizzata in questo lavoro è rappresentato in Figura \ref{fig:cnn}.
-Il layer di input può ricevere come argomento la semplice configurazione degli spin, quindi una matrice di valori reali nell'intervallo $[0,2\pi]$, oppure la configurazione espressa in vortici e antivortici, che appare come una matrice con valori $\{-1;0;+1\}$.
+Il layer di input può ricevere come argomento la semplice configurazione degli spin, quindi una matrice di valori reali nell'intervallo $[0,2\pi)$, oppure la configurazione espressa in vortici e antivortici, che appare come una matrice con valori $\{-1;0;+1\}$.
 
 
 %----------------------------------------------------------------------------------------
@@ -245,9 +264,39 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 
 \section{Risultati e conclusioni}
 
-The atomic weight of magnesium is concluded to be \SI{24}{\gram\per\mol}, as determined by the stoichiometry of its chemical combination with oxygen. This result is in agreement with the accepted value.
+\subsection{Stima della temperatura critica}
+Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione. Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo. Per stimare il valore teorico è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare della lato del reticolo (in numero di spin) da $20$ a $90$, ogni $10$, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$.
+%TODO provare a cercare la legge
+La rete è stata allenata su set di almeno $100000$ configurazioni (prendendo un sottoinsieme di configurazioni pari al $10\%$ del training set per la validazione) a reticolo quadrato, e testata su set di $10000$ a reticolo sia triangolare che honeycomb: ciascun valore di temperatura riportato è dati dalla media di $10$ temperature, i cui valori sono classificati da $10$ diverse reti scelte in modo da avere una \emph{test accuracy} alta e una \emph{test loss} bassa. I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{llllllll}
+\toprule
+Rete & Layer & Neuroni & Batch size & w e b init & Attivazione & Earlystop & Rego\\
+\midrule
+FeedForward & $1$ & $100$ & $100$ & Random & Sigmoidale & si & L$2$ $0.01$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Parametri}
+\label{tab:ffnnpar}
+\end{table}
 
-
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]}, 
+ylabel={$T$ [\si{K}]},
+grid=major,
+major grid style={line width=.1pt, dashed, draw=gray!30}
+]
+\addplot [only marks, blue] 
+plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
+ table [ y error index=2] {dati/honeycomb_pgf.dat};
+\end{axis} 
+\end{tikzpicture}
+\end{figure}
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
