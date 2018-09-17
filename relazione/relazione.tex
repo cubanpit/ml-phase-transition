@@ -385,20 +385,32 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 Per meglio valutare il contributo dei diversi parametri della rete sono stati generati diversi modelli, eseguendo la fase di apprendimento sullo stesso \emph{training set} e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
 %TODO: completare man mano che si sceglie come procedere
 
-\begin{figure}
+\begin{figure}[ht]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
-ylabel={$T$ [\si{K}]},
-grid=major,
-major grid style={line width=.1pt, dashed, draw=gray!30}
+    xmode=log,
+    xlabel = {Numero di neuroni},
+    ylabel = {Accuracy},
+    grid = major,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
 ]
-\addplot [only marks, blue]
-plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
- table [ y error index=2] {dati/neurons_number_900};
-\end{axis}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_tr};
+\addlegendentry{6nn 30x30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_hc};
+\addlegendentry{3nn 30x30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_tr};
+\addlegendentry{6nn 50x50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_hc};
+\addlegendentry{3nn 50x50}
+\end{axis} 
 \end{tikzpicture}
+\caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
 \end{figure}
 
 \subsection{Stima della temperatura critica}
@@ -406,7 +418,7 @@ plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione. Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo. Per stimare il valore teorico è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare della lato del reticolo (in numero di spin) da $20$ a $90$, ogni $10$, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$.
 %TODO provare a cercare la legge
 La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $10\%$ del training set per la validazione) a reticolo quadrato, e testata su set di \num{10000} a reticolo sia triangolare che honeycomb: ciascun valore di temperatura riportato è dati dalla media di $10$ temperature, i cui valori sono classificati da $10$ diverse reti scelte in modo da avere una \emph{test accuracy} alta e una \emph{test loss} bassa. I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
-\begin{table}[h]
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{llllllll}
 \toprule
@@ -420,22 +432,20 @@ FeedForward & $1$ & $100$ & $100$ & Random & Sigmoidale & si & L$2$ $0.01$\\
 \label{tab:ffnnpar}
 \end{table}
 
-\begin{figure}
+
+\begin{figure}[ht]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
 xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
 ylabel={$T$ [\si{K}]},
 grid=major,
-major grid style={line width=.1pt, dashed, draw=gray!30},
+major grid style={line width=.1pt, dashed, draw=gray!30}
 ]
-\addplot[mark=none, red, thick] coordinates {(0.001,1.5187) (0.055,1.5187)};
-\addlegendentry{Temperatura critica}
 \addplot [only marks, blue]
 plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
-table [ y error index=2] {dati/honeycomb_pgf};
-\addlegendentry{Temperatura} 
-\end{axis} 
+ table [ y error index=2] {dati/honeycomb_pgf};
+\end{axis}
 \end{tikzpicture}
 \end{figure}
 

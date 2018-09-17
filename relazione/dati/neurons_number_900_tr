@@ -1,4 +1,4 @@
-# lattice-size neurons-number avg-accuracy avg-stdev
+size neurons accuracy stdev
 900 3 0.6981 0.02787
 900 10 0.9739 0.00019
 900 50 0.9734 0.00018
