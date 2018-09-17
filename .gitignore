@@ -22,5 +22,6 @@
 *.log
 *.bbl
 *.blg
+*.synctex*
 # compressed archive
 *.gz

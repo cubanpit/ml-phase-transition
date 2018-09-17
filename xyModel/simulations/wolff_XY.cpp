@@ -152,7 +152,7 @@ void measureBlockObservables() {
 
 int main() {
 
-  Ly = Lx = 16;
+  Ly = Lx = 6;
   N = Lx * Ly;
   int MCSteps = 100000;
   int blockSize = 1000; // suggested by Wolff is 1000

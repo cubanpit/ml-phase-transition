@@ -21,12 +21,12 @@ def column(matrix, i):
 
 input_set = sys.argv[1]
 
-L = 32    # Size
+L = 6    # Size
 s = 2     # Submatrix size
 i = 0
 v = []    # Vorticity vector
 
-graph = False   # Set True if you want to create vortex graphics
+graph = True   # Set True if you want to create vortex graphics
 
 vortex_conf = open('vortex_L'+str(L)+'.dat', "a")
 
