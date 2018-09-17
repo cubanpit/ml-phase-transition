@@ -27,6 +27,7 @@ with open(data_file, 'r') as input_file:
             sizes.append(int(data[0]))
             temps.append(float(data[1]))
             temps_e.append(float(data[2]))
+            print(str(1./int(data[0]))+" "+str(float(data[1]))+" "+str(float(data[2])))
 
 sizes = np.array(sizes)
 temps = np.array(temps)
