@@ -97,7 +97,8 @@ Il lavoro prende spunto da diversi articoli pubblicati negli ultimi due anni che
 \section{Sistemi fisici e simulazioni}
 In questo lavoro sono stati simulati e studiati due sistemi matematici su reticolo bidimensionale:  il modello di Ising e il modello XY.
 \subsection{Modello di Ising}
-Il modello di Ising descrive il comportamento di spin su reticolo che possono assumere valori $\{+1;-1\}$ interagendo tra loro. L'hamiltoniana di interazione che è stata utilizzata in questo lavoro è
+Il modello di Ising descrive il comportamento di spin su reticolo che possono assumere valori $\{+1;-1\}$ interagendo tra loro.
+L'hamiltoniana di interazione che è stata utilizzata in questo lavoro è
 \begin{equation}
 H=- \sum_{\langle i~j\rangle} \sigma_i\sigma_j
 \end{equation}
@@ -105,6 +106,7 @@ dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin.
 La costante di accoppiamento è costante fra tutti gli spin e posta pari a $1$.
 Ad alte temperature il contributo entropico fa si che il sistema si trovi in uno stato di disordine, ovvero nella fase paramagnetica \ref{fig:isingP}.
 Abbassando la temperatura prevale il contributo energetico quindi al di sotto della temperatura critica gli spin tendono ad allinearsi e il sistema transisce alla fase ferromagnetica \ref{fig:isingF}: tale transizione di fase è detta del \emph{secondo ordine}.
+
 \begin{figure}[ht]
 \centering
 \begin{subfigure}[b]{0.4\linewidth}
@@ -141,9 +143,9 @@ Abbassando la temperatura prevale il contributo energetico quindi al di sotto de
 \caption{Ising 2D}
 \end{figure}
 
-Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione totale del sistema:
+Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione totale del sistema
 \begin{equation}
-M=\sum_i \sigma_i
+M = \sum_i \sigma_i
 \end{equation}
 
 Sono stati studiati sistemi con geometrie di reticolo differenti e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica divera, i cui valori sono riportati in tabella \ref{tab:ltI}.
@@ -166,16 +168,21 @@ honeycomb & $3$ & --- & $1.5187$ & $0.0$\\
 
 La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo, equilibrando il sistema a temperatura fissata, in un range di $40$ temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:ltI}.
 I modelli di Ising su reticolo quadrato e honeycomb sono stati simulati tramite l'algoritmo di Wolff \cite{wolff}, quindi eseguendo mosse a cluster, mentre il modello su reticolo triangolare è stato simulato con un algoritmo di Metropolis, ad ogni mossa viene provata l'inversione di un singolo spin.
+Le simulazioni sono state scritte in linguaggio C++.
 
 \subsection{Modello XY}
 
-Il modello XY descrive il comportamento di spin su reticolo in grado di ruotare assumendo valori nell'intervallo $[0,2\pi)$, interagendo a primi vicini tramite l'hamiltoniana
+Il modello XY descrive il comportamento di spin su reticolo bidimensionale in grado di ruotare assumendo valori nell'intervallo $[0,2\pi)$, interagendo a primi vicini tramite l'hamiltoniana
 \begin{equation}
 H=-\sum_{\langle i~j\rangle} \cos(\theta_i-\theta_j)
 \end{equation}
-dove l'energia di interazione è stata posta costante pari ad $1$. Nel modello XY,  secondo il teorema di Mermin-Wagner, non è prevista alcuna transizioni di fase del secondo ordine. Tuttavia presenta una transizione di fase \emph{topologica}, ovvero la transizione BKT\cite{kosterlitz}: al di sopra della temperatura di transizione gli spin tendono a creare vortici e antivortici, ovvero configurazioni topologicametne stabili.
+dove l'energia di interazione è stata posta costante pari ad $1$.
+Nel modello XY,  secondo il teorema di Mermin-Wagner, non è prevista alcuna transizione di fase del secondo ordine.
+Tuttavia presenta una transizione di fase \emph{topologica}, ovvero la transizione BKT\cite{kosterlitz}: al di sopra della temperatura di transizione gli spin tendono a creare vortici e antivortici, ovvero configurazioni topologicamente stabili.
 Appena sotto la temperatura di transizione si osserva la formazione di coppie vortice-antivortice mentre i vortici e gli antivortici singoli tendono a disgregarsi e gli spin ad orientarsi parallelamente tra loro.
-Anche questo sistema è stato simulato tramite Monte Carlo seguendo una procedura analoga a quella usata per simulare il modello di Ising, con i valori riportati in tabella \ref{tab:ltXY}.
+Due configurazioni esemplari temperature diverse sono riportate in Figura \ref{fig:xy}.
+Anche questo sistema è stato simulato tramite metodi Monte Carlo, utilizzando l'algoritmo di Wolff e seguendo una procedura analoga a quella utilizzata per il modello di Ising, i parametri sono riportati in tabella \ref{tab:ltXY}.
+
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lllll}
@@ -239,7 +246,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     \node[draw, blue, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*2.5){};
     \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*1.5){};
 \end{tikzpicture}
-\caption{Modello XY vicino alla temperatura critica.}
+\caption{Modello XY vicino alla temperatura di transizione.}
 \end{subfigure}
 \begin{subfigure}[b]{0.45\linewidth}
 \centering
@@ -291,7 +298,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*1.5){};
     \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*2.5,1.5*0.5){};
 \end{tikzpicture}
-\caption{Modello XY sopra la temperatura critica.}
+\caption{Modello XY sopra la temperatura di transizione.}
 \end{subfigure}
 \caption{Modello XY a due diverse temperature, i vortici sono indicati in blu, gli antivortici in rosso. Si può notare una chiara coppia vortice-antivortice nella figura di sinistra, mentre nella figura di destra non è presente alcuna coppia.}
 \label{fig:xy}
@@ -304,14 +311,13 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \section{Metodi di apprendimento}
 
 A partire dai sistemi fisici simulati, descritti nella sezione precedente, sono stati sviluppati diversi metodi di apprendimento con l'obiettivo di classificare automaticamente la fase in cui si trova il sistema.
-I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici analizzati, il modello di Ising e il modello XY, seguendo la stessa strada di altri lavori.
-%TODO citazioni!
+I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici analizzati, il modello di Ising e il modello XY, seguendo la stessa strada di altri lavori \cite{wessel}.
 
 \subsection{Modello di Ising}
 
-\begin{figure}
+\begin{figure}[ht]
 \centering
-\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth]
+\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth, scale=0.9]
 
 \foreach \m/\l [count=\y] in {1,2,3,missing,4}
   \node [every neuron/.try, neuron \m/.try] (input-\m) at (0,2.5-\y) {};
@@ -356,7 +362,7 @@ I nodi di output restituiscono la probabilità che la configurazione fisica sia 
 
 \subsection{Modello XY}
 
-\begin{figure}
+\begin{figure}[ht]
  \centerline{\includegraphics[scale=0.35]{cnn.png}}
  \caption{Schema di una rete convoluzionale effettivamente utilizzata per l'analisi di un sistema XY su reticolo $32\times32$, sono stati tralasciati i layer \emph{dropout}.}
  \label{fig:cnn}
@@ -372,10 +378,34 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 
 \section{Risultati e conclusioni}
 
+\subsection{Valutazione dei parametri della rete}
+
+\subsubsection{Modello di Ising}
+
+Per meglio valutare il contributo dei diversi parametri della rete sono stati generati diversi modelli, eseguendo la fase di apprendimento sullo stesso \emph{training set} e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
+%TODO: completare man mano che si sceglie come procedere
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+ylabel={$T$ [\si{K}]},
+grid=major,
+major grid style={line width=.1pt, dashed, draw=gray!30}
+]
+\addplot [only marks, blue]
+plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
+ table [ y error index=2] {dati/neurons_number_900};
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
 \subsection{Stima della temperatura critica}
+
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione. Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo. Per stimare il valore teorico è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare della lato del reticolo (in numero di spin) da $20$ a $90$, ogni $10$, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$.
 %TODO provare a cercare la legge
-La rete è stata allenata su set di almeno $100000$ configurazioni (prendendo un sottoinsieme di configurazioni pari al $10\%$ del training set per la validazione) a reticolo quadrato, e testata su set di $10000$ a reticolo sia triangolare che honeycomb: ciascun valore di temperatura riportato è dati dalla media di $10$ temperature, i cui valori sono classificati da $10$ diverse reti scelte in modo da avere una \emph{test accuracy} alta e una \emph{test loss} bassa. I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
+La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $10\%$ del training set per la validazione) a reticolo quadrato, e testata su set di \num{10000} a reticolo sia triangolare che honeycomb: ciascun valore di temperatura riportato è dati dalla media di $10$ temperature, i cui valori sono classificati da $10$ diverse reti scelte in modo da avere una \emph{test accuracy} alta e una \emph{test loss} bassa. I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{llllllll}
@@ -405,6 +435,7 @@ plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
 \end{axis}
 \end{tikzpicture}
 \end{figure}
+
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
