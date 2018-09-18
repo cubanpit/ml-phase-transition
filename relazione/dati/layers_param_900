@@ -1,0 +1,4 @@
+size neurons layers param datatr
+900 10 2 9142 80000
+900 10 5 9472 80000
+900 10 10 10022 80000
