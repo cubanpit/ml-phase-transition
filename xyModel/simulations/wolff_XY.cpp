@@ -26,13 +26,11 @@ std::uniform_real_distribution<double> rndDist(0,1);
 
 void initialize ( ) {
 
-  s =
-    new double* [Lx];
+  s = new double* [Lx];
   for (int i = 0; i < Lx; i++) {
     s[i] = new double [Ly];
   }
   for (int i = 0; i < Lx; i++) {
-
     for (int j = 0; j < Ly; j++) {
       s[i][j] = rndDist(rndGen) * 2 * M_PI; // random start
     }
