@@ -173,23 +173,19 @@ def build_model(data_shape, neurons_number):
     """Build neural network model with given data shape and neurons number.
     """
 
-    model = keras.Sequential([
-        keras.layers.Dense(
+    model = keras.models.Sequential()
+    model.add(keras.layers.Dense(
             neurons_number,
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
             kernel_regularizer=keras.regularizers.l2(0.01),
-            input_shape=(data_shape,)),
-        # keras.layers.Dropout(0.30),
-        keras.layers.Dense(
+            input_shape=(data_shape,)))
+    model.add(keras.layers.Dense(
             2,
             activation=tf.nn.softmax,
-            # kernel_initializer=tf.constant_initializer(np.array([[2, 1, -1], [-2, -2, 1]])),
-            # bias_initializer=tf.constant_initializer(np.array([0, 0])))
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
-            bias_initializer=keras.initializers.RandomNormal(stddev=1))
-        ])
+            bias_initializer=keras.initializers.RandomNormal(stddev=1)))
 
     optimizer = tf.keras.optimizers.Adam(lr=0.0001)
 
@@ -472,8 +468,8 @@ if len(tc_predictions) > 1:
     print("Predicted critical temperature: mean =", tc_mean, "+-", tc_stdev)
     print("Theoretical critical temperature =", np.round(test_temp, decimals=4))
 else:
-    print("There are no useful data,\
-            impossible to compute critical temperature")
+    print("There are no useful data,",
+          "impossible to compute critical temperature")
 
 
 # Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
