@@ -497,6 +497,12 @@ Per approfondire i risultati ottenuti modificando il numero di neuroni nelle ret
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_tr};
 \addlegendentry{6nn 50x50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_hc};
+\addlegendentry{3nn 80x80}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_tr};
+\addlegendentry{6nn 80x80}
 \end{axis}
 \end{tikzpicture}
 \label{fig:varLN}
@@ -518,6 +524,9 @@ Per approfondire i risultati ottenuti modificando il numero di neuroni nelle ret
 \addplot+[line]
     table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_2500};
 \addlegendentry{50x50}
+\addplot+[line]
+    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_6400};
+\addlegendentry{80x80}
 \end{axis}
 \end{tikzpicture}
 }

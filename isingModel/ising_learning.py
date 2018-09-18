@@ -181,6 +181,20 @@ def build_model(data_shape, neurons_number):
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
             kernel_regularizer=keras.regularizers.l2(0.01),
             input_shape=(data_shape,)),
+        keras.layers.Dense(
+            neurons_number,
+            activation=tf.sigmoid,
+            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
+            bias_initializer=keras.initializers.RandomNormal(stddev=1),
+            kernel_regularizer=keras.regularizers.l2(0.01),
+            input_shape=(data_shape,)),
+        keras.layers.Dense(
+            neurons_number,
+            activation=tf.sigmoid,
+            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
+            bias_initializer=keras.initializers.RandomNormal(stddev=1),
+            kernel_regularizer=keras.regularizers.l2(0.01),
+            input_shape=(data_shape,)),
         # keras.layers.Dropout(0.30),
         keras.layers.Dense(
             2,
