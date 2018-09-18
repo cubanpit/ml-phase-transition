@@ -31,6 +31,7 @@
 \usepackage{subfig}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -479,7 +480,7 @@ Per approfondire i risultati ottenuti modificando il numero di neuroni nelle ret
 \resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
-    xlabel = {Numero di neuroni},
+    xlabel = {Numero di layer nascosti},
     ylabel = {Accuracy},
     grid = major,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
@@ -506,7 +507,7 @@ Per approfondire i risultati ottenuti modificando il numero di neuroni nelle ret
 \resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
-    xlabel = {Numero di neuroni},
+    xlabel = {Numero di layer nascosti},
     ylabel = {Parametri/training data},
     grid = major,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
@@ -548,7 +549,7 @@ Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature
 \centering
 \subfloat{
 \centering
-\resizebox{0.5\textwidth}{!}{
+\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
 title={Triangolare},
@@ -574,7 +575,7 @@ table [ y error index=2] {dati/temperature_tr};
 }
 \subfloat{
 \centering
-\resizebox{0.5\textwidth}{!}{
+\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
 title={Honeycomb},
