@@ -421,6 +421,9 @@ Infine per sistemi su reticolo di lato $80$ si osserva \dots
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_tr};
 \addlegendentry{6nn 80x80}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_hc};
+\addlegendentry{3nn 80x80}
 \end{axis}
 \end{tikzpicture}
 \label{fig:varNN}
