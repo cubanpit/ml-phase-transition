@@ -31,6 +31,7 @@
 \usepackage{subfig}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -48,7 +49,7 @@
   },
   neuron missing/.style={
     draw=none,
-    scale=4,
+    scale=2,
     text height=0.333cm,
     execute at begin node=\color{black}$\vdots$
   },
@@ -321,7 +322,8 @@ I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici an
 
 \begin{figure}[!ht]
 \centering
-\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth, scale=0.9]
+\resizebox{0.7\textwidth}{!}{
+\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth, scale=1]
 
 \foreach \m/\l [count=\y] in {1,2,missing,3}
   \node [every neuron/.try, neuron \m/.try] (input-\m) at (0,2.5-\y*1.35) {};
@@ -329,9 +331,15 @@ I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici an
 \foreach \m [count=\y] in {1,2,missing,3}
   \node [every neuron/.try, neuron \m/.try ] (hidden-\m) at (2,2.5-\y*1.35) {};
 
-\node [circle,fill,inner sep=1.5pt] at (2.9166,2.5-2*1.35) {};
-\node [circle,fill,inner sep=1.5pt] at (3.25,2.5-2*1.35) {};
-\node [circle,fill,inner sep=1.5pt] at (3.5833,2.5-2*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (2.9166,2.5-1*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (3.25,2.5-1*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (3.5833,2.5-1*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (2.9166,2.5-2*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (3.25,2.5-2*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (3.5833,2.5-2*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (2.9166,2.5-4*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (3.25,2.5-4*1.35) {};
+\node [circle,fill,inner sep=0.75pt] at (3.5833,2.5-4*1.35) {};
 \node [every neuron/.try, neuron missing/.try ] (hidden-missing) at (3.25,2.5-3*1.35) {};
   
 \foreach \m [count=\y] in {1,2,missing,3}
@@ -368,6 +376,7 @@ I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici an
 \node [align=center, above] at (6.5,2) {Layer \\ di Output};
 
 \end{tikzpicture}
+}
 \caption{Schema di una rete neuronale \emph{feed forward} a più layer nascosti \emph{fully connected}.}
 \label{fig:ffn}
 \end{figure}
@@ -479,7 +488,7 @@ Per approfondire i risultati ottenuti modificando il numero di neuroni nelle ret
 \resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
-    xlabel = {Numero di neuroni},
+    xlabel = {Numero di layer nascosti},
     ylabel = {Accuracy},
     grid = major,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
@@ -512,7 +521,7 @@ Per approfondire i risultati ottenuti modificando il numero di neuroni nelle ret
 \resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
-    xlabel = {Numero di neuroni},
+    xlabel = {Numero di layer nascosti},
     ylabel = {Parametri/training data},
     grid = major,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
@@ -557,7 +566,7 @@ Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature
 \centering
 \subfloat{
 \centering
-\resizebox{0.5\textwidth}{!}{
+\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
 title={Triangolare},
@@ -583,7 +592,7 @@ table [ y error index=2] {dati/temperature_tr};
 }
 \subfloat{
 \centering
-\resizebox{0.5\textwidth}{!}{
+\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
 title={Honeycomb},
