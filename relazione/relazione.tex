@@ -341,10 +341,10 @@ I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici an
 \node [circle,fill,inner sep=0.75pt] at (3.25,2.5-4*1.35) {};
 \node [circle,fill,inner sep=0.75pt] at (3.5833,2.5-4*1.35) {};
 \node [every neuron/.try, neuron missing/.try ] (hidden-missing) at (3.25,2.5-3*1.35) {};
-  
+
 \foreach \m [count=\y] in {1,2,missing,3}
   \node [every neuron/.try, neuron \m/.try ] (shidden-\m) at (4.5,2.5-\y*1.35) {};
-  
+
 \foreach \m [count=\y] in {1,2}
   \node [every neuron/.try, neuron \m/.try ] (output-\m) at (6.5,1-\y) {};
 
@@ -402,9 +402,7 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 %	SECTION 4
 %----------------------------------------------------------------------------------------
 
-\section{Modello di Ising: risultati e conclusioni}
-
-\subsection{Impostazione dell'apprendimento}
+\section{Impostazione dell'apprendimento}
 
 \begin{figure}[!ht]
 \centering
@@ -418,10 +416,10 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
-\addplot+[mark=none, smooth]
+\addplot+[mark=none, smooth, ultra thick]
     table[x=epoch, y=acc] {dati/training_histo};
 \addlegendentry{Training accuracy}
-\addplot+[mark=none, smooth]
+\addplot+[mark=none, smooth, ultra thick]
     table[x=epoch, y=val_acc]{dati/training_histo};
 \addlegendentry{Validation accuracy}
 \end{axis}
@@ -439,10 +437,10 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[mark=none, smooth]
+\addplot+[mark=none, smooth, ultra thick]
     table[x=epoch, y=loss] {dati/training_histo};
 \addlegendentry{Training loss}
-\addplot+[mark=none, smooth]
+\addplot+[mark=none, smooth, ultra thick]
     table[x=epoch, y=val_loss] {dati/training_histo};
 \addlegendentry{Validation loss}
 \end{axis}
@@ -450,8 +448,27 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 \label{fig:loss_histo}
 }
 }
-\caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
+\caption{Risultati dell'apprendimento di una rete \emph{feed forward} a singolo layer \emph{fully connected} da 100 neuroni. I dati utilizzati sono relativi ad un modello di Ising su reticolo quadrato di lato 30.}
 \end{figure}
+
+Il primo passo nel lavoro di creazione della rete è stato valutare se questa può apprendere efficacemente da un insieme di dati sufficientemente vasto.
+Dopo aver generato circa \num{100000} dati per l'apprendimento questi sono stati divisi in \emph{training set} e \emph{validation set} in una percentuale rispettivamente dell'$80\%$ e del $20\%$.
+Attraverso il \emph{validation set} è possibile stimare le performance della rete con l'avanzare del processo di apprendimento e capire se sta avvenendo un \emph{overfit}.
+
+Lasciando apprendere la rete liberamente si è arrivati facilmente in situazioni in cui questa apprendeva caratteristiche chiaramente non generalizzabili ai dati esterni al \emph{training set}.
+%TODO: figura curva bella bella di overfit, da fare
+Per risolvere il problema sono stati introdotti dei regolarizzatori come L2, che limita la libertà di evoluzione dei pesi della rete, o come i layer \emph{dropout}, che disattiva alcuni nodi della rete in modo casuale; in generale questi metodi riescono ad impedire la costruzione di un modello perfetto per il \emph{training set} ed inevitabilmente meno generalizzabile.
+Un altro utile strumento per la prevenzione del'\emph{overfit} è l'\emph{early stop}, un metodo per interrompere in modo automatico l'apprendimento della rete una volta che le sue prformance, valutate sul \emph{validation set}, siano sufficientemente stabili.
+Applicando questi strumenti sono stati ottenuti ottimi risultati nell'apprendimento di sistemi di Ising e XY.
+%TODO: figura curva bella bella senza overfit
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION 5
+%----------------------------------------------------------------------------------------
+
+\section{Modello di Ising: risultati e conclusioni}
+
 \subsection{Valutazione dei parametri della rete}
 Per meglio valutare il contributo dei diversi parametri della rete sono stati generati diversi modelli, eseguendo la fase di apprendimento sullo stesso \emph{training set} e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
 
@@ -526,6 +543,7 @@ Infine per sistemi su reticolo di lato $80$ si osserva \dots
 }
 \caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
 \end{figure}
+
 \begin{figure}[!ht]
 \centering
 \subfloat{
@@ -559,7 +577,7 @@ Infine per sistemi su reticolo di lato $80$ si osserva \dots
 \addlegendentry{3nn 80x80}
 \end{axis}
 \end{tikzpicture}
-\label{fig:varNN}
+\label{fig:varNN2}
 }
 }
 \subfloat{
@@ -584,11 +602,12 @@ Infine per sistemi su reticolo di lato $80$ si osserva \dots
 \addlegendentry{80x80}
 \end{axis}
 \end{tikzpicture}
-\label{fig:varparam}
+\label{fig:varparam2}
 }
 }
 \caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
 \end{figure}
+
 \subsubsection{Diverso numero di layer}
 Per approfondire i risultati ottenuti modificando il numero di neuroni nelle reti a singolo layer, è stata cambiata la geometria della stessa variando il numero di layer nascosti, sempre su reticoli di lato $30$, $50$ e $80$, e tenendo il numero di neuroni per layer, costante pari a $10$.
 
@@ -729,7 +748,12 @@ table [ y error index=2] {dati/temperature_hc};
 \caption{Interpolazione temperatura}
 \end{figure}
 
+%----------------------------------------------------------------------------------------
+%	LAST SECTION
+%----------------------------------------------------------------------------------------
+
 \section{Modello XY: risultati e conclusioni}
+
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
