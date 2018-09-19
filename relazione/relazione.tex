@@ -404,6 +404,54 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 
 \section{Modello di Ising: risultati e conclusioni}
 
+\subsection{Impostazione dell'apprendimento}
+
+\begin{figure}[!ht]
+\centering
+\subfloat{
+\resizebox{0.45\textwidth}{!}{
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel = {Epoche},
+    ylabel = {Accuracy},
+    grid = major,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
+]
+\addplot+[mark=none, smooth]
+    table[x=epoch, y=acc] {dati/training_histo};
+\addlegendentry{Training accuracy}
+\addplot+[mark=none, smooth]
+    table[x=epoch, y=val_acc]{dati/training_histo};
+\addlegendentry{Validation accuracy}
+\end{axis}
+\end{tikzpicture}
+\label{fig:acc_histo}
+}
+}
+\subfloat{
+\resizebox{0.45\textwidth}{!}{
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel = {Epoche},
+    ylabel = {Loss},
+    grid = major,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[mark=none, smooth]
+    table[x=epoch, y=loss] {dati/training_histo};
+\addlegendentry{Training loss}
+\addplot+[mark=none, smooth]
+    table[x=epoch, y=val_loss] {dati/training_histo};
+\addlegendentry{Validation loss}
+\end{axis}
+\end{tikzpicture}
+\label{fig:loss_histo}
+}
+}
+\caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
+\end{figure}
 \subsection{Valutazione dei parametri della rete}
 Per meglio valutare il contributo dei diversi parametri della rete sono stati generati diversi modelli, eseguendo la fase di apprendimento sullo stesso \emph{training set} e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
 
@@ -478,7 +526,69 @@ Infine per sistemi su reticolo di lato $80$ si osserva \dots
 }
 \caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
 \end{figure}
-
+\begin{figure}[!ht]
+\centering
+\subfloat{
+\resizebox{0.45\textwidth}{!}{
+\begin{tikzpicture}
+\begin{axis}[
+    xmode=log,
+    xlabel = {Numero di neuroni},
+    ylabel = {Accuracy},
+    grid = major,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
+]
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_tr};
+\addlegendentry{6nn 30x30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_hc};
+\addlegendentry{3nn 30x30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_tr};
+\addlegendentry{6nn 50x50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_hc};
+\addlegendentry{3nn 50x50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_tr};
+\addlegendentry{6nn 80x80}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_hc};
+\addlegendentry{3nn 80x80}
+\end{axis}
+\end{tikzpicture}
+\label{fig:varNN}
+}
+}
+\subfloat{
+\resizebox{0.45\textwidth}{!}{
+\begin{tikzpicture}
+\begin{axis}[
+    xmode=log,
+    xlabel = {Numero di neuroni},
+    ylabel = {Parametri/training data},
+    grid = major,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north west,
+]
+\addplot+[line]
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_900};
+\addlegendentry{30x30}
+\addplot+[line]
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_2500};
+\addlegendentry{50x50}
+\addplot+[line]
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_6400};
+\addlegendentry{80x80}
+\end{axis}
+\end{tikzpicture}
+\label{fig:varparam}
+}
+}
+\caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
+\end{figure}
 \subsubsection{Diverso numero di layer}
 Per approfondire i risultati ottenuti modificando il numero di neuroni nelle reti a singolo layer, è stata cambiata la geometria della stessa variando il numero di layer nascosti, sempre su reticoli di lato $30$, $50$ e $80$, e tenendo il numero di neuroni per layer, costante pari a $10$.
 
