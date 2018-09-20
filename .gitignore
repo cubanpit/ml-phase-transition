@@ -5,6 +5,8 @@
 # data files
 *.dat
 *.data
+*.backup
+*.old
 # output files for simulation debug
 *.debug
 # editor swap files

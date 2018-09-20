@@ -32,6 +32,13 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
+% axis style, ticks, etc
+\pgfplotsset{every axis/.append style={
+                    label style={font=\small},
+                    tick label style={font=\footnotesize},  
+                    legend style={font=\scriptsize}  
+                    }}
+
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -103,7 +110,7 @@ Il lavoro prende spunto da diversi articoli pubblicati negli ultimi due anni che
 \section{Sistemi fisici e simulazioni}
 In questo lavoro sono stati simulati e studiati due sistemi classici della meccanica statistica su reticolo bidimensionale:  il modello di Ising e il modello XY.
 
-\subsection{Modello di Ising}
+\subsection{Modello di Ising}\label{sec:simIsing}
 Il modello di Ising descrive il comportamento di spin su reticolo che assumono valori $\{+1;-1\}$ e interagiscono attraverso un'hamiltoniana, la cui forma più semplice, utilizzata in questo lavoro, è
 \begin{equation}
 H=- \sum_{\langle i~j\rangle} \sigma_i\sigma_j
@@ -383,8 +390,12 @@ I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici an
 
 Per classificare le configurazioni di un modello di Ising è stata utilizzata una rete neuronale \emph{feed forward} a uno o più layer nascosti, uno schema generico della rete è rappresentato in Figura \ref{fig:ffn}.
 Al layer di input vengono fornite le configurazioni degli spin del sistema fisico nella forma di un vettore di elementi $\{+1;-1\}$, la dimensione di questo vettore dipende ovviamente dalla dimensione del reticolo di Ising utilizzato, nel caso del presente lavoro spazia da un minimo di 400 elementi (reticolo $20\times20$) ad un massimo di 8100 elementi (reticolo $90\times90$).
+Le etichette con cui vengono classificate le configurazioni, e che vengono fornite per l'apprendimento, sono variabili binarie che indicano se il sistema si trova sopra o sotto la temperatura di transizione.
+
 Si tratta di un problema di classificazione binaria, è quindi possibile utilizzare uno o due nodi nel layer di output, per una questione di comodità nell'analisi dei risultati fisici è stato utilizzato un layer di output a due nodi.
 I nodi di output restituiscono la probabilità che la configurazione fisica sia in una fase ferromagnetica o in quella paramagnetica, le due probabilità sommano quindi a 1.
+
+La rete viene sempre allenata su configurazioni del modello di Ising su reticolo quadrato classico, ossia con 4 primi vicini; se riesce ad apprendere correttamente la transizione di fase dovrebbe essere in grado di classificare adeguatamente anche le configurazioni dei modelli a lei sconosciuti, come Ising su reticolo triangolare e honeycomb. 
 
 \subsection{Modello XY}
 
@@ -395,7 +406,8 @@ I nodi di output restituiscono la probabilità che la configurazione fisica sia 
 \end{figure}
 
 Il metodo migliore per classificare un modello XY risulta essere una rete convoluzionale \cite{melko}, uno schema di una rete di questo tipo effettivamente utilizzata in questo lavoro è rappresentato in Figura \ref{fig:cnn}.
-Il layer di input può ricevere come argomento la semplice configurazione degli spin, quindi una matrice di valori reali nell'intervallo $[0,2\pi)$, oppure la configurazione espressa in vortici e antivortici, che appare come una matrice con valori $\{-1;0;+1\}$.
+Il layer di input può ricevere come argomento la semplice configurazione degli spin, quindi una matrice di valori reali nell'intervallo $[0,2\pi)$, oppure la configurazione espressa in vortici e antivortici, che appare come una matrice con valori $\{-1;0;+1\}$ che rappresentano rispettivamente la presenza di un antivortice, l'assenza di strutture e la presenza di un vortice.
+Come nel caso di Ising le etichette indicano se la temperatura del sistema si trova sopra o sotto la temperatura di transizone e il layer di output ha due nodi, che rappresentano le probabilità complementari di essere in una delle due fasi.
 
 
 %----------------------------------------------------------------------------------------
@@ -407,48 +419,48 @@ Il layer di input può ricevere come argomento la semplice configurazione degli 
 \begin{figure}[!ht]
 \centering
 \subfloat{
-\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Epoche},
     ylabel = {Accuracy},
     grid = major,
+    width=0.5\textwidth,
+    height=0.5\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
 \addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=acc] {dati/training_histo};
+    table[x=epoch, y=acc] {dati/training_histo_2};
 \addlegendentry{Training accuracy}
 \addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=val_acc]{dati/training_histo};
+    table[x=epoch, y=val_acc]{dati/training_histo_2};
 \addlegendentry{Validation accuracy}
 \end{axis}
 \end{tikzpicture}
 \label{fig:acc_histo}
 }
-}
 \subfloat{
-\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Epoche},
     ylabel = {Loss},
     grid = major,
+    width=0.5\textwidth,
+    height=0.5\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
 \addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=loss] {dati/training_histo};
+    table[x=epoch, y=loss] {dati/training_histo_2};
 \addlegendentry{Training loss}
 \addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=val_loss] {dati/training_histo};
+    table[x=epoch, y=val_loss] {dati/training_histo_2};
 \addlegendentry{Validation loss}
 \end{axis}
 \end{tikzpicture}
 \label{fig:loss_histo}
 }
-}
-\caption{Risultati dell'apprendimento di una rete \emph{feed forward} a singolo layer \emph{fully connected} da 100 neuroni. I dati utilizzati sono relativi ad un modello di Ising su reticolo quadrato di lato 30.}
+\caption{Risultati dell'apprendimento di una rete \emph{feed forward} a singolo layer \emph{fully connected} da 100 neuroni. I dati utilizzati sono relativi ad un modello di Ising su reticolo quadrato di lato 30. Ogni punto è ottenuto come media della quantità considerata su 10 modelli allenati sullo stesso training set.}
 \end{figure}
 
 Il primo passo nel lavoro di creazione della rete è stato valutare se questa può apprendere efficacemente da un insieme di dati sufficientemente vasto.
@@ -457,11 +469,16 @@ Attraverso il \emph{validation set} è possibile stimare le performance della re
 
 Lasciando apprendere la rete liberamente si è arrivati facilmente in situazioni in cui questa apprendeva caratteristiche chiaramente non generalizzabili ai dati esterni al \emph{training set}.
 %TODO: figura curva bella bella di overfit, da fare
-Per risolvere il problema sono stati introdotti dei regolarizzatori come L2, che limita la libertà di evoluzione dei pesi della rete, o come i layer \emph{dropout}, che disattiva alcuni nodi della rete in modo casuale; in generale questi metodi riescono ad impedire la costruzione di un modello perfetto per il \emph{training set} ed inevitabilmente meno generalizzabile.
-Un altro utile strumento per la prevenzione del'\emph{overfit} è l'\emph{early stop}, un metodo per interrompere in modo automatico l'apprendimento della rete una volta che le sue prformance, valutate sul \emph{validation set}, siano sufficientemente stabili.
+Per risolvere il problema sono stati introdotti dei regolarizzatori come L2, che limita la libertà di evoluzione dei pesi della rete, o come i layer \emph{dropout}, che disattivano alcuni nodi della rete in modo casuale; in generale questi metodi riescono ad impedire la costruzione di un modello perfetto per il \emph{training set} ed inevitabilmente meno generalizzabile.
+Un altro utile strumento per la prevenzione dell'\emph{overfit} è l'\emph{early stop}, un metodo per interrompere in modo automatico l'apprendimento della rete una volta che le sue performance, valutate sul \emph{validation set}, siano sufficientemente stabili.
 Applicando questi strumenti sono stati ottenuti ottimi risultati nell'apprendimento di sistemi di Ising e XY.
 %TODO: figura curva bella bella senza overfit
 
+\subsection{Statistica sui dati}
+Per ottenere in ogni analisi una stima solida delle variabili misurate, come la test accuracy, sono stati generati test set da \num{100000} elementi che vengono divisi in 10 insiemi più piccoli su cui ogni modello viene valutato.
+Allo stesso modo, per tenere conto della componente stocastica presente nel processo di apprendimento della rete, sono stati generati 10 modelli su ciascun training set.
+Questo procedimento genera quindi 10 misure per ciascuno dei 10 modelli, per un totale di 100 misure, da cui viene estratta la media e l'errore, come deviazione standard della media.
+Questo sarà lo standard utilizzato in tutte le analisi successive.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 5
@@ -470,212 +487,263 @@ Applicando questi strumenti sono stati ottenuti ottimi risultati nell'apprendime
 \section{Modello di Ising: risultati e conclusioni}
 
 \subsection{Valutazione dei parametri della rete}
-Per meglio valutare il contributo dei diversi parametri della rete sono stati generati diversi modelli, eseguendo la fase di apprendimento sullo stesso \emph{training set} e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
+Per meglio valutare il contributo dei diversi parametri della rete sono stati generati più modelli, eseguendo la fase di apprendimento sullo stesso training set e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
 
 \subsubsection{Diverso numero di neuroni}
-La prima analisi è stata effettuata allenando la rete su reticoli di lato $30$, $50$ e $80$, e variando il numero di neuroni ($3$, $10$, $50$, $100$ e $200$) per ciascun reticolo. Per avere una stima più stabile della capacità di apprendimento della rete e ridurre al minimo la componente stocastica del risultato, sono stati generati $10$ modelli sul medesimo \emph{training set} per ciascuna tipologia di reticolo e rete, mediando i risultati di \emph{test accuracy}.
-Nel grafico in figura \ref{fig:varNN} sono riportati i valori mediati di \emph{test accuracy} al variare del numero di neuroni (in scala logaritmica), per i diversi reticoli.
-Si osserva che per il reticolo di lato $30$ già una rete a $10$ neuroni riesca a classificare in maniera soddisfacente ($\sim 98\%$??) la fase del sistema, mentre aumentando il numero di neuroni a $200$ vi sia un crollo nelle performance.
-Aumentando il lato del reticolo a $50$, le performance aumentano da $50$ neuroni in su, per poi diminure a \dots neuroni.
-Infine per sistemi su reticolo di lato $80$ si osserva \dots
-%TODO: completare man mano che si sceglie come procedere
+La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
+L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
+Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
+
+Si osserva che per il reticolo di lato 30 una rete a 10 neuroni è sufficiente per classificare in maniera adeguata la fase del sistema, raggiungendo una test accuracy circa del $98\%$.
+Per reticoli di maggiori dimensioni sono necessari almeno 50 neuroni per raggiungre livelli di test accuracy superiori al $90\%$.
+Per tutte le dimensioni considerate aumentando il numero di neuroni a 1000 si osserva un crollo nelle performance per i reticoli honeycomb e quadrato, mentre per il reticolo triangolare la rete continua a classificare in modo soddisfacente.
+Per limiti computazionali non sono state realizzate reti con un numero di neuroni superiore, quindi non è stato possibile chiarire l'andamento complessivo per il reticolo triangolare.
+Si osserva che una differenza tra la configurazione su reticolo triangolare e gli altri due sistemi, oltre alla geometria del reticolo, è l'algoritmo utilizzato per la simulazione del sistema, come riportato in sezione \ref{sec:simIsing}.
+%TODO aggiungere appendice con tabelle valori
+%TODO approfondire la cosa
 
 \begin{figure}[!ht]
 \centering
 \subfloat{
-\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
+    title=Honeycomb,
     xmode=log,
     xlabel = {Numero di neuroni},
-    ylabel = {Accuracy},
+    ylabel = {Test accuracy},
     grid = major,
+    width=0.36\textwidth,
+    height=0.44\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
+]
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_hc};
+\addlegendentry{L30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_hc};
+\addlegendentry{L50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_hc};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Quadrato,
+    xmode=log,
+    xlabel = {Numero di neuroni},
+    grid = major,
+    width=0.36\textwidth,
+    height=0.44\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
+]
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_sq};
+\addlegendentry{L30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_sq};
+\addlegendentry{L50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_sq};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Triangolare,
+    xmode=log,
+    xlabel = {Numero di neuroni},
+    grid = major,
+    width=0.36\textwidth,
+    height=0.44\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_tr};
-\addlegendentry{6nn 30x30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_hc};
-\addlegendentry{3nn 30x30}
+\addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_tr};
-\addlegendentry{6nn 50x50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_hc};
-\addlegendentry{3nn 50x50}
+\addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_tr};
-\addlegendentry{6nn 80x80}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_hc};
-\addlegendentry{3nn 80x80}
+\addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-\label{fig:varNN}
 }
-}
-\subfloat{
-\resizebox{0.45\textwidth}{!}{
-\begin{tikzpicture}
-\begin{axis}[
-    xmode=log,
-    xlabel = {Numero di neuroni},
-    ylabel = {Parametri/training data},
-    grid = major,
-    major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = north west,
-]
-\addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_900};
-\addlegendentry{30x30}
-\addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_2500};
-\addlegendentry{50x50}
-\addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_6400};
-\addlegendentry{80x80}
-\end{axis}
-\end{tikzpicture}
-\label{fig:varparam}
-}
-}
-\caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\subfloat{
-\resizebox{0.45\textwidth}{!}{
-\begin{tikzpicture}
-\begin{axis}[
-    xmode=log,
-    xlabel = {Numero di neuroni},
-    ylabel = {Accuracy},
-    grid = major,
-    major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = south east,
-]
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_tr};
-\addlegendentry{6nn 30x30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_hc};
-\addlegendentry{3nn 30x30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_tr};
-\addlegendentry{6nn 50x50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_hc};
-\addlegendentry{3nn 50x50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_tr};
-\addlegendentry{6nn 80x80}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_hc};
-\addlegendentry{3nn 80x80}
-\end{axis}
-\end{tikzpicture}
-\label{fig:varNN2}
-}
-}
-\subfloat{
-\resizebox{0.45\textwidth}{!}{
-\begin{tikzpicture}
-\begin{axis}[
-    xmode=log,
-    xlabel = {Numero di neuroni},
-    ylabel = {Parametri/training data},
-    grid = major,
-    major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = north west,
-]
-\addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_900};
-\addlegendentry{30x30}
-\addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_2500};
-\addlegendentry{50x50}
-\addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_6400};
-\addlegendentry{80x80}
-\end{axis}
-\end{tikzpicture}
-\label{fig:varparam2}
-}
-}
-\caption{Performance della rete \emph{feed forward} a singolo layer \emph{fully connected} sul modello di Ising.}
+\caption{Performance della rete feed forward a singolo layer fully connected sul modello di Ising.}
+\label{fig:NN}
 \end{figure}
 
 \subsubsection{Diverso numero di layer}
-Per approfondire i risultati ottenuti modificando il numero di neuroni nelle reti a singolo layer, è stata cambiata la geometria della stessa variando il numero di layer nascosti, sempre su reticoli di lato $30$, $50$ e $80$, e tenendo il numero di neuroni per layer, costante pari a $10$.
 
 \begin{figure}[!ht]
 \centering
 \subfloat{
-\resizebox{0.45\textwidth}{!}{
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel = {Numero di neuroni},
+    ylabel = {\# parametri / \# training data},
+    grid = major,
+    width=0.5\textwidth,
+    height=0.5\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north west,
+]
+\addplot+[line]
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_900};
+\addlegendentry{L30}
+\addplot+[line]
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_2500};
+\addlegendentry{L50}
+\addplot+[line]
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_6400};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Numero di layer nascosti},
-    ylabel = {Accuracy},
+    ymax=1.5,
     grid = major,
+    width=0.5\textwidth,
+    height=0.5\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north west,
+]
+\addplot+[line]
+    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_900};
+\addlegendentry{L30}
+\addplot+[line]
+    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_2500};
+\addlegendentry{L50}
+\addplot+[line]
+    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_6400};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+}
+\caption{Rapporto tra il numero di parametri della rete e il numero di elementi del training set utilizzato per l'apprendimento.}
+\label{fig:par}
+\end{figure}
+
+In questa analisi sono state allenate reti aventi numero di layer nascosti pari a 1, 2, 3, 5 e 10; ciascun layer è popolato da 10 neuroni.
+
+Il primo grafico riportato in figura \ref{fig:par} presenta l'andamento del numero di parametri normalizzato sul numero di training data rispetto al numero di neuroni per reti a un layer nascosto.
+Come si può notare il numero di parametri segue un andamento lineare e cresce velocemente.
+Diversamente, nel secondo grafico in figura \ref{fig:par} si osserva che aumentando il numero di layer il numero di parametri cresce sempre linearmente ma in maniera molto meno marcata, la crescita è rappresentata rispetto al numero di layer nascosti che è proporzionale al numero totale di neuroni.
+
+Un buon equilibrio tra il numero di parametri da apprendere ed il numero di dati utilizzati per l'apprendimento porta tendenzialmente ad ottenere migliori risultati.
+Confrontando i valori in tabella \ref{tab:NNLN} si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+L & 1x100 test accuracy & 2x10 test accuracy\\
+\midrule
+30 & \num{0.981 \pm 0.004} & \num{0.979 \pm 0.004} \\
+50 & \num{0.973 \pm 0.006} & \num{0.988 \pm 0.003} \\
+80 & \num{0.994 \pm 0.002} & \num{0.993 \pm 0.002} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Test accuracy valutata su una rete a singolo layer da 100 neuroni e su una rete a 2 layer da 10 neuroni ciascuno. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\label{tab:NNLN}
+\end{table}
+
+Dai risultati di questa analisi si può osservare come le performance sul modello di Ising con reticolo triangolare siano consistenti con quelle degli altri modelli, al contrario di quanto riportato nella sezione precedente.
+%TODO: da approfondire
+
+\begin{figure}[!ht]
+\centering
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Honeycomb,
+    xlabel = {Numero di layer nascosti},
+    grid = major,
+    width=0.36\textwidth,
+    height=0.44\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_900_hc};
-\addlegendentry{3nn 30x30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_900_tr};
-\addlegendentry{6nn 30x30}
+\addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_hc};
-\addlegendentry{3nn 50x50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_tr};
-\addlegendentry{6nn 50x50}
+\addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_hc};
-\addlegendentry{3nn 80x80}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_tr};
-\addlegendentry{6nn 80x80}
+\addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-\label{fig:varLN}
-}
 }
 \subfloat{
-\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
+    title=Quadrato,
     xlabel = {Numero di layer nascosti},
-    ylabel = {Parametri/training data},
     grid = major,
+    width=0.36\textwidth,
+    height=0.44\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = south east,
+    legend pos = north east,
 ]
-\addplot+[line]
-    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_900};
-\addlegendentry{30x30}
-\addplot+[line]
-    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_2500};
-\addlegendentry{50x50}
-\addplot+[line]
-    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_6400};
-\addlegendentry{80x80}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_900_sq};
+\addlegendentry{L30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_sq};
+\addlegendentry{L50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_sq};
+\addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
 }
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Triangolare,
+    xlabel = {Numero di layer nascosti},
+    ylabel = {Test accuracy},
+    grid = major,
+    width=0.36\textwidth,
+    height=0.44\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_900_tr};
+\addlegendentry{L30}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_tr};
+\addlegendentry{L50}
+\addplot+[line, error bars/.cd, y dir=both, y explicit]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_tr};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
 }
-\caption{Performance della rete \emph{feed forward} a layer multipli \emph{fully connected} da dieci neuroni ciascuno sul modello di Ising.}
+\caption{Performance della rete feed forward a layer multipli fully connected da dieci neuroni ciascuno sul modello di Ising.}
+\label{fig:LN}
 \end{figure}
 
 \subsection{Stima della temperatura critica}
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione. Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo. Per stimare il valore teorico è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare della lato del reticolo (in numero di spin) da $20$ a $90$, ogni $10$, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$.
 %TODO provare a cercare la legge
 La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $20\%$ del training set per la validazione) a reticolo quadrato, e testata su set di \num{100000} a reticolo sia triangolare che honeycomb: ciascun valore di temperatura riportato è dato dalla media di $10$ temperature, i cui valori sono classificati da $10$ diverse reti scelte in modo da avere una \emph{test accuracy} alta e una \emph{test loss} bassa. I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
+
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{llllllll}
@@ -689,23 +757,25 @@ FeedFw & $1$ & $100$ & $100$ & Random & Sigmoidale & si & L$2$ $0.01$\\
 \caption{Parametri}
 \label{tab:ffnnpar}
 \end{table}
+
 Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature $T_L$ al variare del lato del reticolo, con le relative barre d'errore date dalla deviazione standard della media. Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e la retta che interpola tali temperature.
 
 \begin{figure}[!ht]
 \centering
 \subfloat{
 \centering
-\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
-title={Triangolare},
-xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
-ylabel={$T$ [\si{K}]},
-yticklabel style={/pgf/number format/fixed,
+    title={Triangolare},
+    xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+    ylabel={$T$ [\si{K}]},
+    yticklabel style={/pgf/number format/fixed,
                   /pgf/number format/precision=3},
-grid=major,
-major grid style={line width=.1pt, dashed, draw=gray!30},
-legend pos=north west
+    grid=major,
+    width=0.5\textwidth,
+    height=0.5\textwidth,
+    major grid style={line width=.1pt, dashed, draw=gray!30},
+    legend pos=north west
 ]
 \addplot[mark=none, red, thick] coordinates {(0.005,3.6410) (0.055,3.6410)};
 \addlegendentry{$T_c$}
@@ -718,20 +788,19 @@ table [ y error index=2] {dati/temperature_tr};
 \end{tikzpicture}
 \label{fig:Tlimit}
 }
-}
 \subfloat{
 \centering
-\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
 \begin{axis}[
-title={Honeycomb},
-xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
-ylabel={$T$ [\si{K}]},
-yticklabel style={/pgf/number format/fixed,
+    title={Honeycomb},
+    xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+    yticklabel style={/pgf/number format/fixed,
                   /pgf/number format/precision=3},
-grid=major,
-major grid style={line width=.1pt, dashed, draw=gray!30},
-legend pos=north west
+    grid=major,
+    width=0.5\textwidth,
+    height=0.5\textwidth,
+    major grid style={line width=.1pt, dashed, draw=gray!30},
+    legend pos=north west
 ]
 \addplot[mark=none, red, thick] coordinates {(0.005,1.5187) (0.055,1.5187)};
 \addlegendentry{$T_c$}
@@ -743,7 +812,6 @@ table [ y error index=2] {dati/temperature_hc};
 \end{axis}
 \end{tikzpicture}
 \label{fig:Paramlimit}
-}
 }
 \caption{Interpolazione temperatura}
 \end{figure}
