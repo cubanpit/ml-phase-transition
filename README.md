@@ -4,7 +4,7 @@
 
 This is an exam project for a master course on ''Statistical Methods for Learning''.
 
-The repository include C++ simulations of physical systems and Python Tensorflow (Keras) code for the neural networks part.
+The repository include C++ simulations of physical systems and Python Keras/Tensorflow code for the neural networks part.
 
 Simulated physical systems:
 
@@ -14,6 +14,8 @@ Simulated physical systems:
  - XY model on square lattice, with 4 nearest neighbours (Wolff algorithm)
 
 ### Sources and References
+
+[Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/)
 
 [Carrasquilla J, Melko RG. 2017. ''Machine learning phases of matter''. Nature Physics.](https://doi.org/10.1038/nphys4035)
 
