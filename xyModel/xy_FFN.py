@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # Machine Learning programm written using TensorFlow
-# Data used to train the neural network come from a computer simulated 2D Ising
+# Data used to train the neural network come from a computer simulated XY
 #  model, the purpose is to identify critical phase transitions using a trained
 #  neural network, without feeding it with the order parameter.
 
@@ -22,10 +22,6 @@ parser.add_argument(
         "-lt", "--lattice_type",
         help="Test set lattice type: square (sq), triangular (tr),\
         honeycomb (hc), cubic (cb)", required=True)
-parser.add_argument(
-        "-nn", "--neurons_number",
-        help="Neurons number for FFN",
-        required=False, type=int, default=100)
 parser.add_argument(
         "-lm", "--load_models",
         help="Files '.h5' containing previously trained model(s)",
@@ -87,7 +83,7 @@ def read_data(input_set, critical_temp):
                 odd = False
 
             else:
-                configuration = np.fromstring(line, dtype=np.int8, sep=' ')
+                configuration = np.fromstring(line, dtype=np.float32, sep=' ')
                 configurations.append(configuration)
                 odd = True
 
@@ -103,21 +99,12 @@ def critical_temp(input_lattice):
     """Returns critical temperature for different lattice.
     """
 
-    square_temp = 2/np.log(1+np.sqrt(2))
-    triangular_temp = 4/np.log(3)
-    cubic_temp = 1/0.221654
-    honeycomb_temp = 1/0.658478
+    square_temp = 0.893
 
     if input_lattice == "sq":
         test_temp = square_temp
-    elif input_lattice == "tr":
-        test_temp = triangular_temp
-    elif input_lattice == "hc":
-        test_temp = honeycomb_temp
-    elif input_lattice == "cb":
-        test_temp = cubic_temp
     else:
-        raise SyntaxError("Use sq for square, tr for triangular and cb for cubic")
+        raise SyntaxError("Use sq for square")
 
     return test_temp
 
@@ -170,22 +157,26 @@ def intersection_pt(L1, L2):
 
 
 def build_model(data_shape, neurons_number):
-    """Build neural network model with given data shape and neurons number.
+    """Build neural network model with given data shape.
     """
 
-    model = keras.models.Sequential()
-    model.add(keras.layers.Dense(
+    model = keras.Sequential([
+        keras.layers.Dense(
             neurons_number,
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            #kernel_regularizer=keras.regularizers.l2(0.01),
-            input_shape=(data_shape,)))
-    model.add(keras.layers.Dense(
+            kernel_regularizer=keras.regularizers.l2(0.0001),
+            input_shape=(data_shape,)),
+        # keras.layers.Dropout(0.2),
+        keras.layers.Dense(
             2,
             activation=tf.nn.softmax,
+            # kernel_initializer=tf.constant_initializer(np.array([[2, 1, -1], [-2, -2, 1]])),
+            # bias_initializer=tf.constant_initializer(np.array([0, 0])))
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
-            bias_initializer=keras.initializers.RandomNormal(stddev=1)))
+            bias_initializer=keras.initializers.RandomNormal(stddev=1))
+        ])
 
     optimizer = tf.keras.optimizers.Adam(lr=0.0001)
 
@@ -212,7 +203,7 @@ def train_model(model, training_inputs, training_labels):
     return model.fit(
             training_inputs, training_labels,
             validation_split=0.2, epochs=500,
-            #callbacks=callbacks_list,
+            callbacks=callbacks_list,
             batch_size=100,
             shuffle=True, verbose=args.verbose)
 
@@ -229,11 +220,11 @@ if args.training_set is not None:
     else:
         save = True
 
-    if args.load_models is not None:
+    if args.load_model is not None:
         raise SyntaxError("You can not load a model and train a new one, choose\
                 between the two options.")
 else:
-    if args.load_models is None:
+    if args.load_model is None:
         raise SyntaxError("You must have a training set or \
                             a previously trained model.")
     else:
@@ -258,12 +249,14 @@ if train:
     train_magns, train_bin_temps, train_real_temps, train_configs \
         = read_data(train_set, critical_temp("sq"))
 
+    train_configs = train_configs / (2 * np.float32(np.pi))
+
     # number of training iterations
     n_models = 10
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
-        models.append(build_model(train_configs.shape[1], args.neurons_number))
+        models.append(build_model(train_configs.shape[1:]))
 
         # fit model on training data
         history = train_model(models[m], train_configs, train_bin_temps)
@@ -354,6 +347,8 @@ test_temp = critical_temp(args.lattice_type)
 test_set = args.test_set
 test_magns, test_bin_temps, test_real_temps, test_configs \
         = read_data(test_set, test_temp)
+
+test_configs = test_configs / (2 * np.float32(np.pi))
 
 # split test set in n_split sets, to compute statistical accuracy
 n_split = 10
