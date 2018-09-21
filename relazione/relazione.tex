@@ -35,8 +35,8 @@
 % axis style, ticks, etc
 \pgfplotsset{every axis/.append style={
                     label style={font=\small},
-                    tick label style={font=\footnotesize},  
-                    legend style={font=\scriptsize}  
+                    tick label style={font=\footnotesize},
+                    legend style={font=\scriptsize}
                     }}
 
 
@@ -66,22 +66,22 @@
 % link and reference config
 \usepackage{varioref}
 \usepackage{hyperref}
-\hypersetup{%                                                                    
-    pdfpagemode={UseOutlines},                                                      
-    bookmarksopen,                                                               
-    pdfstartview={FitH},                                                         
-    colorlinks,                                                                  
-    linkcolor={black}, %COLORE DEI RIFERIMENTI AL TESTO                          
-    citecolor={black}, %COLORE DEI RIFERIMENTI ALLE CITAZIONI                    
-    urlcolor={black} %COLORI DEGLI URL                                           
-} 
+\hypersetup{%
+    pdfpagemode={UseOutlines},
+    bookmarksopen,
+    pdfstartview={FitH},
+    colorlinks,
+    linkcolor={black}, %COLORE DEI RIFERIMENTI AL TESTO
+    citecolor={black}, %COLORE DEI RIFERIMENTI ALLE CITAZIONI
+    urlcolor={black} %COLORI DEGLI URL
+}
 
 % compile tikz plots only once
-\usetikzlibrary{trees}                                                           
-\usetikzlibrary{external}                                                        
-\usepgfplotslibrary{external}                                                    
-\tikzexternalize[prefix=tex/]                                                    
-\usepgfplotslibrary{units} % L A TEX and plain TEX                               
+\usetikzlibrary{trees}
+\usetikzlibrary{external}
+\usepgfplotslibrary{external}
+\tikzexternalize[prefix=tex/]
+\usepgfplotslibrary{units} % L A TEX and plain TEX
 \usetikzlibrary{pgfplots.units} % L A TEX and plain TEX
 
 % create tables from file
@@ -424,7 +424,7 @@ Le etichette con cui vengono classificate le configurazioni, e che vengono forni
 Si tratta di un problema di classificazione binaria, è quindi possibile utilizzare uno o due nodi nel layer di output, per una questione di comodità nell'analisi dei risultati fisici è stato utilizzato un layer di output a due nodi.
 I nodi di output restituiscono la probabilità che la configurazione fisica sia in una fase ferromagnetica o in quella paramagnetica, le due probabilità sommano quindi a 1.
 
-La rete viene sempre allenata su configurazioni del modello di Ising su reticolo quadrato classico, ossia con 4 primi vicini; se riesce ad apprendere correttamente la transizione di fase dovrebbe essere in grado di classificare adeguatamente anche le configurazioni dei modelli a lei sconosciuti, come Ising su reticolo triangolare e honeycomb. 
+La rete viene sempre allenata su configurazioni del modello di Ising su reticolo quadrato classico, ossia con 4 primi vicini; se riesce ad apprendere correttamente la transizione di fase dovrebbe essere in grado di classificare adeguatamente anche le configurazioni dei modelli a lei sconosciuti, come Ising su reticolo triangolare e honeycomb.
 
 \subsection{Modello XY}
 
@@ -663,32 +663,15 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \label{fig:par}
 \end{figure}
 
-In questa analisi sono state allenate reti aventi numero di layer nascosti pari a 1, 2, 3, 5 e 10; ciascun layer è popolato da 10 neuroni.
-
 Il primo grafico riportato in figura \ref{fig:par} presenta l'andamento del numero di parametri normalizzato sul numero di training data rispetto al numero di neuroni per reti a un layer nascosto.
 Come si può notare il numero di parametri segue un andamento lineare e cresce velocemente.
 Diversamente, nel secondo grafico in figura \ref{fig:par} si osserva che aumentando il numero di layer il numero di parametri cresce sempre linearmente ma in maniera molto meno marcata, la crescita è rappresentata rispetto al numero di layer nascosti che è proporzionale al numero totale di neuroni.
 
 Un buon equilibrio tra il numero di parametri da apprendere ed il numero di dati utilizzati per l'apprendimento porta tendenzialmente ad ottenere migliori risultati.
-Confrontando i valori in tabella \ref{tab:NNLN} si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
-
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{rcc}
-\toprule
-L & 1x100 test accuracy & 2x10 test accuracy\\
-\midrule
-30 & \num{0.981 \pm 0.004} & \num{0.979 \pm 0.004} \\
-50 & \num{0.973 \pm 0.006} & \num{0.988 \pm 0.003} \\
-80 & \num{0.994 \pm 0.002} & \num{0.993 \pm 0.002} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Test accuracy valutata su una rete a singolo layer da 100 neuroni e su una rete a 2 layer da 10 neuroni ciascuno. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
-\label{tab:NNLN}
-\end{table}
-
-Dai risultati di questa analisi si può osservare come le performance sul modello di Ising con reticolo triangolare siano consistenti con quelle degli altri modelli, al contrario di quanto riportato nella sezione precedente.
+%TODO verificare
+Perciò è stata effettuata una seconda analisi cercando di mantenere un numero di parametri rispetto al numero di dati costante per ciascun reticolo, allenando reti a più layer nascosti, pari a  1, 2, 3, 5 e 10 con ciascun layer popolato da 10 neuroni.
+I risultati, riportati nei grafici di \ref{fig:LN}, mostrano che si ottiene un valore ottimale di test accuracy per tutte le tipologie di reticolo classificando con reti a 2 layer. Aggiungendo un layer le performance si abbassano notevolmente, mentre per i reticoli di lato 30 si ottengono buoni risultati anche per reti aventi  un singolo layer.
+Inoltre dai risultati di questa analisi si può osservare come le performance sul modello di Ising con reticolo triangolare siano consistenti con quelle degli altri modelli, al contrario di quanto riportato nella sezione precedente.
 %TODO: da approfondire
 
 \begin{figure}[!ht]
@@ -698,6 +681,7 @@ Dai risultati di questa analisi si può osservare come le performance sul modell
 \begin{axis}[
     title=Honeycomb,
     xlabel = {Numero di layer nascosti},
+    ylabel = {Test accuracy},
     grid = major,
     width=0.35\textwidth,
     height=0.44\textwidth,
@@ -744,7 +728,6 @@ Dai risultati di questa analisi si può osservare come le performance sul modell
 \begin{axis}[
     title=Triangolare,
     xlabel = {Numero di layer nascosti},
-    ylabel = {Test accuracy},
     grid = major,
     width=0.35\textwidth,
     height=0.44\textwidth,
@@ -766,7 +749,46 @@ Dai risultati di questa analisi si può osservare come le performance sul modell
 \caption{Performance della rete feed forward a layer multipli fully connected da dieci neuroni ciascuno sul modello di Ising.}
 \label{fig:LN}
 \end{figure}
+
+Tuttavia confrontando i valori in tabella \ref{tab:NNLN} si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+L & 1x100 test accuracy & 2x10 test accuracy\\
+\midrule
+30 & \num{0.981 \pm 0.004} & \num{0.979 \pm 0.004} \\
+50 & \num{0.973 \pm 0.006} & \num{0.988 \pm 0.003} \\
+80 & \num{0.994 \pm 0.002} & \num{0.993 \pm 0.002} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Test accuracy valutata su una rete a singolo layer da 100 neuroni e su una rete a 2 layer da 10 neuroni ciascuno. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\label{tab:NNLN}
+\end{table}
+
 \subsubsection{Diverso numero di layer e neuroni}
+I risltati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
+
+Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+L & 1x70+1x30 test accuracy & 1x30+1x70 test accuracy\\
+\midrule
+30 & \num{0.979 \pm 0.004} & \num{0.979 \pm 0.004} \\
+50 & \num{0.988 \pm 0.003} & \num{0.988 \pm 0.003} \\
+80 & \num{0.993 \pm 0.002} & \num{0.990 \pm 0.004} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Test accuracy valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\label{tab:NNLN}
+\end{table}
+
 \subsubsection{Diversa funzione di attivazione}
 
 \subsection{Stima della temperatura critica}
