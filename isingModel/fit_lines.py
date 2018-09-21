@@ -27,7 +27,6 @@ with open(data_file, 'r') as input_file:
             sizes.append(int(data[0]))
             temps.append(float(data[1]))
             temps_e.append(float(data[2]))
-            print(str(1./int(data[0]))+" "+str(float(data[1]))+" "+str(float(data[2])))
 
 sizes = np.array(sizes)
 temps = np.array(temps)
@@ -46,7 +45,6 @@ print(
         "Predicted critical temperature : ",
         np.round(line[0], decimals=4), " +- ",
         np.round(np.sqrt(cov[0,0]), decimals=4))
-print(line)
 plt.errorbar(inv_sizes, temps, yerr=temps_e, linestyle='', marker='o')
 plt.hlines(y=tc_theo, xmin=0, xmax=(np.max(inv_sizes)), color='r', label="critical temperature")
 plt.plot(inv_sizes, line(inv_sizes), '-', color='y', label="data fit line")
