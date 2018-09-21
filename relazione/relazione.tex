@@ -63,6 +63,27 @@
 }
 \tikzstyle{line}=[draw]
 
+% link and reference config
+\usepackage{varioref}
+\usepackage{hyperref}
+\hypersetup{%                                                                    
+    pdfpagemode={UseOutlines},                                                      
+    bookmarksopen,                                                               
+    pdfstartview={FitH},                                                         
+    colorlinks,                                                                  
+    linkcolor={black}, %COLORE DEI RIFERIMENTI AL TESTO                          
+    citecolor={black}, %COLORE DEI RIFERIMENTI ALLE CITAZIONI                    
+    urlcolor={black} %COLORI DEGLI URL                                           
+} 
+
+% compile tikz plots only once
+\usetikzlibrary{trees}                                                           
+\usetikzlibrary{external}                                                        
+\usepgfplotslibrary{external}                                                    
+\tikzexternalize[prefix=tex/]                                                    
+\usepgfplotslibrary{units} % L A TEX and plain TEX                               
+\usetikzlibrary{pgfplots.units} % L A TEX and plain TEX
+
 %----------------------------------------------------------------------------------------
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
@@ -111,7 +132,7 @@ Il lavoro prende spunto da diversi articoli pubblicati negli ultimi due anni che
 In questo lavoro sono stati simulati e studiati due sistemi classici della meccanica statistica su reticolo bidimensionale:  il modello di Ising e il modello XY.
 
 \subsection{Modello di Ising}\label{sec:simIsing}
-Il modello di Ising descrive il comportamento di spin su reticolo che assumono valori $\{+1;-1\}$ e interagiscono attraverso un'hamiltoniana, la cui forma più semplice, utilizzata in questo lavoro, è
+Il modello di Ising descrive il comportamento di spin su reticolo che assumono valori $\{+1;-1\}$ e interagiscono attraverso un'hamiltoniana la cui forma più semplice, utilizzata in questo lavoro, è
 \begin{equation}
 H=- \sum_{\langle i~j\rangle} \sigma_i\sigma_j
 \end{equation}
@@ -119,7 +140,7 @@ dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin $\
 Quindi viene assunto nullo il campo magnetico esterno e la costante di accoppiamento assume lo stesso valore fra tutti gli spin, pari a $1$.
 Ad alte temperature il contributo entropico fa sì che il sistema si trovi in uno stato di disordine, ovvero nella fase paramagnetica, illustrata in figura \ref{fig:isingP}.
 Abbassando la temperatura prevale l'interazione tra gli spin e al di sotto della temperatura di transizione questi tendono ad allinearsi, quindi il sistema transisce alla fase ferromagnetica, rappresentata in figura \ref{fig:isingF}.
-Tale transizione di fase è detta del \emph{secondo ordine} caratterizzata da un comportamento critico, per questo la temperatura di transizione viene anche detta temperatura critica.
+Tale transizione di fase è detta del \emph{secondo ordine} ed è caratterizzata da un comportamento critico, per questo la temperatura di transizione viene anche detta temperatura critica.
 
 \begin{figure}[ht]
 \centering
@@ -324,6 +345,8 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \section{Metodi di apprendimento}
 A partire dai sistemi fisici simulati, descritti nella sezione precedente, sono stati sviluppati diversi metodi di apprendimento con l'obiettivo di classificare automaticamente la fase in cui si trova il sistema.
 I metodi utilizzati per l'apprendimento differiscono per i due modelli fisici analizzati, il modello di Ising e il modello XY, seguendo la stessa strada di altri lavori \cite{wessel}.
+
+Le reti sono state implementate tramite Keras \cite{keras}, utilizzando Tensorflow \cite{tensorflow} come backend.
 
 \subsection{Modello di Ising}
 

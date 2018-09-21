@@ -20,7 +20,8 @@
 # Vortex image and other pdf
 *.pdf
 # LaTeX useless files
-*.aux
+relazione/tex
+*.aux*
 *.log
 *.bbl
 *.blg
