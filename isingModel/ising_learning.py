@@ -175,11 +175,18 @@ def build_model(data_shape, neurons_number):
 
     model = keras.models.Sequential()
     model.add(keras.layers.Dense(
-            neurons_number,
+            70,
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            #kernel_regularizer=keras.regularizers.l2(0.01),
+            kernel_regularizer=keras.regularizers.l2(0.01),
+            input_shape=(data_shape,)))
+    model.add(keras.layers.Dense(
+            30,
+            activation=tf.sigmoid,
+            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
+            bias_initializer=keras.initializers.RandomNormal(stddev=1),
+            kernel_regularizer=keras.regularizers.l2(0.01),
             input_shape=(data_shape,)))
     model.add(keras.layers.Dense(
             2,
@@ -212,7 +219,7 @@ def train_model(model, training_inputs, training_labels):
     return model.fit(
             training_inputs, training_labels,
             validation_split=0.2, epochs=500,
-            #callbacks=callbacks_list,
+            callbacks=callbacks_list,
             batch_size=100,
             shuffle=True, verbose=args.verbose)
 
