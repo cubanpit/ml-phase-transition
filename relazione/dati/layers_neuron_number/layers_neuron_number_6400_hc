@@ -1,4 +1,5 @@
 size layers neurons1 neurons2 accuracy stdev
 6400 2 70 30 0.998 0.00006
-6400 2 30 70  
+6400 2 30 70 0.9976 0.00005 
 6400 2 95 5 
+6400 2 5 95
