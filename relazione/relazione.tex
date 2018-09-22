@@ -84,11 +84,6 @@
 \usepgfplotslibrary{units} % L A TEX and plain TEX
 \usetikzlibrary{pgfplots.units} % L A TEX and plain TEX
 
-% create tables from file
-\usepackage{pgfplotstable}
-
-% create a loops o do pretty stuff
-\usepackage{python}
 
 %----------------------------------------------------------------------------------------
 %	DOCUMENT INFORMATION
@@ -768,10 +763,11 @@ L & 1x100 test accuracy & 2x10 test accuracy\\
 \label{tab:NNLN}
 \end{table}
 
-\subsubsection{Diverso numero di layer e neuroni}
-I risultati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN2}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
+\subsubsection{Due layer e diverso numero di neuroni}
+I risltati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
 
-Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
+Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer. Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
+Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, si ottengono risultati compatibili entro l'errore con quelli riportati in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50, che si discosta di circa $2\sigma$ dagli altri valori. Inoltre anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy uguali entro l'errore.
 
 \begin{table}[ht]
 \begin{center}
@@ -786,11 +782,29 @@ L & 1x70+1x30 test accuracy & 1x30+1x70 test accuracy\\
 \end{tabular}
 \end{center}
 \caption{Test accuracy valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
-\label{tab:NNLN2}
+\label{tab:2LN30-70}
+\end{table}
+
+Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembrerebbe modificare le sue capacità di apprendimento. Si procede allenando una rete sempre a due layer, con un numero di neuroni per layer meno equilibrato: 95 e 5.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
+\midrule
+30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.004} \\
+50 & \num{0.0 \pm 0.0} & \num{0.0 \pm 0.0} \\
+80 & \num{0.0 \pm 0.0} & \num{0.0 \pm 0.0} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Test accuracy valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\label{tab:2LN5-95}
 \end{table}
 
 \subsubsection{Diversa funzione di attivazione}
-
+\subsection{Stima delle tempistiche di training}
 \subsection{Stima della temperatura critica}
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione.
 Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo.
@@ -803,11 +817,16 @@ I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{llllllll}
+\begin{tabular}{ll}
 \toprule
-Rete & Layer & Neuroni & Batch size & w e b init & Attivazione & Earlystop & Regolar\\
-\midrule
-FeedFw & $1$ & $100$ & $100$ & Random & Sigmoidale & si & L$2$ $0.01$\\
+Layer: & 1\\
+Neuroni: & 100 \\
+Batch size: & 100\\
+Pesi w e b iniziali: & Random\\
+Fz. attivazione: & Sigmoidale\\
+Earlystop: & validation acc \\
+Regolarizzazione: & L2 0.01\\
+Ottimizzazione: & Adam 0.0001 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -923,7 +942,8 @@ triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
 %----------------------------------------------------------------------------------------
 
 \section{Modello XY: risultati e conclusioni}
-
+\subsection{Valutazione dei parametri della rete}
+Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY.
 %----------------------------------------------------------------------------------------
 %	APPENDICES
 %----------------------------------------------------------------------------------------
