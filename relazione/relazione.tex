@@ -541,13 +541,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     legend pos = south east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_hc};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_900_hc};
 \addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_hc};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_2500_hc};
 \addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_hc};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_6400_hc};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -565,13 +565,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     legend pos = south east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_sq};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_900_sq};
 \addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_sq};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_2500_sq};
 \addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_sq};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_6400_sq};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -589,13 +589,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     legend pos = south east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_900_tr};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_900_tr};
 \addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_2500_tr};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_2500_tr};
 \addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number_6400_tr};
+    table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_6400_tr};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -620,13 +620,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     legend pos = north west,
 ]
 \addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_900};
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_number/neurons_param_900};
 \addlegendentry{L30}
 \addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_2500};
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_number/neurons_param_2500};
 \addlegendentry{L50}
 \addplot+[line]
-    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_param_6400};
+    table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_number/neurons_param_6400};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -643,13 +643,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     legend pos = north west,
 ]
 \addplot+[line]
-    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_900};
+    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_number/layers_param_900};
 \addlegendentry{L30}
 \addplot+[line]
-    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_2500};
+    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_number/layers_param_2500};
 \addlegendentry{L50}
 \addplot+[line]
-    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_param_6400};
+    table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_number/layers_param_6400};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -684,13 +684,13 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
     legend pos = north east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_900_hc};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_hc};
 \addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_hc};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_hc};
 \addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_hc};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_hc};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -707,13 +707,13 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
     legend pos = north east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_900_sq};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_sq};
 \addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_sq};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_sq};
 \addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_sq};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_sq};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -730,13 +730,13 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
     legend pos = north east,
 ]
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_900_tr};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_tr};
 \addlegendentry{L30}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_2500_tr};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_tr};
 \addlegendentry{L50}
 \addplot+[line, error bars/.cd, y dir=both, y explicit]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number_6400_tr};
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_tr};
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
@@ -766,8 +766,10 @@ L & 1x100 test accuracy & 2x10 test accuracy\\
 \subsubsection{Due layer e diverso numero di neuroni}
 I risltati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
 
-Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer. Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
-Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, si ottengono risultati compatibili entro l'errore con quelli riportati in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50, che si discosta di circa $2\sigma$ dagli altri valori. Inoltre anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy uguali entro l'errore.
+Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
+ Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
+Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, questi sono compatibili entro l'errore con quelli riportati in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50 che si discosta di circa $2\sigma$ dagli altri valori.
+Inoltre, anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy uguali entro l'errore.
 
 \begin{table}[ht]
 \begin{center}
@@ -775,9 +777,9 @@ Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, si
 \toprule
 L & 1x70+1x30 test accuracy & 1x30+1x70 test accuracy\\
 \midrule
-30 & \num{0.979 \pm 0.004} & \num{0.979 \pm 0.004} \\
+30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.005} \\
 50 & \num{0.988 \pm 0.003} & \num{0.988 \pm 0.003} \\
-80 & \num{0.993 \pm 0.002} & \num{0.990 \pm 0.004} \\
+80 & \num{0.993 \pm 0.002} & \num{0.0 \pm 0.0} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -785,7 +787,8 @@ L & 1x70+1x30 test accuracy & 1x30+1x70 test accuracy\\
 \label{tab:2LN30-70}
 \end{table}
 
-Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembrerebbe modificare le sue capacità di apprendimento. Si procede allenando una rete sempre a due layer, con un numero di neuroni per layer meno equilibrato: 95 e 5.
+Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembrerebbe modificare le sue capacità di apprendimento.
+Si procede allenando una rete sempre a due layer, con un numero di neuroni per layer meno equilibrato: 95 e 5.
 
 \begin{table}[ht]
 \begin{center}
@@ -794,13 +797,33 @@ Quindi, nel caso di una rete a due layer entrambi con un numero consistente di n
 L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
 \midrule
 30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.004} \\
-50 & \num{0.0 \pm 0.0} & \num{0.0 \pm 0.0} \\
+50 & \num{0.988 \pm 0.003} & \num{0.987 \pm 0.003} \\
 80 & \num{0.0 \pm 0.0} & \num{0.0 \pm 0.0} \\
 \bottomrule
 \end{tabular}
 \end{center}
 \caption{Test accuracy valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
 \label{tab:2LN5-95}
+\end{table}
+
+Anche in questo caso si osserva che i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi la rete non risulta essere sensibile all'inversione di layer, al contrario di quanto ci si sarebbe potuto aspettare: infatti l'inversione di layer porta a una diminuzione del numero di parametri per numero di dati, come riportato in tabella \ref{tab:LNparam}.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+Rete & L30 & L50 & L80\\
+\midrule
+1x70+1x30 & \num{0.81} & \num{2.22} & \num{5.62}\\
+1x30+1x70 & \num{0.36} & \num{0.97} & \\
+\midrule
+1x95+1x5 & \num{1.07} & \num{2.98} &\\
+1x5+1x95 & \num{0.07} & \num{0.17} & \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Numero di parametri normalizzato sul numero di dati del training set}
+\label{tab:LNparam}
 \end{table}
 
 \subsubsection{Diversa funzione di attivazione}
