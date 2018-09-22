@@ -31,7 +31,7 @@
 \usepackage{subfig}
 \usepackage{tikz}
 \usepackage{pgfplots}
-\pgfplotsset{compat=1.16}
+\pgfplotsset{compat=newest}
 % axis style, ticks, etc
 \pgfplotsset{every axis/.append style={
                     label style={font=\small},
@@ -540,13 +540,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_900_hc};
 \addlegendentry{L30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_2500_hc};
 \addlegendentry{L50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_6400_hc};
 \addlegendentry{L80}
 \end{axis}
@@ -564,13 +564,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_900_sq};
 \addlegendentry{L30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_2500_sq};
 \addlegendentry{L50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_6400_sq};
 \addlegendentry{L80}
 \end{axis}
@@ -588,13 +588,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_900_tr};
 \addlegendentry{L30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_2500_tr};
 \addlegendentry{L50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=neurons, y=accuracy, y error=stdev] {dati/neurons_number/neurons_number_6400_tr};
 \addlegendentry{L80}
 \end{axis}
@@ -619,13 +619,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north west,
 ]
-\addplot+[line]
+\addplot+[line, thick, mark=*]
     table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_number/neurons_param_900};
 \addlegendentry{L30}
-\addplot+[line]
+\addplot+[line, thick, mark=square*]
     table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_number/neurons_param_2500};
 \addlegendentry{L50}
-\addplot+[line]
+\addplot+[line, thick, mark=triangle*]
     table[x=neurons, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/neurons_number/neurons_param_6400};
 \addlegendentry{L80}
 \end{axis}
@@ -642,13 +642,13 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north west,
 ]
-\addplot+[line]
+\addplot+[line, thick, mark=*]
     table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_number/layers_param_900};
 \addlegendentry{L30}
-\addplot+[line]
+\addplot+[line, thick, mark=square*]
     table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_number/layers_param_2500};
 \addlegendentry{L50}
-\addplot+[line]
+\addplot+[line, thick, mark=triangle*]
     table[x=layers, y expr={\thisrow{param}/\thisrow{datatr}}] {dati/layers_number/layers_param_6400};
 \addlegendentry{L80}
 \end{axis}
@@ -683,13 +683,13 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_hc};
 \addlegendentry{L30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_hc};
 \addlegendentry{L50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_hc};
 \addlegendentry{L80}
 \end{axis}
@@ -706,13 +706,13 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_sq};
 \addlegendentry{L30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_sq};
 \addlegendentry{L50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_sq};
 \addlegendentry{L80}
 \end{axis}
@@ -729,13 +729,13 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_tr};
 \addlegendentry{L30}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_tr};
 \addlegendentry{L50}
-\addplot+[line, error bars/.cd, y dir=both, y explicit]
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
     table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_tr};
 \addlegendentry{L80}
 \end{axis}
@@ -863,51 +863,78 @@ Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e 
 \begin{figure}[ht]
 \centering
 \subfloat{
-\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Triangolare},
-    xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+    title={Honeycomb},
     ylabel={$T$ [\si{K}]},
-    yticklabel style={/pgf/number format/fixed,
-                  /pgf/number format/precision=3},
-    grid=major,
-    width=0.48\textwidth,
-    height=0.5\textwidth,
+    xlabel={$L^{-1}$  [$\si{nspin}^{-1}$]},
+    width=0.33\textwidth,
+    height=0.44\textwidth,
+    xmin=0.0,
+    xmax=0.06,
+    minor y tick num=1,
+    ytick={1.51,1.52,1.53,1.54},
+    grid=both,
+    minor grid style={line width=.1pt, dashed, draw=gray!30},
     major grid style={line width=.1pt, dashed, draw=gray!30},
     legend pos=north west
 ]
-\addplot[mark=none, red, thick] coordinates {(0.005,3.6410) (0.055,3.6410)};
+\addplot+[mark=none, red, thick] coordinates {(0.0,1.5187) (0.06,1.5187)};
 \addlegendentry{$T_c$}
-\addplot [only marks, blue]
-plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
-table [ y error index=2] {dati/temperature_tr};
+\addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+     table [x expr={1/\thisrow{size}}, y=temp, y error=temp_e] {dati/temperature_hc};
 \addlegendentry{$T_L$}
-\addplot [domain=0.01:0.055, samples=101]{0.3994*x+ 3.635};
+\addplot+[mark=none, green!70!black, thick, domain=0.01:0.055, samples=101]{0.2939*x + 1.5151};
 \end{axis}
 \end{tikzpicture}
 }
 \subfloat{
-\centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Honeycomb},
+    title={Quadrato},
     xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
-    yticklabel style={/pgf/number format/fixed,
-                  /pgf/number format/precision=3},
-    grid=major,
-    width=0.48\textwidth,
-    height=0.5\textwidth,
+    width=0.33\textwidth,
+    height=0.44\textwidth,
+    xmin=0.0,
+    xmax=0.06,
+    minor y tick num=1,
+    ytick={2.25,2.26,2.27,2.28,2.29,2.30},
+    grid=both,
+    minor grid style={line width=.1pt, dashed, draw=gray!30},
     major grid style={line width=.1pt, dashed, draw=gray!30},
     legend pos=north west
 ]
-\addplot[mark=none, red, thick] coordinates {(0.005,1.5187) (0.055,1.5187)};
+\addplot+[mark=none, red, thick] coordinates {(0.0,2.2692) (0.06,2.2692)};
 \addlegendentry{$T_c$}
-\addplot [only marks, blue]
-plot [error bars/.cd, error bar style={red}, y dir = both, y explicit]
-table [ y error index=2] {dati/temperature_hc};
+\addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+     table [x expr={1/\thisrow{size}}, y=temp, y error=temp_e] {dati/temperature_sq};
 \addlegendentry{$T_L$}
-\addplot [domain=0.01:0.055, samples=101]{0.2939*x + 1.515};
+\addplot+[mark=none, green!70!black, thick, domain=0.01:0.055, samples=101]{0.4167*x + 2.2653};
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title={Triangolare},
+    xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+    width=0.33\textwidth,
+    height=0.44\textwidth,
+    xmin=0.0,
+    xmax=0.06,
+    minor y tick num=1,
+    ytick={3.62,3.63,3.64,3.65,3.66},
+    grid=both,
+    minor grid style={line width=.1pt, dashed, draw=gray!30},
+    major grid style={line width=.1pt, dashed, draw=gray!30},
+    legend pos=north west
+]
+\addplot+[mark=none, red, thick] coordinates {(0.0,3.6410) (0.06,3.6410)};
+\addlegendentry{$T_c$}
+\addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+     table [x expr={1/\thisrow{size}}, y=temp, y error=temp_e] {dati/temperature_tr};
+\addlegendentry{$T_L$}
+\addplot+[mark=none, green!70!black, thick, domain=0.01:0.055, samples=101]{0.3994*x + 3.6348};
 \end{axis}
 \end{tikzpicture}
 }
@@ -924,7 +951,7 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 Reticolo & T estratta & T teorica \\
 \midrule
 honeycomb & \num{1.52 \pm 0.04} & \num{1.519} \\
-quadrato & -- & \num{2.269} \\
+quadrato & \num{2.27 \pm 0.07} & \num{2.269} \\
 triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
 \bottomrule
 \end{tabular}
@@ -939,7 +966,7 @@ triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
 
 \section{Modello XY: risultati e conclusioni}
 \subsection{Valutazione dei parametri della rete}
-Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY. 
+Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY.
 %----------------------------------------------------------------------------------------
 %	APPENDICES
 %----------------------------------------------------------------------------------------
