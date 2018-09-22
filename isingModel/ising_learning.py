@@ -175,14 +175,14 @@ def build_model(data_shape, neurons_number):
 
     model = keras.models.Sequential()
     model.add(keras.layers.Dense(
-            70,
+            5,
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
             kernel_regularizer=keras.regularizers.l2(0.01),
             input_shape=(data_shape,)))
     model.add(keras.layers.Dense(
-            30,
+            95,
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
