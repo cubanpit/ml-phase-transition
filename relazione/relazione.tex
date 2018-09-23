@@ -798,7 +798,7 @@ L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
 \midrule
 30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.004} \\
 50 & \num{0.988 \pm 0.003} & \num{0.987 \pm 0.003} \\
-80 & \num{0.0 \pm 0.0} & \num{0.0 \pm 0.0} \\
+80 & \num{0.994 \pm 0.002} & \num{0.992 \pm 0.003} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -806,7 +806,32 @@ L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
 \label{tab:2LN5-95}
 \end{table}
 
-Anche in questo caso si osserva che i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi la rete non risulta essere sensibile all'inversione di layer, al contrario di quanto ci si sarebbe potuto aspettare: infatti l'inversione di layer porta a una diminuzione del numero di parametri per numero di dati, come riportato in tabella \ref{tab:LNparam}.
+Anche in questo caso si osserva che i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
+
+Provando a sbilanciare ultieriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si ottiene un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 riesce a classificare correttamente la fase del sistema, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi. Evidentemente il primo layer di due neuroni funge da \emph{filtro}: \dots. 
+
+Per trovare il rapporto fra numero di neuroni del primo layer e del secondo entro cui invertendo l'ordine di questi si ottiene comunque una buona classificazione, si è provato ad allenare una rete 97-3, ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+Rete & L30 TA & L50 TA & L80 TA \\
+\midrule
+1x98+1x2 & \num{0.977 \pm 0.005} & \num{0.940\pm0.003} & \num{0.993 \pm0.002}\\
+1x2+1x98 & \num{0.722 \pm 0.020} & \num{0.668\pm0.024} & \num{0.679 \pm0.015}\\
+\midrule
+1x97+1x3 & \num{0.979 \pm 0.004} & \num{0.0\pm0.0} & \num{0.0\pm0.0}\\
+1x3+1x97 & \num{0.852 \pm 0.006} & \num{0.920\pm0.004} & \num{0.0\pm0.0}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Numero di parametri normalizzato sul numero di dati del training set}
+\label{tab:2LN2-3-4}
+\end{table}
+
+Si osserva che l'inversione di layer porta a una diminuzione del numero di parametri per numero di dati, come riportato in tabella \ref{tab:LNparam}.
+%TODO pietro deve finire questa parte e trovare una buona ragione
 
 \begin{table}[ht]
 \begin{center}
@@ -817,8 +842,14 @@ Rete & L30 & L50 & L80\\
 1x70+1x30 & \num{0.81} & \num{2.22} & \num{5.62}\\
 1x30+1x70 & \num{0.36} & \num{0.97} & \num{2.43}\\
 \midrule
-1x95+1x5 & \num{1.07} & \num{2.98} &\\
-1x5+1x95 & \num{0.07} & \num{0.17} & \\
+1x95+1x5 & \num{1.07} & \num{2.98} & \num{0.0}\\
+1x5+1x95 & \num{0.07} & \num{0.17} & \num{0.0}\\
+\midrule
+1x98+1x2 & \num{0.0} & \num{0.0} & \num{0.0}\\
+1x2+1x98 & \num{0.0} & \num{0.0} & \num{0.0}\\
+\midrule
+1x97+1x3 & \num{0.0} & \num{0.0} & \num{0.0}\\
+1x97+1x3 & \num{0.0} & \num{0.0} &  \num{0.0}\\
 \bottomrule
 \end{tabular}
 \end{center}
