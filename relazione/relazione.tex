@@ -442,49 +442,77 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
 
 \begin{figure}[!ht]
 \centering
-\subfloat{
-\begin{tikzpicture}
-\begin{axis}[
-    xlabel = {Epoche},
-    ylabel = {Accuracy},
-    grid = major,
-    width=0.5\textwidth,
-    height=0.5\textwidth,
-    major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = south east,
-]
-\addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=acc] {dati/training_histo_2};
-\addlegendentry{Training accuracy}
-\addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=val_acc]{dati/training_histo_2};
-\addlegendentry{Validation accuracy}
-\end{axis}
-\end{tikzpicture}
-\label{fig:acc_histo}
-}
-\subfloat{
+\subfloat[Senza regolarizzatori]{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Epoche},
     ylabel = {Loss},
     grid = major,
-    width=0.5\textwidth,
+    width=0.33\textwidth,
     height=0.5\textwidth,
+    ymin=0,
+    ymax=0.3,
+    xmin=0,
+    xmax=100,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north west,
+]
+\addplot+[mark=none, smooth, ultra thick]
+    table[x=epoch, y=loss] {dati/training_histo_xy};
+\addlegendentry{Training loss}
+\addplot+[mark=none, smooth, ultra thick]
+    table[x=epoch, y=val_loss] {dati/training_histo_xy};
+\addlegendentry{Validation loss}
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat[Regolarizzazione dropout]{
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel = {Epoche},
+    grid = major,
+    width=0.33\textwidth,
+    height=0.5\textwidth,
+    ymin=0,
+    ymax=0.3,
+    xmin=0,
+    xmax=100,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north west,
+]
+\addplot+[mark=none, smooth, ultra thick]
+    table[x=epoch, y=loss] {dati/training_histo_xy_reg};
+\addlegendentry{Training loss}
+\addplot+[mark=none, smooth, ultra thick]
+    table[x=epoch, y=val_loss] {dati/training_histo_xy_reg};
+\addlegendentry{Validation loss}
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat[Early stop]{
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel = {Epoche},
+    grid = major,
+    width=0.33\textwidth,
+    height=0.5\textwidth,
+    ymin=0,
+    ymax=0.3,
+    xmin=0,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
 \addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=loss] {dati/training_histo_2};
+    table[x=epoch, y=loss] {dati/training_histo_xy_stop};
 \addlegendentry{Training loss}
 \addplot+[mark=none, smooth, ultra thick]
-    table[x=epoch, y=val_loss] {dati/training_histo_2};
+    table[x=epoch, y=val_loss] {dati/training_histo_xy_stop};
 \addlegendentry{Validation loss}
 \end{axis}
 \end{tikzpicture}
-\label{fig:loss_histo}
 }
-\caption{Risultati dell'apprendimento di una rete \emph{feed forward} a singolo layer \emph{fully connected} da 100 neuroni. I dati utilizzati sono relativi ad un modello di Ising su reticolo quadrato di lato 30. Ogni punto è ottenuto come media della quantità considerata su 10 modelli allenati sullo stesso training set.}
+\caption{Risultati dell'apprendimento di una rete convoluzionale, del tipo rappresentato in figura \ref{fig:cnn}, priva di metodi di regolarizzazione. I dati utilizzati sono relativi ad un modello XY su reticolo quadrato di lato 32.}
+\label{fig:history}
 \end{figure}
 
 Il primo passo nel lavoro di creazione della rete è stato valutare se questa può apprendere efficacemente da un insieme di dati sufficientemente vasto.
