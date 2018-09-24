@@ -798,11 +798,11 @@ L & 1x100 test accuracy & 2x10 test accuracy\\
 \label{tab:NNLN}
 \end{table}
 
-\subsubsection{Due layer e diverso numero di neuroni}
+\subsubsection{Due layer e diverso numero di neuroni}\label{sec:2Ln}
 I risultati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
 
 Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
- Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
+Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
 Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, questi sono compatibili entro l'errore con quelli riportati in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50 che si discosta di circa $2\sigma$ dagli altri valori.
 Inoltre, anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy uguali entro l'errore.
 
@@ -822,8 +822,8 @@ L & 1x70+1x30 test accuracy & 1x30+1x70 test accuracy\\
 \label{tab:2LN30-70}
 \end{table}
 
-Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembrerebbe modificare le sue capacità di apprendimento.
-Si procede allenando una rete sempre a due layer, con un numero di neuroni per layer meno equilibrato: 95 e 5.
+Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembrerebbe aver modificato le sue capacità di apprendimento.
+Successivamente si è allenata una rete sempre a due layer, con un numero di neuroni per layer meno equilibrato: 95 e 5.
 
 \begin{table}[ht]
 \begin{center}
@@ -841,9 +841,10 @@ L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
 \label{tab:2LN5-95}
 \end{table}
 
-Anche in questo caso si osserva che i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
+Anche in questo caso i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
 
-Provando a sbilanciare ulteriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si ottiene un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 riesce a classificare correttamente la fase del sistema, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi. Evidentemente il primo layer di due neuroni funge da \emph{filtro}: 5 neuroni sono sufficienti per classificare correttamente la fase del sistema, se poi \emph{aiutati} da un secondo layer avente un numero di neuroni elevato; con 2 neuroni posti al primo layer l'informazione viene persa e quindi non si ottiene una test accuracy soddisfacente pur essendo presente un secondo layer con un elevato numero di neuroni. 
+Provando a sbilanciare ulteriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si è ottenuto un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 classifica correttamente la fase del sistema con una test accuracy alta, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi.
+Evidentemente il primo layer di due neuroni funge da \emph{filtro}: 5 neuroni sono sufficienti per classificare correttamente la fase del sistema, se poi supportati da un secondo layer avente un numero di neuroni elevato; con 2 neuroni posti al primo layer l'informazione viene persa e quindi non si ottiene una test accuracy soddisfacente pur essendo presente un secondo layer con un elevato numero di neuroni. 
 Per trovare il numero minimo di neuroni del primo layer necessario per una buona classificazione, si è provato ad allenare le reti 97-3, 96-4 e le relative reti inverse ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
 
 \begin{table}[ht]
@@ -863,9 +864,11 @@ Rete & L30 TA & L50 TA & L80 TA \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy per diverse reti}
+\caption{Test accuracy per diverse reti. I valori sono le medie e le deviazioni standard dei risultati ottenuti per il reticolo honeycomb, quadrato e triangolare.}
 \label{tab:2LN2-3-4}
 \end{table}
+
+In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer con il primo layer avente pochi neuroni: si osserva che, al contrario delle reti a singolo layer, con solo 3 neuroni nel primo layer la rete è in grado di classificare con una test accuracy superiore al $90\%$ i reticoli di lato 50 e 80, mentre per i reticoli di lato 30 raggiunge una test accuracy (in media sulla tipologia di reticolo, vd tabella \ref{tab:2LN2-3-4}) superiore all'$85\%$.
 
 \begin{figure}[!ht]
 \centering
@@ -940,20 +943,47 @@ Rete & L30 TA & L50 TA & L80 TA \\
 \end{tikzpicture}
 }
 \caption{Performance della rete a 2 layer con numero di neuroni totali pari a 100. I punti di test accuracy sono riportati in funzione del numero di neuroni del primo layer.}
-\label{fig:100N2L}
+\label{fig:2L1Lln}
 \end{figure}
 
 \subsection{Valutazione dei parametri della rete}
+Dopo aver esplorato la geometria della rete, si è provato ad allenare reti variando altri tre parametri: la funzione di attivazione, l'ottimizzatore e la batch size. 
+L'analisi è stata effettuata unicamente sul reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni.
 
-\subsubsection{Diversa funzione di attivazione}
+\subsubsection{Funzione di attivazione: Sigmoid vs ReLu vs Tanh}
 
-\subsubsection{Diverso ottimizzatore}
+\subsubsection{Ottimizzazione: Adam vs SGD}
+Tutte le reti analizzate in precedenza sono state implementate attraverso l'ottimizzatore Adam, con un \emph{learning rate} di 0.0001.
+Si è provato a variare l'ottimizzatore impostando SGD, ovvero \emph{stochastic gradient descend}, con il medesimo learning rate.
+Tuttavia il sistema per convergere deve effettuare più di 500 epoche, risultando impossibile allenare 10 modelli differenti a causa di limiti di tempo.
+Quindi si è provato ad alzare il learning rate a 0.001, ottenendo risultati comunque soddisfacenti, riportati in tabella \ref{tab:adaVSsgd}.
+Come si può osservare tutti i valori relativi alla rete ottimizzata con Adam distano più di $5\sigma$ rispetto ai valori ottenuti con SGD, risulta quindi sconveniente utilizzare quest'ultimo.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+Rete L30& lr & hc TA & sq TA & tr TA \\
+\midrule
+Adam &0.0001& \num{0.9886\pm 0.0001} & \num{0.9792\pm 0.0001} & \num{0.9750\pm 0.0002}\\
+SGD & 0.001 & \num{0.9875\pm 0.0001} & \num{0.9776 \pm 0.0001} &\num{ 0.9728\pm 0.0002}\\ 
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Test accuracy valutata su reti implementate sia con ottimizzazione Adam che SGD; per reticolo di lato 30, honeycomb, quadrato e triangolare.}
+\label{tab:adaVSsgd}
+\end{table}
 
 \subsubsection{Diversa batch size}
 
-
 \subsection{Apprendimento e magnetizzazione}
-Come si è mostrato nella sezione \ref{sec:2Ln} esiste una soglia nel numero di neuroni del primo layer al di sotto della quale la rete non riesce ad apprendere correttamente la fase del sistema con una buona test accuracy. Secondo l'articolo \cite{carrasqu}, la rete riesce a classificare la fase del sistema apprendendo la magnetizzazione di questo, e già una rete a singolo layer con 3 neuroni è in grado di classificare con una buona test accuracy. Durante l'apprendimento si osserva, attraverso lo studio della magnetizzazione, l'accensione o meno di alcuni neuroni: \dots  Il sistema può trovarsi in due fasi, paramagnetica o ferromagnetica, mentre i dati in input sono tre: o tutti spin up, o tutti spin down o spin disordinati. 
+Come è stato mostrato nella sezione \ref{sec:2Ln} esiste una soglia nel numero di neuroni del primo layer al di sotto della quale la rete non riesce ad apprendere correttamente la fase del sistema con una buona test accuracy.
+
+Secondo l'articolo \cite{carrasqu}, la rete riesce a classificare la fase del sistema apprendendo la sua magnetizzazione, e il numero minimo di neuroni per classificare con una buona test accuracy è 3: la sovrapposizione dello stato di ciascun neurone (acceso o spento) rappresenta la fase del sistema.
+Durante l'apprendimento si osserva l'accensione o meno di alcuni neuroni: ad esempio, nel caso di 3 neuroni, l'attivazione di un neurone N1 rappresenta tutti gli spin up, l'attivazione di un altro neurone N2 rappresenta tutti gli spin down e l'attivazione del terzo neurone N3 rappresenta o tutti gli spin up o tutti gli spin disordinati.
+
+In questa analisi la rete a singolo layer con tre neuroni non è in grado di classificare con una buona test accuracy tuttavia, aggiungendo un layer di supporto con un consistente numero di neuroni, si ottengono risultati accettabili.
+D'altra parte una rete con il primo layer a 2 neuroni, nonostante il layer aggiuntivo, non è in grado di classificare la fase del sistema: la sovrapposizione dello stato di due neuroni non è sufficiente per descrivere i tre stati di magnetizzazione.
 \subsection{Stima della temperatura critica}
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione.
 Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo.

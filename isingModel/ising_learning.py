@@ -329,6 +329,7 @@ else:
 # print summary of first model, as reference
 models[0].summary()
 n_models = len(models)
+print(keras.backend.eval(models[0].optimizer.lr))
 
 #acc = np.array(acc)
 #val_acc = np.array(val_acc)
