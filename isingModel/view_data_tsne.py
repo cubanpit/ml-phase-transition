@@ -7,6 +7,7 @@
 
 import numpy as np
 from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import argparse
 
@@ -16,7 +17,7 @@ parser.add_argument(
 parser.add_argument(
         "-lt", "--lattice_type",
         help="Test set lattice type: square (sq), triangular (tr),\
-        honeycomb (hc), cubic (cb)", required=True)
+        honeycomb (hc), cubic (cb), xy", required=True)
 parser.add_argument(
         "-dn", "--data_number",
         help="Number of data to analyze and plot",
@@ -63,14 +64,14 @@ def read_data(input_set, critical_temp):
                 odd = False
 
             else:
-                configuration = np.fromstring(line, dtype=np.int8, sep=' ')
+                configuration = np.fromstring(line, dtype=np.float32, sep=' ')
                 configurations.append(configuration)
                 odd = True
 
     magnetizations = np.array(magnetizations).astype(np.float32)
     binary_temperatures = np.array(binary_temperatures).astype(np.uint8)
     real_temperatures = np.array(real_temperatures).astype(np.float32)
-    configurations = np.array(configurations).astype(np.int8)
+    configurations = np.array(configurations).astype(np.float32)
 
     return magnetizations, binary_temperatures, real_temperatures, configurations
 
@@ -83,6 +84,7 @@ def critical_temp(input_lattice):
     triangular_temp = 4/np.log(3)
     cubic_temp = 1/0.221654
     honeycomb_temp = 1/0.658478
+    xy_temp = 0.893
 
     if input_lattice == "sq":
         test_temp = square_temp
@@ -92,6 +94,8 @@ def critical_temp(input_lattice):
         test_temp = honeycomb_temp
     elif input_lattice == "cb":
         test_temp = cubic_temp
+    elif input_lattice == "xy":
+        test_temp = xy_temp
     else:
         raise SyntaxError("Use sq for square, tr for triangular and cb for cubic")
 
@@ -140,20 +144,20 @@ test_real_temps = test_real_temps[:args.data_number]
 
 x_data = np.asarray(test_configs).astype('float64')
 
-vis_data = TSNE().fit_transform(x_data)
+vis_data = TSNE(verbose=2).fit_transform(x_data)
 
 vis_x = vis_data[:, 0]
 vis_y = vis_data[:, 1]
 
-# plt.scatter(
-#             vis_x, vis_y, c=test_real_temps,
-#             cmap=plt.cm.get_cmap("jet", 40), s=10)
-# plt.colorbar(orientation="horizontal")
-# plt.show()
+plt.scatter(
+            vis_x, vis_y, c=test_real_temps,
+            cmap=plt.cm.get_cmap("jet", 40), s=10)
+plt.colorbar(orientation="horizontal")
+plt.show()
 
-print("x y temp")
-for d in range(len(vis_data)):
-    print(vis_x[d], vis_y[d], test_real_temps[d])
+# print("x y temp")
+# for d in range(len(vis_data)):
+#     print(vis_x[d], vis_y[d], test_real_temps[d])
 
 # Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
 #                Martina Crippa    <martina.crippa2@studenti.unimi.it>
