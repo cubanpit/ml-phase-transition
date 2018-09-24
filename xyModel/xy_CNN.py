@@ -198,7 +198,7 @@ def train_model(model, training_inputs, training_labels):
     return model.fit(
             training_inputs, training_labels,
             validation_split=0.2, epochs=500,
-            # callbacks=callbacks_list,
+            callbacks=callbacks_list,
             batch_size=100,
             shuffle=True, verbose=args.verbose)
 
@@ -255,7 +255,7 @@ if train:
     train_configs = train_configs / (2 * np.float32(np.pi))
 
     # number of training iterations
-    n_models = 10
+    n_models = 1
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
@@ -326,22 +326,22 @@ else:
 models[0].summary()
 n_models = len(models)
 
-#acc = np.array(acc)
-#val_acc = np.array(val_acc)
-#loss = np.array(loss)
-#val_loss = np.array(val_loss)
-#binary_crossentropy = np.array(binary_crossentropy)
-#val_binary_crossentropy = np.array(val_binary_crossentropy)
-#print("\nNumber of epochs =", 100)
-#print("\nepoch acc acc_e val_acc val_acc_e loss loss_e val_loss val_loss_e binary_crossentropy binary_crossentropy_e val_binary_crossentropy val_binary_crossentropy_e")
-#for i in range(100):
-#    print(i,
-#          np.mean(acc[:,i]), np.std(acc[:,i])/np.sqrt(99),
-#          np.mean(val_acc[:,i]), np.std(val_acc[:,i])/np.sqrt(99),
-#          np.mean(loss[:,i]), np.std(loss[:,i])/np.sqrt(99),
-#          np.mean(val_loss[:,i]), np.std(val_loss[:,i])/np.sqrt(99),
-#          np.mean(binary_crossentropy[:,i]), np.std(binary_crossentropy[:,i])/np.sqrt(99),
-#          np.mean(val_binary_crossentropy[:,i]), np.std(val_binary_crossentropy[:,i])/np.sqrt(99))
+acc = np.array(acc)
+val_acc = np.array(val_acc)
+loss = np.array(loss)
+val_loss = np.array(val_loss)
+binary_crossentropy = np.array(binary_crossentropy)
+val_binary_crossentropy = np.array(val_binary_crossentropy)
+print("\nNumber of epochs =", 100)
+print("\nepoch acc acc_e val_acc val_acc_e loss loss_e val_loss val_loss_e binary_crossentropy binary_crossentropy_e val_binary_crossentropy val_binary_crossentropy_e")
+for i in range(100):
+    print(i,
+          np.mean(acc[:,i]), np.std(acc[:,i])/np.sqrt(99),
+          np.mean(val_acc[:,i]), np.std(val_acc[:,i])/np.sqrt(99),
+          np.mean(loss[:,i]), np.std(loss[:,i])/np.sqrt(99),
+          np.mean(val_loss[:,i]), np.std(val_loss[:,i])/np.sqrt(99),
+          np.mean(binary_crossentropy[:,i]), np.std(binary_crossentropy[:,i])/np.sqrt(99),
+          np.mean(val_binary_crossentropy[:,i]), np.std(val_binary_crossentropy[:,i])/np.sqrt(99))
 
 # set test critical temperature based on lattice type
 test_temp = critical_temp(args.lattice_type)

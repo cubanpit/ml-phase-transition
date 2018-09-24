@@ -17,6 +17,10 @@ parser.add_argument(
         "-lt", "--lattice_type",
         help="Test set lattice type: square (sq), triangular (tr),\
         honeycomb (hc), cubic (cb)", required=True)
+parser.add_argument(
+        "-dn", "--data_number",
+        help="Number of data to analyze and plot",
+        type=int, default=1000, required=False)
 args = parser.parse_args()
 
 
@@ -131,19 +135,21 @@ test_set = args.test_set
 test_magns, test_bin_temps, test_real_temps, test_configs \
         = read_data(test_set, test_temp)
 
-test_configs = test_configs[:10000]
-test_real_temps = test_real_temps[:10000]
+test_configs = test_configs[:args.data_number]
+test_real_temps = test_real_temps[:args.data_number]
 
 x_data = np.asarray(test_configs).astype('float64')
 print("Data shape =", x_data.shape)
 
 print("Converting with t-sne...")
-vis_data = TSNE(n_iter=5000, perplexity=100, verbose=1).fit_transform(x_data)
+vis_data = TSNE(perplexity=10, verbose=2).fit_transform(x_data)
 
 print("Plotting data...")
 vis_x = vis_data[:, 0]
 vis_y = vis_data[:, 1]
-plt.scatter(vis_x, vis_y, c=test_real_temps, cmap=plt.cm.get_cmap("jet", 10))
+plt.scatter(
+            vis_x, vis_y, c=test_real_temps,
+            cmap=plt.cm.get_cmap("jet", 10), s=10)
 plt.colorbar()
 plt.show()
 
