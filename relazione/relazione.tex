@@ -515,16 +515,19 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
 \label{fig:history}
 \end{figure}
 
-Il primo passo nel lavoro di creazione della rete è stato valutare se questa può apprendere efficacemente da un insieme di dati sufficientemente vasto.
+Il primo passo nel lavoro di creazione della rete è stato valutare se questa potesse apprendere efficacemente da un insieme di dati sufficientemente vasto.
 Dopo aver generato circa \num{100000} dati per l'apprendimento questi sono stati divisi in \emph{training set} e \emph{validation set} in una percentuale rispettivamente dell'$80\%$ e del $20\%$.
 Attraverso il \emph{validation set} è possibile stimare le performance della rete con l'avanzare del processo di apprendimento e capire se sta avvenendo un \emph{overfit}.
 
-Lasciando apprendere la rete liberamente si è arrivati facilmente in situazioni in cui questa apprendeva caratteristiche chiaramente non generalizzabili ai dati esterni al \emph{training set}.
-%TODO: figura curva bella bella di overfit, da fare
-Per risolvere il problema sono stati introdotti dei regolarizzatori come L2, che limita la libertà di evoluzione dei pesi della rete, o come i layer \emph{dropout}, che disattivano alcuni nodi della rete in modo casuale; in generale questi metodi riescono ad impedire la costruzione di un modello perfetto per il \emph{training set} ed inevitabilmente meno generalizzabile.
-Un altro utile strumento per la prevenzione dell'\emph{overfit} è l'\emph{early stop}, un metodo per interrompere in modo automatico l'apprendimento della rete una volta che le sue performance, valutate sul \emph{validation set}, siano sufficientemente stabili.
-Applicando questi strumenti sono stati ottenuti ottimi risultati nell'apprendimento di sistemi di Ising e XY.
-%TODO: figura curva bella bella senza overfit
+In figura \ref{fig:history} è possibile confrontare tre processi di apprendimento della rete convoluzionale utilizzata per la classificazione dei sistemi XY, vengono rappresentate la \emph{training loss} e la \emph{validation loss}, quando la seconda inizia a crescere si sta verificando un overfit, la rete sta imparando caratteristiche specifiche del training set e non generalizzabili ai dati sconosciuti del validation set.
+Nel caso della figura a sinistra non è stato utilizzato alcuno strumento di regolarizzazione se non sul layer nascosto da 128 neuroni su cui è stato fissato un valore massimo per la norma dei pesi; si vede immediatamente come la rete inizia un overfit già dopo la decima epoca.
+Per la figura al centro sono stati aggiunti due layer \emph{dropout}, uno prima ed uno dopo il layer nascosto da 128 neuroni; in questo caso la rete ha maggiori difficoltà a specializzarsi sui dati del training set.
+Infine nella figura di destra viene applicato un \emph{early stop}, ossia l'apprendimento viene bloccato in automatico quando una certa quantità (in questo caso la \emph{validation accuracy}) non cresce significativamente per diverse epoche; si osserva nell'immagine che il processo viene efficacemente interrotto quando la validation loss non ha ancora iniziato a crescere.
+
+I grafici in figura \ref{fig:history} sono stati generati utilizzando \num{100000} dati per l'apprendimento, in seguito per migliorare ulteriormente le performance della rete sono stati generati ulteriori dati per ottenere un totale di \num{400000} dati, sempre divisi in corso d'opera in training set e validation set.
+%TODO: controllare struttura rete, quanti layer nascosti? flatten rientra tra i layer? è corretto?
+
+Nell'apprendimento di sistemi di Ising il fenomeno di overfit è più contenuto, ma ai layer nascosti è stato ugualmente aggiunto un regolarizzatore L2, che limità la libertà di evoluzione dei pesi della rete impedendo la specializzazione sul training set.
 
 \subsection{Statistica sui dati} \label{sec:stats}
 Per ottenere in ogni analisi una stima solida delle variabili misurate, come la test accuracy, sono stati generati test set da \num{100000} elementi che vengono divisi in 10 insiemi più piccoli su cui ogni modello viene valutato.
@@ -689,13 +692,19 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 Il primo grafico riportato in figura \ref{fig:par} presenta l'andamento del numero di parametri normalizzato sul numero di training data rispetto al numero di neuroni per reti a un layer nascosto.
 Come si può notare il numero di parametri segue un andamento lineare e cresce velocemente.
 Diversamente, nel secondo grafico in figura \ref{fig:par} si osserva che aumentando il numero di layer il numero di parametri cresce sempre linearmente ma in maniera molto meno marcata, la crescita è rappresentata rispetto al numero di layer nascosti che è proporzionale al numero totale di neuroni.
+Le specifiche delle reti a più layer sono specificate successivamente.
 
-Un buon equilibrio tra il numero di parametri da apprendere ed il numero di dati utilizzati per l'apprendimento porta tendenzialmente ad ottenere migliori risultati.
-%TODO verificare
-Perciò è stata effettuata una seconda analisi cercando di mantenere un numero di parametri rispetto al numero di dati costante per ciascun reticolo, allenando reti a più layer nascosti, pari a  1, 2, 3, 5 e 10 con ciascun layer popolato da 10 neuroni.
+Nell'ambito delle reti neuronali si cerca di avere sempre un equilibrio tra il numero di parametri da apprendere ed il numero di dati utilizzati per l'apprendimento, preferendo se possibile una prevalenza della seconda quantità.
+Si può trovare un parallelo con il numero di vincoli necessari per ottenere una soluzione unica in un sistema a molte variabili.
+Un metodo per diminuire il numero di parametri totali è aumentare il numero di layer nascosti diminuendo i neuroni presenti su ciascun layer.
+
+È stata effettuata quindi un'analisi allenando reti a più layer nascosti, pari a  1, 2, 3, 5 e 10, con ciascun layer popolato da 10 neuroni.
 I risultati, riportati nei grafici di \ref{fig:LN}, mostrano che si ottiene un valore ottimale di test accuracy per tutte le tipologie di reticolo classificando con reti a 2 layer. Aggiungendo un layer le performance si abbassano notevolmente, mentre per i reticoli di lato 30 si ottengono buoni risultati anche per reti aventi  un singolo layer.
 Inoltre dai risultati di questa analisi si può osservare come le performance sul modello di Ising con reticolo triangolare siano consistenti con quelle degli altri modelli, al contrario di quanto riportato nella sezione precedente.
 %TODO: da approfondire
+
+In definitiva, confrontando i valori in tabella \ref{tab:NNLN}, si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
+Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero di dati non sembra penalizzare l'apprendimento della rete stessa.
 
 \begin{figure}[!ht]
 \centering
@@ -773,8 +782,6 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
 \label{fig:LN}
 \end{figure}
 
-Tuttavia confrontando i valori in tabella \ref{tab:NNLN} si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
-
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lcc}
@@ -792,7 +799,7 @@ L & 1x100 test accuracy & 2x10 test accuracy\\
 \end{table}
 
 \subsubsection{Due layer e diverso numero di neuroni}
-I risltati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
+I risultati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
 
 Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
  Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
@@ -836,7 +843,7 @@ L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
 
 Anche in questo caso si osserva che i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
 
-Provando a sbilanciare ultieriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si ottiene un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 riesce a classificare correttamente la fase del sistema, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi. Evidentemente il primo layer di due neuroni funge da \emph{filtro}: \dots. 
+Provando a sbilanciare ulteriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si ottiene un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 riesce a classificare correttamente la fase del sistema, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi. Evidentemente il primo layer di due neuroni funge da \emph{filtro}: \dots. 
 
 Per trovare il rapporto fra numero di neuroni del primo layer e -del secondo entro cui invertendo l'ordine di questi si ottiene comunque una buona classificazione, si è provato ad allenare una rete 97-3, ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
 
@@ -1029,10 +1036,6 @@ Analogamente a quanto svolto per il modello di Ising si è provato a variare qua
 %----------------------------------------------------------------------------------------
 %	APPENDICES
 %----------------------------------------------------------------------------------------
-
-\appendix
-
-\section{Dati tabulati}
 
 
 %----------------------------------------------------------------------------------------
