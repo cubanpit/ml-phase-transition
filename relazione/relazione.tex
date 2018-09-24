@@ -538,7 +538,7 @@ Questo sarà lo standard utilizzato in tutte le analisi successive.
 
 \section{Modello di Ising: risultati e conclusioni}
 
-\subsection{Valutazione dei parametri della rete}
+\subsection{Valutazione della geometria della rete}
 Per meglio valutare il contributo dei diversi parametri della rete sono stati generati più modelli, eseguendo la fase di apprendimento sullo stesso training set e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
 
 \subsubsection{Diverso numero di neuroni}
@@ -791,7 +791,7 @@ L & 1x100 test accuracy & 2x10 test accuracy\\
 \label{tab:NNLN}
 \end{table}
 
-\subsubsection{Due layer e diverso numero di neuroni}
+\subsubsection{Due layer e diverso numero di neuroni}\label{sec:2Ln}
 I risltati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
 
 Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
@@ -836,9 +836,9 @@ L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
 
 Anche in questo caso si osserva che i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
 
-Provando a sbilanciare ultieriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si ottiene un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 riesce a classificare correttamente la fase del sistema, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi. Evidentemente il primo layer di due neuroni funge da \emph{filtro}: \dots. 
+Provando a sbilanciare ulteriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si ottiene un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 riesce a classificare correttamente la fase del sistema, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi. Evidentemente il primo layer di due neuroni funge da \emph{filtro}: 5 neuroni sono sufficienti per classificare correttamente la fase del sistema, se poi \emph{aiutati} da un secondo layer avente un numero di neuroni elevato; con 2 neuroni posti al primo layer l'informazione viene persa e quindi non si ottiene una test accuracy soddisfacente pur essendo presente un secondo layer con un elevato numero di neuroni. 
 
-Per trovare il rapporto fra numero di neuroni del primo layer e -del secondo entro cui invertendo l'ordine di questi si ottiene comunque una buona classificazione, si è provato ad allenare una rete 97-3, ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
+Per trovare il numero minimo di neuroni del primo layer necessario per una buona classificazione, si è provato ad allenare le reti 97-3, 96-4 e le relative reti inverse ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
 
 \begin{table}[ht]
 \begin{center}
@@ -849,44 +849,105 @@ Rete & L30 TA & L50 TA & L80 TA \\
 1x98+1x2 & \num{0.977 \pm 0.005} & \num{0.940\pm0.003} & \num{0.993 \pm0.002}\\
 1x2+1x98 & \num{0.722 \pm 0.020} & \num{0.668\pm0.024} & \num{0.679 \pm0.015}\\
 \midrule
-1x97+1x3 & \num{0.979 \pm 0.004} & \num{0.0\pm0.0} & \num{0.0\pm0.0}\\
-1x3+1x97 & \num{0.852 \pm 0.006} & \num{0.920\pm0.004} & \num{0.0\pm0.0}\\
+1x97+1x3 & \num{0.979 \pm 0.004} & \num{0.989\pm0.003} & \num{0.994\pm0.003}\\
+1x3+1x97 & \num{0.852 \pm 0.006} & \num{0.920\pm0.004} & \num{0.906\pm0.001}\\
+\midrule
+1x96+1x4 & \num{0.979 \pm 0.004} & \num{0.989\pm0.003} & \num{0.994\pm0.002}\\
+1x4+1x96 & \num{0.946 \pm 0.004} & \num{0.970\pm0.003} & \num{0.992\pm0.003}\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Numero di parametri normalizzato sul numero di dati del training set}
+\caption{Test accuracy per diverse reti}
 \label{tab:2LN2-3-4}
 \end{table}
 
-Si osserva che l'inversione di layer porta a una diminuzione del numero di parametri per numero di dati, come riportato in tabella \ref{tab:LNparam}.
-%TODO pietro deve finire questa parte e trovare una buona ragione
+\begin{figure}[!ht]
+\centering
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Honeycomb,
+    xlabel = {Numero di neuroni layer 1},
+    ylabel = {Test accuracy},
+    grid = major,
+    width=0.35\textwidth,
+    height=0.44\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_900_hc};
+\addlegendentry{L30}
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_2500_hc};
+\addlegendentry{L50}
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_6400_hc};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Quadrato,
+    xlabel = {Numero di neuroni layer 1},
+    grid = major,
+    width=0.35\textwidth,
+    height=0.44\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_900_sq};
+\addlegendentry{L30}
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_2500_sq};
+\addlegendentry{L50}
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_6400_sq};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+}
+\subfloat{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Triangolare,
+    xlabel = {Numero di neuroni layer 1},
+    grid = major,
+    width=0.35\textwidth,
+    height=0.44\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south east,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_900_tr};
+\addlegendentry{L30}
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_2500_tr};
+\addlegendentry{L50}
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=neurons1, y=accuracy, y error=stdev] {dati/layers_neuron_number/layers_neuron_number_l1low_6400_tr};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+}
+\caption{Performance della rete a 2 layer con numero di neuroni totali pari a 100. I punti di test accuracy sono riportati in funzione del numero di neuroni del primo layer.}
+\label{fig:100N2L}
+\end{figure}
 
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{clll}
-\toprule
-Rete & L30 & L50 & L80\\
-\midrule
-1x70+1x30 & \num{0.81} & \num{2.22} & \num{5.62}\\
-1x30+1x70 & \num{0.36} & \num{0.97} & \num{2.43}\\
-\midrule
-1x95+1x5 & \num{1.07} & \num{2.98} & \num{0.0}\\
-1x5+1x95 & \num{0.07} & \num{0.17} & \num{0.0}\\
-\midrule
-1x98+1x2 & \num{0.0} & \num{0.0} & \num{0.0}\\
-1x2+1x98 & \num{0.0} & \num{0.0} & \num{0.0}\\
-\midrule
-1x97+1x3 & \num{0.0} & \num{0.0} & \num{0.0}\\
-1x97+1x3 & \num{0.0} & \num{0.0} &  \num{0.0}\\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Numero di parametri normalizzato sul numero di dati del training set}
-\label{tab:LNparam}
-\end{table}
+\subsection{Valutazione dei parametri della rete}
 
 \subsubsection{Diversa funzione di attivazione}
-\subsection{Stima delle tempistiche di training}
+
+\subsubsection{Diverso ottimizzatore}
+
+\subsubsection{Diversa batch size}
+
+
+\subsection{Apprendimento e magnetizzazione}
+Come si è mostrato nella sezione \ref{sec:2Ln} esiste una soglia nel numero di neuroni del primo layer al di sotto della quale la rete non riesce ad apprendere correttamente la fase del sistema con una buona test accuracy. Secondo l'articolo \cite{carrasqu}, la rete riesce a classificare la fase del sistema apprendendo la magnetizzazione di questo, e già una rete a singolo layer con 3 neuroni è in grado di classificare con una buona test accuracy. Durante l'apprendimento si osserva, attraverso lo studio della magnetizzazione, l'accensione o meno di alcuni neuroni: \dots  Il sistema può trovarsi in due fasi, paramagnetica o ferromagnetica, mentre i dati in input sono tre: o tutti spin up, o tutti spin down o spin disordinati. 
 \subsection{Stima della temperatura critica}
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione.
 Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo.
