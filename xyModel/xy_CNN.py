@@ -164,7 +164,7 @@ def build_model(data_shape):
                                   activation='relu',
                                   input_shape=data_shape,
                                   data_format='channels_last'))
-    model.add(keras.layers.Conv2D(16, (3, 3),
+    model.add(keras.layers.Conv2D(16, kernel_size=(3, 3),
                                   activation='relu',
                                   data_format='channels_last'))
     model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
