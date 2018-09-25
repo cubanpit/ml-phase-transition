@@ -1,38 +1,39 @@
 // Wolff cluster algorithm for the 2-D XY Model
 
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
-#include <fstream>
 #include <random> // genearator and dist
 #include <vector> // std::vector
+#include <array> // std::aray
 #include <algorithm> // std::for_each
-#include <sys/time.h>// time in microseconds
+
+#define Lx 30
+#define Ly 30                     // number of spins in x and y
+const unsigned int N = Lx * Ly;   // number of spins
+
+std::array<std::array<short int, Ly>, Lx> s;     // the spins
+std::array<std::array<bool, Ly>, Lx> cluster;    // cluster[i][j] = true if i,j belongs
 
 double J = +1;                  // ferromagnetic coupling
-int Lx, Ly;                     // number of spins in x and y
-int N;                          // number of spins
-double **s;                        // the spins
 double T;                       // temperature
-int steps;                      // number of Monte Carlo steps
+double addProbability;
+
+// random number generator and distribution
+std::mt19937 rndGen(std::random_device{}());
+std::uniform_real_distribution<double> rndDist(0,1);
+
 double alpha; 					// random angle
 double oldClusterSpin;
 double newClusterSpin;
 
 double mx, my, MAG;
 
-std::mt19937 rndGen;
-std::uniform_real_distribution<double> rndDist(0,1);
-
 void initialize ( ) {
 
-  s = new double* [Lx];
-  for (int i = 0; i < Lx; i++) {
-    s[i] = new double [Ly];
-  }
   for (int i = 0; i < Lx; i++) {
     for (int j = 0; j < Ly; j++) {
-      s[i][j] = rndDist(rndGen) * 2 * M_PI; // random start
+      s[i][j] = rndDist(rndGen) * 2 * M_PI; // hot start
+      //s[i][j] = 1;   // cold start
     }
   }
 
@@ -40,24 +41,10 @@ void initialize ( ) {
   my = 0.0;
 
   for (int i = 0; i < Lx; i++) {
-
     for (int j = 0; j < Ly; j++) {
       mx += cos(s[i][j]);
       my += sin(s[i][j]);
     }
-  }
-  steps = 0;
-}
-
-bool **cluster;                     // cluster[i][j] = true if i,j belongs
-double addProbability;
-
-void initializeClusterVariables() {
-
-  // allocate 2-D array for spin cluster labels
-  cluster = new bool* [Lx];
-  for (int i = 0; i < Lx; i++) {
-    cluster[i] = new bool [Ly];
   }
 }
 
@@ -66,23 +53,18 @@ void growCluster(int i, int j);
 void tryAdd(int i, int j, double oldClusterSpin, double newClusterSpin);
 
 void oneMonteCarloStep() {
-  //
+
   //no cluster defined so clear the cluster array
   for (int i = 0; i < Lx; i++) {
-    for (int j = 0; j < Lx; j++) {
-      cluster[i][j] = false;
-
-    }
+    std::fill(cluster[i].begin(), cluster[i].end(), false);
   }
 
   alpha = rndDist(rndGen)*M_PI;
 
   // choose a random spin and grow a cluster
-  int i = int(rndDist(rndGen) * Lx);
-  int j = int(rndDist(rndGen) * Ly);
+  unsigned int i = int(rndDist(rndGen) * Lx);
+  unsigned int j = int(rndDist(rndGen) * Ly);
   growCluster(i, j);
-
-  ++steps;
 }
 
 void growCluster(int i, int j) {
@@ -101,13 +83,10 @@ void growCluster(int i, int j) {
     s[i][j] = fmod(tmpSpin, 2*M_PI);
   }
 
-
   newClusterSpin = s[i][j];
 
   mx += cos(newClusterSpin);
   my += sin(newClusterSpin);
-
-
 
   // find the indices of the 4 neighbors
   // assuming periodic boundary conditions
@@ -125,7 +104,7 @@ void growCluster(int i, int j) {
   if (!cluster[i][jPrev])
     tryAdd(i, jPrev, oldClusterSpin, newClusterSpin);
   if (!cluster[i][jNext])
-    tryAdd(i, jNext, oldClusterSpin, newClusterSpin);
+     tryAdd(i, jNext, oldClusterSpin, newClusterSpin);
 }
 
 void tryAdd(int i, int j, double oldClusterSpin, double newClusterSpin) {
@@ -145,13 +124,12 @@ double magnetization = 0;
 
 // compute block averages, useful to understand model behaviour
 void measureBlockObservables() {
-  blockM = sqrt(mx*mx+my*my)/(Lx*Ly);
+
+  blockM = sqrt(mx * mx + my * my) / N;
 }
 
 int main() {
 
-  Ly = Lx = 6;
-  N = Lx * Ly;
   int MCSteps = 100000;
   int blockSize = 1000; // suggested by Wolff is 1000
 
@@ -173,13 +151,7 @@ int main() {
   T = Tstart;
   for (int t = 0; t < Tn; ++t) {
 
-    // get time in microseconds and use it as seed
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    rndGen.seed(tv.tv_usec);
-
-    initialize();
-    initializeClusterVariables();
+    initialize(); // initialize spins array
 
     if (computeBlockValues) {
       // thermalize
@@ -188,6 +160,7 @@ int main() {
       }
     }
 
+    // effective MC steps
     for (int i = 0; i < MCSteps; i++) {
       oneMonteCarloStep();
       if (computeBlockValues and i != 0 and i % blockSize == 0) {
@@ -217,7 +190,6 @@ int main() {
 
       std::cerr << T << " " << meanM << " " << meanV << std::endl;
     }
-
 
     std::cout << T << "\n";
 
