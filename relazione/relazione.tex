@@ -423,16 +423,44 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \end{axis}
 \end{tikzpicture}
 \caption{Riduzioni bidimensionali di \num{5000} configurazioni di modelli di Ising su reticoli di lato 50. Il colore indica la temperatura a cui la configurazione è stata simulata, la temperatura di transizione è sempre al centro della scala.}
-\label{fig:tsne}
+\label{fig:tsne_ising}
 \end{figure}
 
-Prima di procedere con l'apprendimento è possibile visualizzare i dati tramite una riduzione bidimensionale delle configurazioni, alcuni esempi sono riportati in figura \ref{fig:tsne}.
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    title=XY su reticolo quadrato,
+    colorbar horizontal,
+    colorbar/width=0.2cm,
+    colorbar shift/.style={yshift=0cm},
+    colormap name=viridis,
+    xtick=\empty,
+    ytick=\empty,
+    grid=major,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot[scatter, only marks, mark=o, mark size=1pt, point meta=explicit]
+    table[x=x, y=y, meta=temp] {dati/tsne/tsne_1024_xy};
+\end{axis}
+\end{tikzpicture}
+\caption{Riduzione bidimensionale di \num{5000} configurazioni di un modello XY su reticolo di lato 32. Il colore indica la temperatura a cui la configurazione è stata simulata, la temperatura di transizione è sempre al centro della scala.}
+\label{fig:tsne_xy}
+\end{figure}
+
+Prima di procedere con l'apprendimento è possibile visualizzare i dati tramite una riduzione bidimensionale delle configurazioni, alcuni esempi sono riportati in figura \ref{fig:tsne_ising}.
 La tecnica utilizzata per ridurre la dimensionalità dei dati è t-SNE \cite{tsne}.
 In tutte le figure è possibile osservare la creazione di cluster per i due possibili stati del sistema, al di sopra della temperatura di transizione e al di sotto di essa.
 
 Sono stati generati due grafici per il reticolo triangolare; uno basato sui dati di una simulazione in cui gli spin vengono inizializzati tutti a 1 quindi in uno stato naturale a bassa temperatura; il secondo proviene da una simulazione con inizializzazione casuale degli spin quindi in uno stato naturale ad alta temperatura.
 La differenza tra le due figure di sistemi su reticolo triangolare è dovuta all'evoluzione del sistema a basse temperature, quando gli spin vengono inizializzati tutti a 1 è molto improbabile che la magnetizzazione si inverta completamente, mentre partendo da un'inizializzazione casuale il sistema può trovare l'equilibrio con eguale probabilità in una delle due polarizzazioni opposte.
 Come indicato in sezione \ref{sec:simIsing} la simulazione su reticolo triangolare inizia da un sistema completamente ordinato per tutti i dati utilizzati nel resto del lavoro.
+
+La riduzione di dimensionalità è stata applicata anche alle configurazioni di un modello XY su reticolo quadrato, il risultato è rappresentato in figura \ref{fig:tsne_xy}.
+Il risultato appare meno chiaro rispetto al caso precedente e sono presenti molti elementi che non rientrano all'interno del cluster principale.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
@@ -561,7 +589,7 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
 \end{axis}
 \end{tikzpicture}
 }
-\subfloat[Regolarizzazione dropout]{
+\subfloat[Con regolarizzazioni]{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Epoche},
@@ -640,6 +668,7 @@ Questo sarà lo standard utilizzato in tutte le analisi successive.
 Per meglio valutare il contributo dei diversi parametri della rete sono stati generati più modelli, eseguendo la fase di apprendimento sullo stesso training set e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
 
 \subsubsection{Diverso numero di neuroni}
+\label{sec:NN}
 La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
 L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
 Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
@@ -879,13 +908,12 @@ Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{lcc}
+\begin{tabular}{llll}
 \toprule
-L & 1x100 test accuracy & 2x10 test accuracy\\
+Rete & L30 TA & L50 TA & L80 TA \\
 \midrule
-30 & \num{0.981 \pm 0.004} & \num{0.979 \pm 0.004} \\
-50 & \num{0.973 \pm 0.006} & \num{0.988 \pm 0.003} \\
-80 & \num{0.994 \pm 0.002} & \num{0.993 \pm 0.002} \\
+1x100 & \num{0.981 \pm 0.004} & \num{0.973 \pm 0.006} & \num{0.994 \pm 0.002} \\
+2x10 & \num{0.979 \pm 0.004} & \num{0.988 \pm 0.003} & \num{0.993 \pm 0.002} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -894,76 +922,76 @@ L & 1x100 test accuracy & 2x10 test accuracy\\
 \end{table}
 
 \subsubsection{Due layer e diverso numero di neuroni}\label{sec:2Ln}
-I risultati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
+I risultati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni ciascuno.
 
-Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
-Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
-Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, questi sono compatibili entro l'errore con quelli riportati in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50 che si discosta di circa $2\sigma$ dagli altri valori.
-Inoltre, anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy uguali entro l'errore.
+Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer con un numero totale di neuroni pari a 100, variando il numero di neuroni dei singoli layer.
+È stata allenata una rete a 30 e 70 neuroni, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
+Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, questi sono compatibili entro l'errore con quelli in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50 che si discosta di circa $2\sigma$ dagli altri valori.
+Anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy equivalenti, considerando l'errore.
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{lcc}
+\begin{tabular}{llll}
 \toprule
-L & 1x70+1x30 test accuracy & 1x30+1x70 test accuracy\\
+Rete & L30 TA & L50 TA & L80 TA\\
 \midrule
-30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.005} \\
-50 & \num{0.988 \pm 0.003} & \num{0.988 \pm 0.003} \\
-80 & \num{0.993 \pm 0.002} & \num{0.993 \pm 0.002} \\
+1x70+1x30 & \num{0.979 \pm 0.004} & \num{0.988 \pm 0.003} & \num{0.993 \pm 0.002} \\
+1x30+1x70 & \num{0.978 \pm 0.005} & \num{0.988 \pm 0.003} & \num{0.993 \pm 0.002} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\caption{Test accuracy (TA) valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
 \label{tab:2LN30-70}
 \end{table}
 
-Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembrerebbe aver modificato le sue capacità di apprendimento.
-Successivamente si è allenata una rete sempre a due layer, con un numero di neuroni per layer meno equilibrato: 95 e 5.
+Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembra aver modificato le sue capacità di apprendimento.
+Si prosegue allenando una rete con un numero di neuroni per layer meno equilibrato: 95 e 5.
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{lcc}
+\begin{tabular}{llll}
 \toprule
-L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
+Rete & L30 TA & L50 TA & L80 TA \\
 \midrule
-30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.004} \\
-50 & \num{0.988 \pm 0.003} & \num{0.987 \pm 0.003} \\
-80 & \num{0.994 \pm 0.002} & \num{0.992 \pm 0.003} \\
+1x95+1x5 & \num{0.979 \pm 0.004} & \num{0.988 \pm 0.003} & \num{0.994 \pm 0.002} \\
+1x5+1x95 & \num{0.978 \pm 0.004} & \num{0.987 \pm 0.003} & \num{0.992 \pm 0.003} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\caption{Test accuracy (TA) valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
 \label{tab:2LN5-95}
 \end{table}
 
 Anche in questo caso i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
 
-Provando a sbilanciare ulteriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si è ottenuto un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 classifica correttamente la fase del sistema con una test accuracy alta, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi.
-Evidentemente il primo layer di due neuroni funge da \emph{filtro}: 5 neuroni sono sufficienti per classificare correttamente la fase del sistema, se poi supportati da un secondo layer avente un numero di neuroni elevato; con 2 neuroni posti al primo layer l'informazione viene persa e quindi non si ottiene una test accuracy soddisfacente pur essendo presente un secondo layer con un elevato numero di neuroni. 
-Per trovare il numero minimo di neuroni del primo layer necessario per una buona classificazione, si è provato ad allenare le reti 97-3, 96-4 e le relative reti inverse ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
+Provando a sbilanciare ulteriormente il numero di neuroni dei due layer, ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si è ottenuto un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 classifica correttamente la fase del sistema con una test accuracy alta, mentre invertendo i layer si ottengono risultati di test accuracy molto bassi.
+Questo è un segnale del fatto che 2 neuroni non sono sufficienti per passare le informazioni necessarie per la classificazione al layer successivo, viene persa parte dell'informazione.
+Si è osservato che 5 neuroni nel primo layer sono sufficienti per classificare correttamente, per trovare il numero minimo di neuroni per una buona classificazione si è provato ad allenare reti 97-3, 96-4 e le relative reti inverse ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{clll}
+\begin{tabular}{llll}
 \toprule
 Rete & L30 TA & L50 TA & L80 TA \\
 \midrule
-1x98+1x2 & \num{0.977 \pm 0.005} & \num{0.940\pm0.003} & \num{0.993 \pm0.002}\\
-1x2+1x98 & \num{0.722 \pm 0.020} & \num{0.668\pm0.024} & \num{0.679 \pm0.015}\\
+1x98+1x2 & \num{0.977 \pm 0.005} & \num{0.940 \pm 0.003} & \num{0.993 \pm 0.002}\\
+1x2+1x98 & \num{0.72 \pm 0.02} & \num{0.67\pm 0.02} & \num{0.68 \pm 0.02}\\
 \midrule
-1x97+1x3 & \num{0.979 \pm 0.004} & \num{0.989\pm0.003} & \num{0.994\pm0.003}\\
-1x3+1x97 & \num{0.852 \pm 0.006} & \num{0.920\pm0.004} & \num{0.906\pm0.001}\\
+1x97+1x3 & \num{0.979 \pm 0.004} & \num{0.989 \pm 0.003} & \num{0.994 \pm 0.003}\\
+1x3+1x97 & \num{0.852 \pm 0.006} & \num{0.920 \pm 0.004} & \num{0.906 \pm 0.001}\\
 \midrule
-1x96+1x4 & \num{0.979 \pm 0.004} & \num{0.989\pm0.003} & \num{0.994\pm0.002}\\
-1x4+1x96 & \num{0.946 \pm 0.004} & \num{0.970\pm0.003} & \num{0.992\pm0.003}\\
+1x96+1x4 & \num{0.979 \pm 0.004} & \num{0.989 \pm 0.003} & \num{0.994 \pm 0.002}\\
+1x4+1x96 & \num{0.946 \pm 0.004} & \num{0.970 \pm 0.003} & \num{0.992 \pm 0.003}\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy per diverse reti. I valori sono le medie e le deviazioni standard dei risultati ottenuti per il reticolo honeycomb, quadrato e triangolare.}
+\caption{Test accuracy (TA) per diverse reti. I valori sono le medie e le deviazioni standard dei risultati ottenuti per il reticolo honeycomb, quadrato e triangolare.}
 \label{tab:2LN2-3-4}
 \end{table}
 
-In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer con il primo layer avente pochi neuroni: si osserva che, al contrario delle reti a singolo layer, con solo 3 neuroni nel primo layer la rete è in grado di classificare con una test accuracy superiore al $90\%$ i reticoli di lato 50 e 80, mentre per i reticoli di lato 30 raggiunge una test accuracy (in media sulla tipologia di reticolo, vd tabella \ref{tab:2LN2-3-4}) superiore all'$85\%$.
+In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer con il primo layer di piccole dimensioni.
+Si osserva che, diversamente dalle reti a singolo layer trattate in sezione \ref{sec:NN}, sono sufficienti 3 neuroni per ottenere una test accuracy superiore al $90\%$ con reticoli di lato 50 e 80, mentre per i reticoli di lato 30 si raggiunge una test accuracy (in media sulla tipologia di reticolo, vd tabella \ref{tab:2LN2-3-4}) superiore all'$85\%$.
+Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella capacità di apprendimento della rete.
 
 \begin{figure}[!ht]
 \centering
@@ -1197,7 +1225,7 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{rcc}
+\begin{tabular}{lll}
 \toprule
 Reticolo & T estratta & T teorica \\
 \midrule
