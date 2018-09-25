@@ -144,20 +144,20 @@ test_real_temps = test_real_temps[:args.data_number]
 
 x_data = np.asarray(test_configs).astype('float64')
 
-vis_data = TSNE(verbose=2).fit_transform(x_data)
+vis_data = TSNE(verbose=0).fit_transform(x_data)
 
 vis_x = vis_data[:, 0]
 vis_y = vis_data[:, 1]
 
-plt.scatter(
-            vis_x, vis_y, c=test_real_temps,
-            cmap=plt.cm.get_cmap("jet", 40), s=10)
-plt.colorbar(orientation="horizontal")
-plt.show()
+# plt.scatter(
+#             vis_x, vis_y, c=test_real_temps,
+#             cmap=plt.cm.get_cmap("jet", 40), s=10)
+# plt.colorbar(orientation="horizontal")
+# plt.show()
 
-# print("x y temp")
-# for d in range(len(vis_data)):
-#     print(vis_x[d], vis_y[d], test_real_temps[d])
+print("x y temp")
+for d in range(len(vis_data)):
+    print(vis_x[d], vis_y[d], test_real_temps[d])
 
 # Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
 #                Martina Crippa    <martina.crippa2@studenti.unimi.it>
