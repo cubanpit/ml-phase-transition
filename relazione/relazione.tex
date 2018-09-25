@@ -428,9 +428,10 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 
 \begin{figure}
 \centering
+\subfloat[Configurazioni]{
 \begin{tikzpicture}
 \begin{axis}[
-    title=XY su reticolo quadrato,
+    title=Quadrato,
     colorbar horizontal,
     colorbar/width=0.2cm,
     colorbar shift/.style={yshift=0cm},
@@ -447,6 +448,28 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     table[x=x, y=y, meta=temp] {dati/tsne/tsne_1024_xy};
 \end{axis}
 \end{tikzpicture}
+}
+\subfloat[Vortici]{
+\begin{tikzpicture}
+\begin{axis}[
+    title=Quadrato,
+    colorbar horizontal,
+    colorbar/width=0.2cm,
+    colorbar shift/.style={yshift=0cm},
+    colormap name=viridis,
+    xtick=\empty,
+    ytick=\empty,
+    grid=major,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot[scatter, only marks, mark=o, mark size=1pt, point meta=explicit]
+    table[x=x, y=y, meta=temp] {dati/tsne/tsne_1024_vortex};
+\end{axis}
+\end{tikzpicture}
+}
 \caption{Riduzione bidimensionale di \num{5000} configurazioni di un modello XY su reticolo di lato 32. Il colore indica la temperatura a cui la configurazione è stata simulata, la temperatura di transizione è sempre al centro della scala.}
 \label{fig:tsne_xy}
 \end{figure}
@@ -476,7 +499,7 @@ Le reti sono state implementate tramite Keras \cite{keras}, utilizzando Tensorfl
 
 \begin{figure}[ht]
 \centering
-\resizebox{0.7\textwidth}{!}{
+\resizebox{0.65\textwidth}{!}{
 \begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth, scale=1]
 
 \foreach \m/\l [count=\y] in {1,2,missing,3}
@@ -572,7 +595,7 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     ylabel = {Loss},
     grid = major,
     width=0.33\textwidth,
-    height=0.5\textwidth,
+    height=0.4\textwidth,
     ymin=0,
     ymax=0.4,
     xmin=0,
@@ -595,7 +618,7 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     xlabel = {Epoche},
     grid = major,
     width=0.33\textwidth,
-    height=0.5\textwidth,
+    height=0.4\textwidth,
     ymin=0,
     ymax=0.4,
     xmin=0,
@@ -618,7 +641,7 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     xlabel = {Epoche},
     grid = major,
     width=0.33\textwidth,
-    height=0.5\textwidth,
+    height=0.4\textwidth,
     ymin=0,
     ymax=0.4,
     xmin=0,
@@ -669,18 +692,8 @@ Per meglio valutare il contributo dei diversi parametri della rete sono stati ge
 
 \subsubsection{Diverso numero di neuroni}
 \label{sec:NN}
-La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
-L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
-Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
 
-Si osserva che per il reticolo di lato 30 una rete a 10 neuroni è sufficiente per classificare in maniera adeguata la fase del sistema, raggiungendo una test accuracy circa del $98\%$.
-Per reticoli di maggiori dimensioni sono necessari almeno 50 neuroni per raggiungre livelli di test accuracy superiori al $90\%$.
-Per tutte le dimensioni considerate aumentando il numero di neuroni a 1000 si osserva un crollo nelle performance per i reticoli honeycomb e quadrato, mentre per il reticolo triangolare la rete continua a classificare in modo soddisfacente.
-Per limiti computazionali non sono state realizzate reti con un numero di neuroni superiore, quindi non è stato possibile chiarire l'andamento complessivo per il reticolo triangolare.
-Si osserva che una differenza tra la configurazione su reticolo triangolare e gli altri due sistemi, oltre alla geometria del reticolo, è l'algoritmo utilizzato per la simulazione del sistema, come riportato in sezione \ref{sec:simIsing}.
-%TODO approfondire la cosa
-
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \centering
 \subfloat{
 \begin{tikzpicture}
@@ -691,7 +704,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     ylabel = {Test accuracy},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -715,7 +728,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     xlabel = {Numero di neuroni},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -739,7 +752,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     xlabel = {Numero di neuroni},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -759,9 +772,21 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \label{fig:NN}
 \end{figure}
 
+La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
+L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
+Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
+
+Si osserva che per il reticolo di lato 30 una rete a 10 neuroni è sufficiente per classificare in maniera adeguata la fase del sistema, raggiungendo una test accuracy circa del $98\%$.
+Per reticoli di maggiori dimensioni sono necessari almeno 50 neuroni per raggiungre livelli di test accuracy superiori al $90\%$.
+Per tutte le dimensioni considerate aumentando il numero di neuroni a 1000 si osserva un crollo nelle performance per i reticoli honeycomb e quadrato, mentre per il reticolo triangolare la rete continua a classificare in modo soddisfacente.
+Per limiti computazionali non sono state realizzate reti con un numero di neuroni superiore, quindi non è stato possibile chiarire l'andamento complessivo per il reticolo triangolare.
+Si osserva che una differenza tra la configurazione su reticolo triangolare e gli altri due sistemi, oltre alla geometria del reticolo, è l'algoritmo utilizzato per la simulazione del sistema, come riportato in sezione \ref{sec:simIsing}.
+%TODO approfondire la cosa
+
+
 \subsubsection{Diverso numero di layer}
 
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \centering
 \subfloat{
 \begin{tikzpicture}
@@ -769,8 +794,8 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     xlabel = {Numero di neuroni},
     ylabel = {\# parametri / \# training data},
     grid = major,
-    width=0.45\textwidth,
-    height=0.4\textwidth,
+    width=0.4\textwidth,
+    height=0.35\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north west,
 ]
@@ -792,8 +817,8 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     xlabel = {Numero di layer nascosti},
     ymax=1.5,
     grid = major,
-    width=0.45\textwidth,
-    height=0.4\textwidth,
+    width=0.4\textwidth,
+    height=0.35\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north west,
 ]
@@ -813,24 +838,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \label{fig:par}
 \end{figure}
 
-Il primo grafico riportato in figura \ref{fig:par} presenta l'andamento del numero di parametri normalizzato sul numero di training data rispetto al numero di neuroni per reti a un layer nascosto.
-Come si può notare il numero di parametri segue un andamento lineare e cresce velocemente.
-Diversamente, nel secondo grafico in figura \ref{fig:par} si osserva che aumentando il numero di layer il numero di parametri cresce sempre linearmente ma in maniera molto meno marcata, la crescita è rappresentata rispetto al numero di layer nascosti che è proporzionale al numero totale di neuroni.
-Le specifiche delle reti a più layer sono specificate successivamente.
-
-Nell'ambito delle reti neuronali si cerca di avere sempre un equilibrio tra il numero di parametri da apprendere ed il numero di dati utilizzati per l'apprendimento, preferendo se possibile una prevalenza della seconda quantità.
-Si può trovare un parallelo con il numero di vincoli necessari per ottenere una soluzione unica in un sistema a molte variabili.
-Un metodo per diminuire il numero di parametri totali è aumentare il numero di layer nascosti diminuendo i neuroni presenti su ciascun layer.
-
-È stata effettuata quindi un'analisi allenando reti a più layer nascosti, pari a  1, 2, 3, 5 e 10, con ciascun layer popolato da 10 neuroni.
-I risultati, riportati nei grafici di \ref{fig:LN}, mostrano che si ottiene un valore ottimale di test accuracy per tutte le tipologie di reticolo classificando con reti a 2 layer. Aggiungendo un layer le performance si abbassano notevolmente, mentre per i reticoli di lato 30 si ottengono buoni risultati anche per reti aventi  un singolo layer.
-Inoltre dai risultati di questa analisi si può osservare come le performance sul modello di Ising con reticolo triangolare siano consistenti con quelle degli altri modelli, al contrario di quanto riportato nella sezione precedente.
-%TODO: da approfondire
-
-In definitiva, confrontando i valori in tabella \ref{tab:NNLN}, si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
-Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero di dati non sembra penalizzare l'apprendimento della rete stessa.
-
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \centering
 \subfloat{
 \begin{tikzpicture}
@@ -840,7 +848,7 @@ Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero
     ylabel = {Test accuracy},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
@@ -863,7 +871,7 @@ Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero
     xlabel = {Numero di layer nascosti},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
@@ -886,7 +894,7 @@ Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero
     xlabel = {Numero di layer nascosti},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
@@ -905,6 +913,23 @@ Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero
 \caption{Performance della rete feed forward a layer multipli fully connected da dieci neuroni ciascuno sul modello di Ising.}
 \label{fig:LN}
 \end{figure}
+
+Il primo grafico riportato in figura \ref{fig:par} presenta l'andamento del numero di parametri normalizzato sul numero di training data rispetto al numero di neuroni per reti a un layer nascosto.
+Come si può notare il numero di parametri segue un andamento lineare e cresce velocemente.
+Diversamente, nel secondo grafico in figura \ref{fig:par} si osserva che aumentando il numero di layer il numero di parametri cresce sempre linearmente ma in maniera molto meno marcata, la crescita è rappresentata rispetto al numero di layer nascosti che è proporzionale al numero totale di neuroni.
+Le specifiche delle reti a più layer sono specificate successivamente.
+
+Nell'ambito delle reti neuronali si cerca di avere sempre un equilibrio tra il numero di parametri da apprendere ed il numero di dati utilizzati per l'apprendimento, preferendo se possibile una prevalenza della seconda quantità.
+Si può trovare un parallelo con il numero di vincoli necessari per ottenere una soluzione unica in un sistema a molte variabili.
+Un metodo per diminuire il numero di parametri totali è aumentare il numero di layer nascosti diminuendo i neuroni presenti su ciascun layer.
+
+È stata effettuata quindi un'analisi allenando reti a più layer nascosti, pari a  1, 2, 3, 5 e 10, con ciascun layer popolato da 10 neuroni.
+I risultati, riportati nei grafici di \ref{fig:LN}, mostrano che si ottiene un valore ottimale di test accuracy per tutte le tipologie di reticolo classificando con reti a 2 layer. Aggiungendo un layer le performance si abbassano notevolmente, mentre per i reticoli di lato 30 si ottengono buoni risultati anche per reti aventi  un singolo layer.
+Inoltre dai risultati di questa analisi si può osservare come le performance sul modello di Ising con reticolo triangolare siano consistenti con quelle degli altri modelli, al contrario di quanto riportato nella sezione precedente.
+%TODO: da approfondire
+
+In definitiva, confrontando i valori in tabella \ref{tab:NNLN}, si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
+Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero di dati non sembra penalizzare l'apprendimento della rete stessa.
 
 \begin{table}[ht]
 \begin{center}
@@ -989,10 +1014,6 @@ Rete & L30 TA & L50 TA & L80 TA \\
 \label{tab:2LN2-3-4}
 \end{table}
 
-In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer con il primo layer di piccole dimensioni.
-Si osserva che, diversamente dalle reti a singolo layer trattate in sezione \ref{sec:NN}, sono sufficienti 3 neuroni per ottenere una test accuracy superiore al $90\%$ con reticoli di lato 50 e 80, mentre per i reticoli di lato 30 si raggiunge una test accuracy (in media sulla tipologia di reticolo, vd tabella \ref{tab:2LN2-3-4}) superiore all'$85\%$.
-Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella capacità di apprendimento della rete.
-
 \begin{figure}[!ht]
 \centering
 \subfloat{
@@ -1003,7 +1024,7 @@ Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella ca
     ylabel = {Test accuracy},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1026,7 +1047,7 @@ Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella ca
     xlabel = {Numero di neuroni layer 1},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1049,7 +1070,7 @@ Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella ca
     xlabel = {Numero di neuroni layer 1},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1069,6 +1090,10 @@ Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella ca
 \label{fig:2L1Lln}
 \end{figure}
 
+In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer con il primo layer di piccole dimensioni.
+Si osserva che, diversamente dalle reti a singolo layer trattate in sezione \ref{sec:NN}, sono sufficienti 3 neuroni per ottenere una test accuracy superiore al $90\%$ con reticoli di lato 50 e 80, mentre per i reticoli di lato 30 si raggiunge una test accuracy (in media sulla tipologia di reticolo, vd tabella \ref{tab:2LN2-3-4}) superiore all'$85\%$.
+Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella capacità di apprendimento della rete.
+
 \subsection{Valutazione dei parametri della rete}
 Dopo aver esplorato la geometria della rete, si è provato ad allenare reti variando altri tre parametri: la funzione di attivazione, l'ottimizzatore e la batch size. 
 L'analisi è stata effettuata unicamente sul reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni.
@@ -1077,7 +1102,7 @@ L'analisi è stata effettuata unicamente sul reticolo di lato 30, allenando una 
 In primo luogo si sono valutate le reti variando la funzione di attivazione: fino a questo punto l'analisi è stata effettuata utilizzando la funzione di attivazione Sigmoid per tutti i layer nascosti.
 Sono state testate sulla rete a singolo layer con 100 neuroni tre funzioni di attivazione diverse: la ReLu, la Tanh e la Sigmoid, comparando la test accuracy ottenuta per i tre reticoli studiati, di lato 30. I risultati sono riportati in tabella \ref{tab:SigVsReluVsTanh}.
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \begin{center}
 \begin{tabular}{llll}
 \toprule
@@ -1103,7 +1128,7 @@ Come si può osservare i valori di test accuracy per Sigmoid e Tanh sono compati
     xmin=-3, xmax=3,
     ymin=-1.2, ymax=1.2,
     width=0.4\textwidth,
-    height=0.44\textwidth,
+    height=0.4\textwidth,
     axis lines=center,
     axis on top=true,
     domain=-3:3,
@@ -1124,7 +1149,7 @@ Come si può osservare i valori di test accuracy per Sigmoid e Tanh sono compati
     xmin=-3, xmax=3,
     ymin=-1.2, ymax=1.2,
     width=0.4\textwidth,
-    height=0.44\textwidth,
+    height=0.4\textwidth,
     axis lines=center,
     axis on top=true,
     domain=-3:3,
@@ -1147,7 +1172,7 @@ Come si può osservare i valori di test accuracy per Sigmoid e Tanh sono compati
     xmin=-3, xmax=3,
     ymin=-1.2, ymax=1.2,
     width=0.4\textwidth,
-    height=0.44\textwidth,
+    height=0.4\textwidth,
     axis lines=center,
     axis on top=true,
     domain=-3:3,
