@@ -165,6 +165,7 @@ Tale transizione di fase è detta del \emph{secondo ordine} ed è caratterizzata
 \end{tikzpicture}
 \label{fig:isingP}
 }
+\hspace{2cm}
 \subfloat[Ferromagnetico]{
 \centering
 \begin{tikzpicture}[> = stealth, scale=0.8]
@@ -187,7 +188,7 @@ Sono stati studiati sistemi con geometrie di reticolo differenti e conseguenteme
 
 \begin{table}[!ht]
 \begin{center}
-\begin{tabular}{rcccc}
+\begin{tabular}{lllll}
 \toprule
 reticolo & nn & $T_c$ & $T_c$ approx $[$\si{K}$]$ & $T_{init}$ $[$\si{K}$]$\\
 \midrule
@@ -204,40 +205,20 @@ triangolare & $6$ & $4/\!\ln{3}$ & $3.6410 $ & $2.0$\\
 La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo per $40$ diverse temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:ltI}.
 Il sistema è stato inizializzato random a $T_{init}$, lasciandolo raggiungere l'equilibrio a temperatura fissata per poi passare alla temperatura successiva senza randomizzare nuovamente il sistema.
 I modelli di Ising su reticolo quadrato e honeycomb sono stati simulati tramite l'algoritmo di Wolff \cite{wolff}, quindi eseguendo mosse a cluster, mentre il modello su reticolo triangolare è stato simulato con l'algoritmo di Metropolis, quindi ad ogni mossa viene provata l'inversione di un singolo spin.
+In tutti i sistemi studiati vengono applicate condizioni al contorno periodiche.
 Nelle simulazioni con l'algoritmo di Wolff il sistema di partenza è randomizzato, mentre nella simulazione con l'algoritmo di Metropolis il sistema di partenza è preso ordinato per facilitare il raggiungimento dell'equilibrio.
 Le simulazioni sono state scritte in linguaggio C++, il generatore di numeri casuali utilizzato è il Mersenne Twister 19937.
 
-\subsection{Modello XY}
-Il modello XY descrive il comportamento di spin su reticolo in grado di ruotare assumendo valori nell'intervallo $[0,2\pi)$; gli spin interagiscono a primi vicini tramite l'hamiltoniana
-\begin{equation}
-H=-\sum_{\langle i~j\rangle} \cos(\theta_i-\theta_j)
-\end{equation}
-dove la costante si accoppiamento è stata fissata pari ad $1$ ed è stato posto nullo il campo magnetico esterno.
-Nel modello XY,  secondo il teorema di Mermin-Wagner \cite{mermin}, non è prevista alcuna transizione di fase del secondo ordine.
-Tuttavia presenta una transizione di fase \emph{topologica}, ovvero la transizione BKT \cite{kosterlitz}, che coinvolge la creazione di vortici e antivortici, configurazioni topologicamente stabili.
-Appena sotto la temperatura di transizione si osserva la formazione di coppie vortice-antivortice mentre non è energeticamente conveniente la creazione di vortici e antivortici singoli, abbassando la temperatura la maggior parte degli spin tende ad orientarsi in modo parallelo.
-Al di sopra della temperatura critica vince il contributo entropico e compaiono vortici e antivortici non accoppiati, gli spin in generale non sono più allineati tra loro.
-Due configurazioni esemplari temperature diverse sono riportate in Figura \ref{fig:xy}.
-Anche questo sistema è stato simulato tramite metodi Monte Carlo, utilizzando l'algoritmo di Wolff e seguendo una procedura analoga a quella utilizzata per il modello di Ising, i parametri sono riportati in tabella \ref{tab:ltXY}.
+Nel caso del reticolo honeycomb le dimensioni del reticolo si riferiscono ad un reticolo quadrato su cui si intrecciano due reticoli honeycomb, le interazioni sono progettate in modo che i due reticoli intrecciati siano indipendenti salvo una connessione tramite condizioni al contorno su un unico lato, riproducendo il comportamento di un reticolo honeycomb unico di dimensione doppia.
+L'accuratezza del procedimento viene confermata dai risultati stessi del lavoro.
 
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{rcccc}
-\toprule
-reticolo & nn & $T_t$ & $T_t$ approx $[$\si{K}$]$ & $T_{init}$ $[$\si{K}$]$\\
-\midrule
-quadrato & $4$ & --- & $0.893$ & $0.01$\\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Reticoli studiati}
-\label{tab:ltXY}
-\end{table}
-\begin{figure}[!ht]
+\subsection{Modello XY}
+
+\begin{figure}[ht]
 \centering
 \subfloat[Modello XY vicino alla temperatura critica]{
 \centering
-\begin{tikzpicture}[> = stealth, scale=0.7]
+\begin{tikzpicture}[> = stealth, scale=0.65]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9.5cm,9.5cm);
     \foreach \y in {0,1,2,3,4,5}
         \foreach \x in {0,1,2,3,4,5}
@@ -284,9 +265,10 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     \node[draw, red, ultra thick, shape = circle, minimum size = 0.8cm] at (1.5*4.5,1.5*1.5){};
 \end{tikzpicture}
 }
+\hspace{2cm}
 \subfloat[Modello XY sopra la temperatura critica]{
 \centering
-\begin{tikzpicture}[> = stealth, scale=0.7]
+\begin{tikzpicture}[> = stealth, scale=0.65]
 \draw[gray,dashed,step=1.5cm] (-1,-1) grid +(9.5cm,9.5cm);
     \foreach \y in {0,1,2,3,4,5}
         \foreach \x in {0,1,2,3,4,5}
@@ -338,6 +320,33 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \caption{Modello XY a due diverse temperature, i vortici sono indicati in blu, gli antivortici in rosso. Si può notare una chiara coppia vortice-antivortice nella figura di sinistra, mentre nella figura di destra non è presente alcuna coppia.}
 \label{fig:xy}
 \end{figure}
+
+Il modello XY descrive il comportamento di spin su reticolo in grado di ruotare assumendo valori nell'intervallo $[0,2\pi)$; gli spin interagiscono a primi vicini tramite l'hamiltoniana
+\begin{equation}
+H=-\sum_{\langle i~j\rangle} \cos(\theta_i-\theta_j)
+\end{equation}
+dove la costante si accoppiamento è stata fissata pari ad $1$ ed è stato posto nullo il campo magnetico esterno.
+Nel modello XY,  secondo il teorema di Mermin-Wagner \cite{mermin}, non è prevista alcuna transizione di fase del secondo ordine.
+Tuttavia presenta una transizione di fase \emph{topologica}, ovvero la transizione BKT \cite{kosterlitz}, che coinvolge la creazione di vortici e antivortici, configurazioni topologicamente stabili.
+Appena sotto la temperatura di transizione si osserva la formazione di coppie vortice-antivortice mentre non è energeticamente conveniente la creazione di vortici e antivortici singoli, abbassando la temperatura la maggior parte degli spin tende ad orientarsi in modo parallelo.
+Al di sopra della temperatura critica vince il contributo entropico e compaiono vortici e antivortici non accoppiati, gli spin in generale non sono più allineati tra loro.
+Due configurazioni esemplari temperature diverse sono riportate in Figura \ref{fig:xy}.
+Anche questo sistema è stato simulato tramite metodi Monte Carlo, utilizzando l'algoritmo di Wolff e seguendo una procedura analoga a quella utilizzata per il modello di Ising, i parametri sono riportati in tabella \ref{tab:ltXY}.
+L'inizializzazione degli spin sul reticolo è casuale e non viene ripetuta per ogni modifica di temperatura ma solo all'inizio della simulazione, a bassa temperatura.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+reticolo & nn & $T_t$ & $T_t$ approx $[$\si{K}$]$ & $T_{init}$ $[$\si{K}$]$\\
+\midrule
+quadrato & $4$ & --- & $0.893$ & $0.01$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Reticoli studiati}
+\label{tab:ltXY}
+\end{table}
 
 \section{Visualizzazione dei dati}
 
@@ -423,16 +432,71 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \end{axis}
 \end{tikzpicture}
 \caption{Riduzioni bidimensionali di \num{5000} configurazioni di modelli di Ising su reticoli di lato 50. Il colore indica la temperatura a cui la configurazione è stata simulata, la temperatura di transizione è sempre al centro della scala.}
-\label{fig:tsne}
+\label{fig:tsne_ising}
 \end{figure}
 
-Prima di procedere con l'apprendimento è possibile visualizzare i dati tramite una riduzione bidimensionale delle configurazioni, alcuni esempi sono riportati in figura \ref{fig:tsne}.
+\begin{figure}
+\centering
+\subfloat[Configurazioni]{
+\begin{tikzpicture}
+\begin{axis}[
+    title=XY Quadrato,
+    colorbar horizontal,
+    colorbar/width=0.2cm,
+    colorbar shift/.style={yshift=0cm},
+    colormap name=viridis,
+    xtick=\empty,
+    ytick=\empty,
+    grid=major,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot[scatter, only marks, mark=o, mark size=1pt, point meta=explicit]
+    table[x=x, y=y, meta=temp] {dati/tsne/tsne_1024_xy};
+\end{axis}
+\end{tikzpicture}
+}
+\hspace{2cm}
+\subfloat[Vortici]{
+\begin{tikzpicture}
+\begin{axis}[
+    title=XY Quadrato,
+    colorbar horizontal,
+    colorbar/width=0.2cm,
+    colorbar shift/.style={yshift=0cm},
+    colormap name=viridis,
+    xtick=\empty,
+    ytick=\empty,
+    grid=major,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot[scatter, only marks, mark=o, mark size=1pt, point meta=explicit]
+    table[x=x, y=y, meta=temp] {dati/tsne/tsne_1024_vortex};
+\end{axis}
+\end{tikzpicture}
+}
+\caption{Riduzione bidimensionale di \num{5000} configurazioni di un modello XY su reticolo di lato 32. Il colore indica la temperatura a cui la configurazione è stata simulata, la temperatura di transizione è sempre al centro della scala.}
+\label{fig:tsne_xy}
+\end{figure}
+
+Prima di procedere con l'apprendimento è possibile visualizzare i dati tramite una riduzione bidimensionale delle configurazioni, alcuni esempi per il modello di Ising sono riportati in figura \ref{fig:tsne_ising}.
 La tecnica utilizzata per ridurre la dimensionalità dei dati è t-SNE \cite{tsne}.
 In tutte le figure è possibile osservare la creazione di cluster per i due possibili stati del sistema, al di sopra della temperatura di transizione e al di sotto di essa.
 
-Sono stati generati due grafici per il reticolo triangolare; uno basato sui dati di una simulazione in cui gli spin vengono inizializzati tutti a 1 quindi in uno stato naturale a bassa temperatura; il secondo proviene da una simulazione con inizializzazione casuale degli spin quindi in uno stato naturale ad alta temperatura.
+Sono stati generati due grafici per il reticolo triangolare; il primo basato sui dati di una simulazione in cui gli spin vengono inizializzati tutti a 1 quindi in uno stato naturale a bassa temperatura; il secondo proviene da una simulazione con inizializzazione casuale degli spin quindi in uno stato naturale ad alta temperatura.
 La differenza tra le due figure di sistemi su reticolo triangolare è dovuta all'evoluzione del sistema a basse temperature, quando gli spin vengono inizializzati tutti a 1 è molto improbabile che la magnetizzazione si inverta completamente, mentre partendo da un'inizializzazione casuale il sistema può trovare l'equilibrio con eguale probabilità in una delle due polarizzazioni opposte.
 Come indicato in sezione \ref{sec:simIsing} la simulazione su reticolo triangolare inizia da un sistema completamente ordinato per tutti i dati utilizzati nel resto del lavoro.
+
+La riduzione di dimensionalità è stata applicata anche alle configurazioni di un modello XY su reticolo quadrato, il risultato è rappresentato in figura \ref{fig:tsne_xy}.
+Fornendo le semplici configurazioni il risultato è poco chiaro, ma fornendo le configurazioni espresse in vortici (vd. sezione \ref{sec:xy_learning}) peggiora ulteriormente e compare un unico grosso cluster; in entrambi i casi molti punti fuoriescono dal cluster principale, mostrando come la classificazione non sia affatto completa.
+Nel caso della figura a sinistra si possono notare due zone in cui sono concentrate le configurazioni a bassa temperatura, come nel caso di Ising, ma la simulazione non prevede magnetizzazione discreta nel caso di XY e l'inizializzazione del reticolo avviene in modo casuale, le configurazioni a bassa temperatura appaiono quindi come spin equi-orientati ma in direzione diversa per ogni singola simulazione.
+
+In conclusione questa tecnica può fornire un'utile anteprima della struttura dei dati nel caso dei sistemi di Ising, al contrario nel caso dei sistemi XY non permette di trarre conclusioni, confermando la difficoltà presenti nella classificazione delle configurazioni di questo modello.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
@@ -448,7 +512,7 @@ Le reti sono state implementate tramite Keras \cite{keras}, utilizzando Tensorfl
 
 \begin{figure}[ht]
 \centering
-\resizebox{0.7\textwidth}{!}{
+\resizebox{0.65\textwidth}{!}{
 \begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth, scale=1]
 
 \foreach \m/\l [count=\y] in {1,2,missing,3}
@@ -503,11 +567,11 @@ Le reti sono state implementate tramite Keras \cite{keras}, utilizzando Tensorfl
 
 \end{tikzpicture}
 }
-\caption{Schema di una rete neuronale \emph{feed forward} a più layer nascosti \emph{fully connected}.}
+\caption{Schema di una rete neuronale feed forward a più layer nascosti fully connected.}
 \label{fig:ffn}
 \end{figure}
 
-Per classificare le configurazioni di un modello di Ising è stata utilizzata una rete neuronale \emph{feed forward} a uno o più layer nascosti, uno schema generico della rete è rappresentato in Figura \ref{fig:ffn}.
+Per classificare le configurazioni di un modello di Ising è stata utilizzata una rete neuronale \emph{feed forward} a uno o più layer nascosti \emph{fully connected}, uno schema generico della rete è rappresentato in Figura \ref{fig:ffn}.
 Al layer di input vengono fornite le configurazioni degli spin del sistema fisico nella forma di un vettore di elementi $\{+1;-1\}$, la dimensione di questo vettore dipende ovviamente dalla dimensione del reticolo di Ising utilizzato, nel caso del presente lavoro spazia da un minimo di 400 elementi (reticolo $20\times20$) ad un massimo di 8100 elementi (reticolo $90\times90$).
 Le etichette con cui vengono classificate le configurazioni, e che vengono fornite per l'apprendimento, sono variabili binarie che indicano se il sistema si trova sopra o sotto la temperatura di transizione.
 
@@ -517,6 +581,7 @@ I nodi di output restituiscono la probabilità che la configurazione fisica sia 
 La rete viene sempre allenata su configurazioni del modello di Ising su reticolo quadrato classico, ossia con 4 primi vicini; se riesce ad apprendere correttamente la transizione di fase dovrebbe essere in grado di classificare adeguatamente anche le configurazioni dei modelli a lei sconosciuti, come Ising su reticolo triangolare e honeycomb.
 
 \subsection{Modello XY}
+\label{sec:xy_learning}
 
 \begin{figure}[ht]
  \centerline{\includegraphics[scale=0.35]{cnn.png}}
@@ -544,7 +609,7 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     ylabel = {Loss},
     grid = major,
     width=0.33\textwidth,
-    height=0.5\textwidth,
+    height=0.4\textwidth,
     ymin=0,
     ymax=0.4,
     xmin=0,
@@ -561,13 +626,14 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
 \end{axis}
 \end{tikzpicture}
 }
-\subfloat[Regolarizzazione dropout]{
+\hfill
+\subfloat[Con regolarizzazioni]{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Epoche},
     grid = major,
     width=0.33\textwidth,
-    height=0.5\textwidth,
+    height=0.4\textwidth,
     ymin=0,
     ymax=0.4,
     xmin=0,
@@ -584,13 +650,14 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
 \end{axis}
 \end{tikzpicture}
 }
+\hfill
 \subfloat[Early stop]{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Epoche},
     grid = major,
     width=0.33\textwidth,
-    height=0.5\textwidth,
+    height=0.4\textwidth,
     ymin=0,
     ymax=0.4,
     xmin=0,
@@ -640,18 +707,9 @@ Questo sarà lo standard utilizzato in tutte le analisi successive.
 Per meglio valutare il contributo dei diversi parametri della rete sono stati generati più modelli, eseguendo la fase di apprendimento sullo stesso training set e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
 
 \subsubsection{Diverso numero di neuroni}
-La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
-L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
-Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
+\label{sec:NN}
 
-Si osserva che per il reticolo di lato 30 una rete a 10 neuroni è sufficiente per classificare in maniera adeguata la fase del sistema, raggiungendo una test accuracy circa del $98\%$.
-Per reticoli di maggiori dimensioni sono necessari almeno 50 neuroni per raggiungre livelli di test accuracy superiori al $90\%$.
-Per tutte le dimensioni considerate aumentando il numero di neuroni a 1000 si osserva un crollo nelle performance per i reticoli honeycomb e quadrato, mentre per il reticolo triangolare la rete continua a classificare in modo soddisfacente.
-Per limiti computazionali non sono state realizzate reti con un numero di neuroni superiore, quindi non è stato possibile chiarire l'andamento complessivo per il reticolo triangolare.
-Si osserva che una differenza tra la configurazione su reticolo triangolare e gli altri due sistemi, oltre alla geometria del reticolo, è l'algoritmo utilizzato per la simulazione del sistema, come riportato in sezione \ref{sec:simIsing}.
-%TODO approfondire la cosa
-
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \centering
 \subfloat{
 \begin{tikzpicture}
@@ -662,7 +720,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     ylabel = {Test accuracy},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -678,6 +736,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \end{axis}
 \end{tikzpicture}
 }
+\hfill
 \subfloat{
 \begin{tikzpicture}
 \begin{axis}[
@@ -686,7 +745,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     xlabel = {Numero di neuroni},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -702,6 +761,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \end{axis}
 \end{tikzpicture}
 }
+\hfill
 \subfloat{
 \begin{tikzpicture}
 \begin{axis}[
@@ -710,7 +770,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
     xlabel = {Numero di neuroni},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -730,18 +790,29 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \label{fig:NN}
 \end{figure}
 
+La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
+L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
+Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
+
+Si osserva che per il reticolo di lato 30 una rete a 10 neuroni è sufficiente per classificare in maniera adeguata la fase del sistema, raggiungendo una test accuracy circa del $98\%$.
+Per reticoli di maggiori dimensioni sono necessari almeno 50 neuroni per raggiungre livelli di test accuracy superiori al $90\%$.
+Per tutte le dimensioni considerate aumentando il numero di neuroni a 1000 si osserva un crollo nelle performance per i reticoli honeycomb e quadrato, mentre per il reticolo triangolare la rete continua a classificare in modo soddisfacente.
+Per limiti computazionali non sono state realizzate reti con un numero di neuroni superiore, quindi non è stato possibile chiarire l'andamento complessivo per il reticolo triangolare.
+Si osserva che una differenza tra la configurazione su reticolo triangolare e gli altri due sistemi, oltre alla geometria del reticolo, è l'algoritmo utilizzato per la simulazione del sistema, come riportato in sezione \ref{sec:simIsing}.
+%TODO approfondire la cosa
+
+
 \subsubsection{Diverso numero di layer}
 
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \centering
-\subfloat{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Numero di neuroni},
     ylabel = {\# parametri / \# training data},
     grid = major,
-    width=0.5\textwidth,
-    height=0.5\textwidth,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north west,
 ]
@@ -756,15 +827,14 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-}
-\subfloat{
+\hspace{2cm}
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Numero di layer nascosti},
     ymax=1.5,
     grid = major,
-    width=0.5\textwidth,
-    height=0.5\textwidth,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north west,
 ]
@@ -779,9 +849,80 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-}
 \caption{Rapporto tra il numero di parametri della rete e il numero di elementi del training set utilizzato per l'apprendimento.}
 \label{fig:par}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    title=Honeycomb,
+    xlabel = {Numero di layer nascosti},
+    ylabel = {Test accuracy},
+    grid = major,
+    width=0.35\textwidth,
+    height=0.40\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_hc};
+\addlegendentry{L30}
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_hc};
+\addlegendentry{L50}
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_hc};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+    title=Quadrato,
+    xlabel = {Numero di layer nascosti},
+    grid = major,
+    width=0.35\textwidth,
+    height=0.40\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_sq};
+\addlegendentry{L30}
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_sq};
+\addlegendentry{L50}
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_sq};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+    title=Triangolare,
+    xlabel = {Numero di layer nascosti},
+    grid = major,
+    width=0.35\textwidth,
+    height=0.40\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_tr};
+\addlegendentry{L30}
+\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_tr};
+\addlegendentry{L50}
+\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_tr};
+\addlegendentry{L80}
+\end{axis}
+\end{tikzpicture}
+\caption{Performance della rete feed forward a layer multipli fully connected da dieci neuroni ciascuno sul modello di Ising.}
+\label{fig:LN}
 \end{figure}
 
 Il primo grafico riportato in figura \ref{fig:par} presenta l'andamento del numero di parametri normalizzato sul numero di training data rispetto al numero di neuroni per reti a un layer nascosto.
@@ -801,91 +942,14 @@ Inoltre dai risultati di questa analisi si può osservare come le performance su
 In definitiva, confrontando i valori in tabella \ref{tab:NNLN}, si può notare come l'apprendimento sul modello di Ising non sembri trarre vantaggio dall'utilizzo di reti a più layer.
 Nel presente lavoro la sovrabbondanza di parametri nella rete rispetto al numero di dati non sembra penalizzare l'apprendimento della rete stessa.
 
-\begin{figure}[!ht]
-\centering
-\subfloat{
-\begin{tikzpicture}
-\begin{axis}[
-    title=Honeycomb,
-    xlabel = {Numero di layer nascosti},
-    ylabel = {Test accuracy},
-    grid = major,
-    width=0.35\textwidth,
-    height=0.44\textwidth,
-    major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = north east,
-]
-\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_hc};
-\addlegendentry{L30}
-\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_hc};
-\addlegendentry{L50}
-\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_hc};
-\addlegendentry{L80}
-\end{axis}
-\end{tikzpicture}
-}
-\subfloat{
-\begin{tikzpicture}
-\begin{axis}[
-    title=Quadrato,
-    xlabel = {Numero di layer nascosti},
-    grid = major,
-    width=0.35\textwidth,
-    height=0.44\textwidth,
-    major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = north east,
-]
-\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_sq};
-\addlegendentry{L30}
-\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_sq};
-\addlegendentry{L50}
-\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_sq};
-\addlegendentry{L80}
-\end{axis}
-\end{tikzpicture}
-}
-\subfloat{
-\begin{tikzpicture}
-\begin{axis}[
-    title=Triangolare,
-    xlabel = {Numero di layer nascosti},
-    grid = major,
-    width=0.35\textwidth,
-    height=0.44\textwidth,
-    major grid style = {line width=.1pt, dashed, draw=gray!30},
-    legend pos = north east,
-]
-\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_900_tr};
-\addlegendentry{L30}
-\addplot+[line, mark=square*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_2500_tr};
-\addlegendentry{L50}
-\addplot+[line, mark=triangle*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-    table[x=layers, y=accuracy, y error=stdev] {dati/layers_number/layers_number_6400_tr};
-\addlegendentry{L80}
-\end{axis}
-\end{tikzpicture}
-}
-\caption{Performance della rete feed forward a layer multipli fully connected da dieci neuroni ciascuno sul modello di Ising.}
-\label{fig:LN}
-\end{figure}
-
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{lcc}
+\begin{tabular}{llll}
 \toprule
-L & 1x100 test accuracy & 2x10 test accuracy\\
+Rete & L30 TA & L50 TA & L80 TA \\
 \midrule
-30 & \num{0.981 \pm 0.004} & \num{0.979 \pm 0.004} \\
-50 & \num{0.973 \pm 0.006} & \num{0.988 \pm 0.003} \\
-80 & \num{0.994 \pm 0.002} & \num{0.993 \pm 0.002} \\
+1x100 & \num{0.981 \pm 0.004} & \num{0.973 \pm 0.006} & \num{0.994 \pm 0.002} \\
+2x10 & \num{0.979 \pm 0.004} & \num{0.988 \pm 0.003} & \num{0.993 \pm 0.002} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -894,88 +958,83 @@ L & 1x100 test accuracy & 2x10 test accuracy\\
 \end{table}
 
 \subsubsection{Due layer e diverso numero di neuroni}\label{sec:2Ln}
-I risultati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni per layer.
+I risultati delle analisi descritte nei capitoli precedenti, riportati in tabella \ref{tab:NNLN}, mostrano che per tutti modelli considerati si ottengono valori di test accuracy massimi per reti a singolo layer con 100 neuroni e per reti a 2 layer con 10 neuroni ciascuno.
 
-Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer, con un numero totale di neuroni pari a 100, variando il numero di neuroni dei diversi layer.
-Si è iniziato allenando una rete a 30 e 70 neuroni per i due rispettivi layer, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
-Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, questi sono compatibili entro l'errore con quelli riportati in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50 che si discosta di circa $2\sigma$ dagli altri valori.
-Inoltre, anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy uguali entro l'errore.
+Prendendo spunto da questi risultati sono stati generati modelli di rete a 2 layer con un numero totale di neuroni pari a 100, variando il numero di neuroni dei singoli layer.
+È stata allenata una rete a 30 e 70 neuroni, quindi fornendo ad entrambi i layer un numero consistente di neuroni.
+Come si può osservare dai risultati riportati in tabella \ref{tab:2LN30-70}, questi sono compatibili entro l'errore con quelli in tabella \ref{tab:NNLN}, a parte la test accuracy per la rete 1x100 sul reticolo L50 che si discosta di circa $2\sigma$ dagli altri valori.
+Anche invertendo i layer da 30 e 70 neuroni si ottengono valori di test accuracy equivalenti, considerando l'errore.
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{lcc}
+\begin{tabular}{llll}
 \toprule
-L & 1x70+1x30 test accuracy & 1x30+1x70 test accuracy\\
+Rete & L30 TA & L50 TA & L80 TA\\
 \midrule
-30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.005} \\
-50 & \num{0.988 \pm 0.003} & \num{0.988 \pm 0.003} \\
-80 & \num{0.993 \pm 0.002} & \num{0.993 \pm 0.002} \\
+1x70+1x30 & \num{0.979 \pm 0.004} & \num{0.988 \pm 0.003} & \num{0.993 \pm 0.002} \\
+1x30+1x70 & \num{0.978 \pm 0.005} & \num{0.988 \pm 0.003} & \num{0.993 \pm 0.002} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\caption{Test accuracy (TA) valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
 \label{tab:2LN30-70}
 \end{table}
 
-Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembrerebbe aver modificato le sue capacità di apprendimento.
-Successivamente si è allenata una rete sempre a due layer, con un numero di neuroni per layer meno equilibrato: 95 e 5.
+Quindi, nel caso di una rete a due layer entrambi con un numero consistente di neuroni, l'inversione dei layer non sembra aver modificato le sue capacità di apprendimento.
+Si prosegue allenando una rete con un numero di neuroni per layer meno equilibrato: 95 e 5.
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{lcc}
+\begin{tabular}{llll}
 \toprule
-L & 1x95+1x5 test accuracy & 1x5+1x95 test accuracy\\
+Rete & L30 TA & L50 TA & L80 TA \\
 \midrule
-30 & \num{0.979 \pm 0.004} & \num{0.978 \pm 0.004} \\
-50 & \num{0.988 \pm 0.003} & \num{0.987 \pm 0.003} \\
-80 & \num{0.994 \pm 0.002} & \num{0.992 \pm 0.003} \\
+1x95+1x5 & \num{0.979 \pm 0.004} & \num{0.988 \pm 0.003} & \num{0.994 \pm 0.002} \\
+1x5+1x95 & \num{0.978 \pm 0.004} & \num{0.987 \pm 0.003} & \num{0.992 \pm 0.003} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\caption{Test accuracy (TA) valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
 \label{tab:2LN5-95}
 \end{table}
 
 Anche in questo caso i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
 
-Provando a sbilanciare ulteriormente il numero di neuroni dei due layer ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si è ottenuto un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 classifica correttamente la fase del sistema con una test accuracy alta, mentre invertendo i layer si ottengono risultati di test accuracy notevolmente bassi.
-Evidentemente il primo layer di due neuroni funge da \emph{filtro}: 5 neuroni sono sufficienti per classificare correttamente la fase del sistema, se poi supportati da un secondo layer avente un numero di neuroni elevato; con 2 neuroni posti al primo layer l'informazione viene persa e quindi non si ottiene una test accuracy soddisfacente pur essendo presente un secondo layer con un elevato numero di neuroni. 
-Per trovare il numero minimo di neuroni del primo layer necessario per una buona classificazione, si è provato ad allenare le reti 97-3, 96-4 e le relative reti inverse ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
+Provando a sbilanciare ulteriormente il numero di neuroni dei due layer, ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si è ottenuto un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 classifica correttamente la fase del sistema con una test accuracy alta, mentre invertendo i layer si ottengono risultati di test accuracy molto bassi.
+Questo è un segnale del fatto che 2 neuroni non sono sufficienti per passare le informazioni necessarie per la classificazione al layer successivo, viene persa parte dell'informazione.
+Si è osservato che 5 neuroni nel primo layer sono sufficienti per classificare correttamente, per trovare il numero minimo di neuroni per una buona classificazione si è provato ad allenare reti 97-3, 96-4 e le relative reti inverse ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{clll}
+\begin{tabular}{llll}
 \toprule
 Rete & L30 TA & L50 TA & L80 TA \\
 \midrule
-1x98+1x2 & \num{0.977 \pm 0.005} & \num{0.940\pm0.003} & \num{0.993 \pm0.002}\\
-1x2+1x98 & \num{0.722 \pm 0.020} & \num{0.668\pm0.024} & \num{0.679 \pm0.015}\\
+1x98+1x2 & \num{0.977 \pm 0.005} & \num{0.940 \pm 0.003} & \num{0.993 \pm 0.002}\\
+1x2+1x98 & \num{0.72 \pm 0.02} & \num{0.67\pm 0.02} & \num{0.68 \pm 0.02}\\
 \midrule
-1x97+1x3 & \num{0.979 \pm 0.004} & \num{0.989\pm0.003} & \num{0.994\pm0.003}\\
-1x3+1x97 & \num{0.852 \pm 0.006} & \num{0.920\pm0.004} & \num{0.906\pm0.001}\\
+1x97+1x3 & \num{0.979 \pm 0.004} & \num{0.989 \pm 0.003} & \num{0.994 \pm 0.003}\\
+1x3+1x97 & \num{0.852 \pm 0.006} & \num{0.920 \pm 0.004} & \num{0.906 \pm 0.001}\\
 \midrule
-1x96+1x4 & \num{0.979 \pm 0.004} & \num{0.989\pm0.003} & \num{0.994\pm0.002}\\
-1x4+1x96 & \num{0.946 \pm 0.004} & \num{0.970\pm0.003} & \num{0.992\pm0.003}\\
+1x96+1x4 & \num{0.979 \pm 0.004} & \num{0.989 \pm 0.003} & \num{0.994 \pm 0.002}\\
+1x4+1x96 & \num{0.946 \pm 0.004} & \num{0.970 \pm 0.003} & \num{0.992 \pm 0.003}\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy per diverse reti. I valori sono le medie e le deviazioni standard dei risultati ottenuti per il reticolo honeycomb, quadrato e triangolare.}
+\caption{Test accuracy (TA) per diverse reti. I valori sono le medie e le deviazioni standard dei risultati ottenuti per il reticolo honeycomb, quadrato e triangolare.}
 \label{tab:2LN2-3-4}
 \end{table}
 
-In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer con il primo layer avente pochi neuroni: si osserva che, al contrario delle reti a singolo layer, con solo 3 neuroni nel primo layer la rete è in grado di classificare con una test accuracy superiore al $90\%$ i reticoli di lato 50 e 80, mentre per i reticoli di lato 30 raggiunge una test accuracy (in media sulla tipologia di reticolo, vd tabella \ref{tab:2LN2-3-4}) superiore all'$85\%$.
-
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \centering
-\subfloat{
 \begin{tikzpicture}
 \begin{axis}[
     title=Honeycomb,
-    xlabel = {Numero di neuroni layer 1},
+    xlabel = {Numero di neuroni 1\textsuperscript{o} layer},
     ylabel = {Test accuracy},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -990,15 +1049,14 @@ In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer 
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-}
-\subfloat{
+\hfill
 \begin{tikzpicture}
 \begin{axis}[
     title=Quadrato,
-    xlabel = {Numero di neuroni layer 1},
+    xlabel = {Numero di neuroni 1\textsuperscript{o} layer},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1013,15 +1071,14 @@ In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer 
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-}
-\subfloat{
+\hfill
 \begin{tikzpicture}
 \begin{axis}[
     title=Triangolare,
-    xlabel = {Numero di neuroni layer 1},
+    xlabel = {Numero di neuroni 1\textsuperscript{o} layer},
     grid = major,
     width=0.35\textwidth,
-    height=0.44\textwidth,
+    height=0.40\textwidth,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1036,21 +1093,118 @@ In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer 
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-}
 \caption{Performance della rete a 2 layer con numero di neuroni totali pari a 100. I punti di test accuracy sono riportati in funzione del numero di neuroni del primo layer.}
 \label{fig:2L1Lln}
 \end{figure}
 
+In figura \ref{fig:2L1Lln} sono riportati i grafici relativi a reti a due layer con il primo layer di piccole dimensioni.
+Si osserva che, diversamente dalle reti a singolo layer trattate in sezione \ref{sec:NN}, sono sufficienti 3 neuroni per ottenere una test accuracy superiore al $90\%$ con reticoli di lato 50 e 80, mentre per i reticoli di lato 30 si raggiunge una test accuracy (in media sulla tipologia di reticolo, vd tabella \ref{tab:2LN2-3-4}) superiore all'$85\%$.
+Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella capacità di apprendimento della rete.
+
 \subsection{Valutazione dei parametri della rete}
 Dopo aver esplorato la geometria della rete, si è provato ad allenare reti variando altri tre parametri: la funzione di attivazione, l'ottimizzatore e la batch size. 
-L'analisi è stata effettuata unicamente sul reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni.
+L'analisi è stata effettuata unicamente su sistemi di Ising con reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni.
 
 \subsubsection{Funzione di attivazione: Sigmoid vs ReLu vs Tanh}
+In primo luogo sono state valutate le reti variando la funzione di attivazione, fino a questo punto l'analisi è stata effettuata utilizzando la funzione di attivazione \emph{Sigmoid} per tutti i layer nascosti.
+Sono state testate sulla rete a singolo layer con 100 neuroni tre funzioni di attivazione diverse: Sigmoid, Tanh e ReLu.
+Vengono comparate le test accuracy ottenute per le tre geometrie di reticoli studiate.
+I risultati sono riportati in tabella \ref{tab:SigVsReluVsTanh}.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Rete L30& hc TA & sq TA & tr TA \\
+\midrule
+Sigmoid & \num{0.9886\pm 0.0007} & \num{0.979\pm 0.001} & \num{0.9750\pm 0.0002}\\
+Tanh & \num{0.9884\pm 0.0001} & \num{0.9788 \pm 0.0001} &\num{ 0.9749\pm 0.0002}\\ 
+ReLu  & \num{0.84\pm 0.02} & \num{0.83 \pm 0.02} &\num{ 0.83\pm 0.02}\\ 
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Test accuracy valutata su reti implementate sia con ottimizzazione Adam che SGD; per reticolo di lato 30, honeycomb, quadrato e triangolare.}
+\label{tab:SigVsReluVsTanh}
+\end{table}
+
+Come si può osservare i valori di test accuracy per Sigmoid e Tanh sono compatibili entro l'errore, mentre la rete implementata con ReLu raggiunge prestazioni inferiori.
+
+\begin{figure}[ht]
+\centering
+\subfloat[Sigmoid]{
+\begin{tikzpicture}
+\begin{axis}[
+    xmin=-3, xmax=3,
+    ymin=-1.2, ymax=1.2,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
+    axis lines=center,
+    axis on top=true,
+    domain=-3:3,
+    ylabel=$y$,
+    xlabel=$x$,
+    ]
+
+    \addplot [mark=none, thick, smooth] {1/(1+exp(-\x))};
+    %% Add the asymptotes
+    \draw [dotted, thick] (axis cs:+10,+1)-- (axis cs:0,+1);
+\end{axis}
+\end{tikzpicture}
+}
+\hfill
+\subfloat[Tanh]{
+\begin{tikzpicture}
+\begin{axis}[
+    xmin=-3, xmax=3,
+    ymin=-1.2, ymax=1.2,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
+    axis lines=center,
+    axis on top=true,
+    domain=-3:3,
+    ylabel=$y$,
+    xlabel=$x$,
+    ]
+
+    \addplot [mark=none, thick, smooth] {tanh(\x)};
+
+    %% Add the asymptotes
+    \draw [dotted, thick] (axis cs:-10,-1)-- (axis cs:0,-1);
+    \draw [dotted, thick] (axis cs:+10,+1)-- (axis cs:0,+1);
+\end{axis}
+\end{tikzpicture}
+}
+\hfill
+\subfloat[ReLu]{
+\begin{tikzpicture}
+\begin{axis}[
+    xmin=-3, xmax=3,
+    ymin=-1.2, ymax=1.2,
+    width=0.4\textwidth,
+    height=0.4\textwidth,
+    axis lines=center,
+    axis on top=true,
+    domain=-3:3,
+    ylabel=$y$,
+    xlabel=$x$,
+    ]
+
+    \addplot [mark=none, thick] {max(0,\x)};
+
+\end{axis}
+\end{tikzpicture}
+}
+\caption{Funzioni di attivazione studiate.}
+\label{fig:actv_func}
+\end{figure}
+
+In figura \ref{fig:actv_func} sono riportate le funzioni di attivazione studiate: come si può notare la Sigmoid e la Tanh
+%TODO: completare descrizioni funzioni di attivazione, differenziabili? A cosa serve? In quali casi sono migliori?
 
 \subsubsection{Ottimizzazione: Adam vs SGD}
 Tutte le reti analizzate in precedenza sono state implementate attraverso l'ottimizzatore Adam, con un \emph{learning rate} di 0.0001.
 Si è provato a variare l'ottimizzatore impostando SGD, ovvero \emph{stochastic gradient descend}, con il medesimo learning rate.
-Tuttavia il sistema per convergere deve effettuare più di 500 epoche, risultando impossibile allenare 10 modelli differenti a causa di limiti di tempo.
+Tuttavia il sistema per convergere deve effettuare più di 500 epoche, risultando impossibile allenare 10 modelli differenti entro limiti di tempo convenienti.
 Quindi si è provato ad alzare il learning rate a 0.001, ottenendo risultati comunque soddisfacenti, riportati in tabella \ref{tab:adaVSsgd}.
 Come si può osservare tutti i valori relativi alla rete ottimizzata con Adam distano più di $5\sigma$ rispetto ai valori ottenuti con SGD, risulta quindi sconveniente utilizzare quest'ultimo.
 
@@ -1070,6 +1224,65 @@ SGD & 0.001 & \num{0.9875\pm 0.0001} & \num{0.9776 \pm 0.0001} &\num{ 0.9728\pm 
 \end{table}
 
 \subsubsection{Diversa batch size}
+Infine si è provato a variare la dimensione dei batch, come riportato in figura \ref{fig:batch} per batch tra i 10 e i 100 elementi si ottiene una buona test accuracy, aumentandone ulteriormente la dimensione la test accuracy diminuisce.
+Dimensioni minori di 10 elementi non sono convenienti da un punto di vista computazionale.
+
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    title=Honeycomb,
+    xlabel = {Batch size},
+    ylabel = {Test accuracy},
+    xmode=log,
+    grid = major,
+    width=0.35\textwidth,
+    height=0.4\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south west,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=batch, y=accuracy, y error=stdev] {dati/batch_size/batch_hc};
+\addlegendentry{L30}
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+    title=Quadrato,
+    xlabel = {Batch size},
+    xmode=log,
+    grid = major,
+    width=0.35\textwidth,
+    height=0.4\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south west,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=batch, y=accuracy, y error=stdev] {dati/batch_size/batch_sq};
+\addlegendentry{L30}
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+    title=Triangolare,
+    xlabel = {Batch size},
+    xmode=log,
+    grid = major,
+    width=0.35\textwidth,
+    height=0.4\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = south west,
+]
+\addplot+[line, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+    table[x=batch, y=accuracy, y error=stdev] {dati/batch_size/batch_tr};
+\addlegendentry{L30}
+\end{axis}
+\end{tikzpicture}
+\caption{}
+\label{fig:batch}
+\end{figure}
 
 \subsection{Apprendimento e magnetizzazione}
 Come è stato mostrato nella sezione \ref{sec:2Ln} esiste una soglia nel numero di neuroni del primo layer al di sotto della quale la rete non riesce ad apprendere correttamente la fase del sistema con una buona test accuracy.
@@ -1113,7 +1326,6 @@ Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e 
 
 \begin{figure}[ht]
 \centering
-\subfloat{
 \begin{tikzpicture}
 \begin{axis}[
     title={Honeycomb},
@@ -1138,8 +1350,7 @@ Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e 
 \addplot+[mark=none, green!70!black, thick, domain=0.01:0.055, samples=101]{0.2939*x + 1.5151};
 \end{axis}
 \end{tikzpicture}
-}
-\subfloat{
+\hfill
 \begin{tikzpicture}
 \begin{axis}[
     title={Quadrato},
@@ -1163,8 +1374,7 @@ Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e 
 \addplot+[mark=none, green!70!black, thick, domain=0.01:0.055, samples=101]{0.4167*x + 2.2653};
 \end{axis}
 \end{tikzpicture}
-}
-\subfloat{
+\hfill
 \begin{tikzpicture}
 \begin{axis}[
     title={Triangolare},
@@ -1188,7 +1398,6 @@ Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e 
 \addplot+[mark=none, green!70!black, thick, domain=0.01:0.055, samples=101]{0.3994*x + 3.6348};
 \end{axis}
 \end{tikzpicture}
-}
 \caption{Interpolazione temperatura}
 \label{fig:Tlimit}
 \end{figure}
@@ -1197,7 +1406,7 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 
 \begin{table}[ht]
 \begin{center}
-\begin{tabular}{rcc}
+\begin{tabular}{lll}
 \toprule
 Reticolo & T estratta & T teorica \\
 \midrule
