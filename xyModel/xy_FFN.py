@@ -50,11 +50,10 @@ def read_data(input_set, critical_temp):
     Only argument is the path to the data file.
 
     File format:
-    - odd lines contain magnetization and temperature separated by spaces
+    - odd lines contain temperature
     - even lines contain spin configuration, single spin separated by spaces
     """
 
-    magnetizations = []
     binary_temperatures = []
     real_temperatures = []
     configurations = []
@@ -64,11 +63,8 @@ def read_data(input_set, critical_temp):
         for line in infile:
             if odd is True:
                 infos = line.split()
-                if len(infos) == 2:
-                    magnetization, temperature = infos[:]
-                elif len(infos) == 1:
+                if len(infos) == 1:
                     temperature = infos[0]
-                    magnetization = 0.0
                 else:
                     raise RuntimeError(
                             "Wrong number of information on the same line.\n"
@@ -87,12 +83,11 @@ def read_data(input_set, critical_temp):
                 configurations.append(configuration)
                 odd = True
 
-    magnetizations = np.array(magnetizations).astype(np.float32)
     binary_temperatures = np.array(binary_temperatures).astype(np.uint8)
     real_temperatures = np.array(real_temperatures).astype(np.float32)
     configurations = np.array(configurations).astype(np.int8)
 
-    return magnetizations, binary_temperatures, real_temperatures, configurations
+    return binary_temperatures, real_temperatures, configurations
 
 
 def critical_temp(input_lattice):
@@ -237,16 +232,10 @@ else:
 
 # if there is a training set load it, otherwise load the trained model
 models = []
-acc = []
-val_acc = []
-loss = []
-val_loss = []
-binary_crossentropy = []
-val_binary_crossentropy = []
 if train:
     print("Training new model(s) using as training set:", args.training_set)
     train_set = args.training_set
-    train_magns, train_bin_temps, train_real_temps, train_configs \
+    train_bin_temps, train_real_temps, train_configs \
         = read_data(train_set, critical_temp("sq"))
 
     train_configs = train_configs / (2 * np.float32(np.pi))
@@ -260,13 +249,6 @@ if train:
 
         # fit model on training data
         history = train_model(models[m], train_configs, train_bin_temps)
-
-        acc.append(history.history['acc'])
-        val_acc.append(history.history['val_acc'])
-        loss.append(history.history['loss'])
-        val_loss.append(history.history['val_loss'])
-        binary_crossentropy.append(history.history['binary_crossentropy'])
-        val_binary_crossentropy.append(history.history['val_binary_crossentropy'])
 
         if train and args.debug:
             acc = history.history['acc']
@@ -323,29 +305,12 @@ else:
 models[0].summary()
 n_models = len(models)
 
-#acc = np.array(acc)
-#val_acc = np.array(val_acc)
-#loss = np.array(loss)
-#val_loss = np.array(val_loss)
-#binary_crossentropy = np.array(binary_crossentropy)
-#val_binary_crossentropy = np.array(val_binary_crossentropy)
-#print("\nNumber of epochs =", 100)
-#print("\nepoch acc acc_e val_acc val_acc_e loss loss_e val_loss val_loss_e binary_crossentropy binary_crossentropy_e val_binary_crossentropy val_binary_crossentropy_e")
-#for i in range(100):
-#    print(i,
-#          np.mean(acc[:,i]), np.std(acc[:,i])/np.sqrt(99),
-#          np.mean(val_acc[:,i]), np.std(val_acc[:,i])/np.sqrt(99),
-#          np.mean(loss[:,i]), np.std(loss[:,i])/np.sqrt(99),
-#          np.mean(val_loss[:,i]), np.std(val_loss[:,i])/np.sqrt(99),
-#          np.mean(binary_crossentropy[:,i]), np.std(binary_crossentropy[:,i])/np.sqrt(99),
-#          np.mean(val_binary_crossentropy[:,i]), np.std(val_binary_crossentropy[:,i])/np.sqrt(99))
-
 # set test critical temperature based on lattice type
 test_temp = critical_temp(args.lattice_type)
 
 # load test set
 test_set = args.test_set
-test_magns, test_bin_temps, test_real_temps, test_configs \
+test_bin_temps, test_real_temps, test_configs \
         = read_data(test_set, test_temp)
 
 test_configs = test_configs / (2 * np.float32(np.pi))

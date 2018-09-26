@@ -45,6 +45,11 @@ parser.add_argument(
         "-v", "--verbose",
         help="Make output verbose",
         required=False, action='store_const', const=1, default=0)
+parser.add_argument(
+        "-dw", "--draw_weights",
+        help="Enable plots of first hidden layer weights, \
+                x value is the magnetization.",
+        required=False, action='store_true')
 args = parser.parse_args()
 
 
@@ -80,6 +85,7 @@ def read_data(input_set, critical_temp):
                             "temperature")
                 temperature = float(temperature)
                 real_temperatures.append(temperature)
+                magnetizations.append(magnetization)
                 if temperature < critical_temp:
                     binary_temperatures.append(np.array([1, 0]))
                 else:
@@ -176,12 +182,48 @@ def build_model(data_shape, neurons_number):
     model = keras.models.Sequential()
     model.add(keras.layers.Dense(
             neurons_number,
-            activation=tf.sigmoid,
-            # activation=tf.nn.relu,
+            # activation=tf.sigmoid,
+            activation=tf.nn.relu,
             # activation=tf.tanh,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
             kernel_regularizer=keras.regularizers.l2(0.01),
+            input_shape=(data_shape,)))
+    model.add(keras.layers.Dense(
+            neurons_number,
+            # activation=tf.sigmoid,
+            activation=tf.nn.relu,
+            # activation=tf.tanh,
+            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
+            bias_initializer=keras.initializers.RandomNormal(stddev=1),
+            kernel_regularizer=keras.regularizers.l2(0.01),
+            input_shape=(data_shape,)))
+    model.add(keras.layers.Dense(
+            neurons_number,
+            # activation=tf.sigmoid,
+            activation=tf.nn.relu,
+            # activation=tf.tanh,
+            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
+            bias_initializer=keras.initializers.RandomNormal(stddev=1),
+            kernel_regularizer=keras.regularizers.l2(0.01),
+            input_shape=(data_shape,)))
+    model.add(keras.layers.Dense(
+            neurons_number,
+            # activation=tf.sigmoid,
+            activation=tf.nn.relu,
+            # activation=tf.tanh,
+            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
+            bias_initializer=keras.initializers.RandomNormal(stddev=1),
+            kernel_regularizer=keras.regularizers.l2(0.01),
+            input_shape=(data_shape,)))
+    model.add(keras.layers.Dense(
+            neurons_number,
+            # activation=tf.sigmoid,
+            activation=tf.nn.relu,
+            # activation=tf.tanh,
+            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
+            bias_initializer=keras.initializers.RandomNormal(stddev=1),
+            kernel_regularizer=keras.regularizers.l2(0.05),
             input_shape=(data_shape,)))
     model.add(keras.layers.Dense(
             2,
@@ -208,12 +250,12 @@ def train_model(model, training_inputs, training_labels):
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=8, verbose=args.verbose, mode='auto')
+            patience=12, verbose=args.verbose, mode='auto')
     callbacks_list = [earlystop]
 
     return model.fit(
             training_inputs, training_labels,
-            validation_split=0.2, epochs=500,
+            validation_split=0.1, epochs=500,
             callbacks=callbacks_list,
             batch_size=100,
             shuffle=True, verbose=args.verbose)
@@ -248,12 +290,6 @@ else:
 
 # if there is a training set load it, otherwise load the trained model
 models = []
-acc = []
-val_acc = []
-loss = []
-val_loss = []
-binary_crossentropy = []
-val_binary_crossentropy = []
 if train:
     print("Training new model(s) using as training set:", args.training_set)
     train_set = args.training_set
@@ -261,7 +297,7 @@ if train:
         = read_data(train_set, critical_temp("sq"))
 
     # number of training iterations
-    n_models = 10
+    n_models = 1
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
@@ -269,13 +305,6 @@ if train:
 
         # fit model on training data
         history = train_model(models[m], train_configs, train_bin_temps)
-
-        acc.append(history.history['acc'])
-        val_acc.append(history.history['val_acc'])
-        loss.append(history.history['loss'])
-        val_loss.append(history.history['val_loss'])
-        binary_crossentropy.append(history.history['binary_crossentropy'])
-        val_binary_crossentropy.append(history.history['val_binary_crossentropy'])
 
         if train and args.debug:
             acc = history.history['acc']
@@ -332,23 +361,6 @@ else:
 models[0].summary()
 n_models = len(models)
 
-#acc = np.array(acc)
-#val_acc = np.array(val_acc)
-#loss = np.array(loss)
-#val_loss = np.array(val_loss)
-#binary_crossentropy = np.array(binary_crossentropy)
-#val_binary_crossentropy = np.array(val_binary_crossentropy)
-#print("\nNumber of epochs =", 100)
-#print("\nepoch acc acc_e val_acc val_acc_e loss loss_e val_loss val_loss_e binary_crossentropy binary_crossentropy_e val_binary_crossentropy val_binary_crossentropy_e")
-#for i in range(100):
-#    print(i,
-#          np.mean(acc[:,i]), np.std(acc[:,i])/np.sqrt(99),
-#          np.mean(val_acc[:,i]), np.std(val_acc[:,i])/np.sqrt(99),
-#          np.mean(loss[:,i]), np.std(loss[:,i])/np.sqrt(99),
-#          np.mean(val_loss[:,i]), np.std(val_loss[:,i])/np.sqrt(99),
-#          np.mean(binary_crossentropy[:,i]), np.std(binary_crossentropy[:,i])/np.sqrt(99),
-#          np.mean(val_binary_crossentropy[:,i]), np.std(val_binary_crossentropy[:,i])/np.sqrt(99))
-
 # set test critical temperature based on lattice type
 test_temp = critical_temp(args.lattice_type)
 
@@ -356,6 +368,26 @@ test_temp = critical_temp(args.lattice_type)
 test_set = args.test_set
 test_magns, test_bin_temps, test_real_temps, test_configs \
         = read_data(test_set, test_temp)
+
+# draw magnetization vs first layer weights
+if args.draw_weights:
+    weights = models[0].layers[0].get_weights()[0]
+    bias = models[0].layers[0].get_weights()[1]
+
+    # do not plt every test data, too much information is no information
+    partial_configs = test_configs[:1000]
+    y = np.matmul(partial_configs, weights) + bias
+    x = test_magns[:1000]
+
+    for i in range(y.shape[1]):
+        # plt.scatter(x, y[:,i], marker='*', label="N°."+str(i))
+        print("x", "y")
+        for j in range(len(x)):
+            print(x[j], y[j,i])
+
+    # plt.legend()
+    # plt.show()
+
 
 # split test set in n_split sets, to compute statistical accuracy
 n_split = 10
