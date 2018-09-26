@@ -1,13 +1,10 @@
 #!/usr/bin/python3
 
-# Machine Learning programm written using TensorFlow
-# Data used to train the neural network come from a computer simulated 2D Ising
-#  model, the purpose is to identify critical phase transitions using a trained
-#  neural network, without feeding it with the order parameter.
+# Simple program to draw t-SNE representation of spin configurations for
+#  Ising and XY model. Spin configurations come from a MonteCarlo simulation.
 
 import numpy as np
 from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import argparse
 
@@ -57,6 +54,7 @@ def read_data(input_set, critical_temp):
                             "temperature")
                 temperature = float(temperature)
                 real_temperatures.append(temperature)
+                magnetizations.append(magnetization)
                 if temperature < critical_temp:
                     binary_temperatures.append(np.array([1, 0]))
                 else:
@@ -73,7 +71,8 @@ def read_data(input_set, critical_temp):
     real_temperatures = np.array(real_temperatures).astype(np.float32)
     configurations = np.array(configurations).astype(np.float32)
 
-    return magnetizations, binary_temperatures, real_temperatures, configurations
+    return magnetizations, binary_temperatures, \
+           real_temperatures, configurations
 
 
 def critical_temp(input_lattice):
@@ -97,34 +96,10 @@ def critical_temp(input_lattice):
     elif input_lattice == "xy":
         test_temp = xy_temp
     else:
-        raise SyntaxError("Use sq for square, tr for triangular and cb for cubic")
+        raise SyntaxError("Use sq for square, tr for triangular",
+                          "and cb for cubic")
 
     return test_temp
-
-
-def unique_elements(complete_array):
-    """Returns a list of different elements in an array.
-    """
-
-    uniques = []
-    for elem in complete_array:
-        if elem not in uniques:
-            uniques.append(elem)
-
-    uniques = np.array(uniques)
-    uniques.sort()
-
-    return uniques
-
-
-def unison_shuffled_copies(a, b):
-    """Shuffle two arrays with corresponding elements.
-        High memory usage, makes entire copy of arrays.
-    """
-    assert len(a) == len(b)
-    p = np.random.permutation(len(a))
-    return a[p], b[p]
-
 
 
 #
@@ -158,6 +133,7 @@ vis_y = vis_data[:, 1]
 print("x y temp")
 for d in range(len(vis_data)):
     print(vis_x[d], vis_y[d], test_real_temps[d])
+
 
 # Copyright 2018 Pietro F. Fontana <pietrofrancesco.fontana@studenti.unimi.it>
 #                Martina Crippa    <martina.crippa2@studenti.unimi.it>
