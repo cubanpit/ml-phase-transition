@@ -11,7 +11,7 @@
 #define Ly 30                     // number of spins in x and y
 const unsigned int N = Lx * Ly;   // number of spins
 
-std::array<std::array<short int, Ly>, Lx> s;     // the spins
+std::array<std::array<double, Ly>, Lx> s;     // the spins
 std::array<std::array<bool, Ly>, Lx> cluster;    // cluster[i][j] = true if i,j belongs
 
 double J = +1;                  // ferromagnetic coupling
