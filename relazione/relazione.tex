@@ -1242,7 +1242,7 @@ SGD & 0.001 & \num{0.9875\pm 0.0001} & \num{0.9776 \pm 0.0001} &\num{ 0.9728\pm 
 Infine si è provato a variare la dimensione dei batch, come riportato in figura \ref{fig:batch} per batch tra i 10 e i 100 elementi si ottiene una buona test accuracy, aumentandone ulteriormente la dimensione la test accuracy diminuisce.
 Dimensioni minori di 10 elementi non sono convenienti da un punto di vista computazionale.
 
-L'analisi è stata effettuata su reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni, attivatore Sigmoid e ottimizzatore Adam.
+L'analisi è stata effettuata su reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni, funzione di attivazione Sigmoid e ottimizzatore Adam.
 
 \begin{figure}[!ht]
 \centering
@@ -1371,14 +1371,41 @@ Nel caso in cui il sistema di spin sia ordinato, quindi con magnetizzazione non 
 La rete può riconoscere facilmente in quale delle due fasi si trova il sistema.
 
 \subsection{Stima della temperatura critica}
-Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione.
-Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo.
-Per stimare il valore teorico è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare della lato del reticolo (in numero di spin) da 20 a 90, con passo 10, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$.
-%TODO provare a cercare la legge
-La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $20\%$ del training set per la validazione) a reticolo quadrato, e testata su set di \num{100000} a reticolo sia triangolare che honeycomb.
-Ciascun valore di temperatura riportato è dato dalla media di 100 temperature, i cui valori sono classificati da 10 diverse reti su 10 diversi test set, come spiegato nella sezione \ref{sec:stats}.
-Le reti utilizzate per questo scopo sono state scelte appositamente, tra quelle con test accuracy alta e test loss bassa.
-I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel={$T$ [\si{K}]},
+    ylabel={Output},
+    width=0.8\textwidth,
+    height=0.4\textwidth,
+    grid=both,
+    ymin=-0.1,
+    ymax=1.1,
+    minor grid style={line width=.1pt, dashed, draw=gray!30},
+    major grid style={line width=.1pt, dashed, draw=gray!30},
+    %legend pos=north east,
+    legend style={at={(0.03,0.5)},anchor=west},
+]
+\addplot[mark=none, black, very thick] coordinates {(2.2692,-0.1) (2.2692,1.1)};
+\addlegendentry{T teorica}
+\addplot[mark=*, blue, very thick, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+     table [x=temp, y=output1, y error=output1_e] {dati/temperature_cross};
+\addlegendentry{Output 1}
+\addplot[mark=triangle*, red, very thick, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+     table [x=temp, y=output2, y error=output2_e] {dati/temperature_cross};
+\addlegendentry{Output 2}
+\end{axis}
+\end{tikzpicture}
+\caption{Output dei due neuroni presenti nel layer di output, la rete è valutata su configurazioni di un sistema di Ising di lato 30. La temperatura critica per il modello di Ising si trova in tabella \ref{tab:ltI}. I risultati sono ottenuti dalla media su 250 configurazioni per ciascuna temperatura.}
+\label{fig:temp_cross}
+\end{figure}
+
+Attraverso l'utilizzo delle reti neuronali è stato possibile stimare la temperatura critica $T_c$ del modello di Ising.
+Il valore teorico, riportato in tabella \ref{tab:ltI}, è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo \cite{fisher}.
+Per stimare il valore esatto per dimensione infinità è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare del lato del reticolo da 20 a 90, con passo 10, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$ come ordinata all'origine della retta che interpola i dati.
+Un esempio di misura della temperatura critica è presentato in figura \ref{fig:temp_cross}, il punto in cui le due curve si incontrano è preso come stima della temperatura critica per quel set di dati.
 
 \begin{table}[ht]
 \begin{center}
@@ -1387,9 +1414,9 @@ I parametri della rete sono riportati in tabella \ref{tab:ffnnpar}
 Layer: & 1\\
 Neuroni: & 100 \\
 Batch size: & 100\\
-Pesi w e b iniziali: & Random\\
-Fz. attivazione: & Sigmoidale\\
-Earlystop: & validation acc \\
+Pesi w e b iniziali: & Gauss($\nu=0$, $\sigma=1$)\\
+Fz. attivazione: & Sigmoid\\
+Earlystop: & validation accuracy \\
 Regolarizzazione: & L2 0.01\\
 Ottimizzazione: & Adam 0.0001 \\
 \bottomrule
@@ -1399,8 +1426,10 @@ Ottimizzazione: & Adam 0.0001 \\
 \label{tab:ffnnpar}
 \end{table}
 
-Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature $T_L$ al variare del lato del reticolo, con le relative barre d'errore date dalla deviazione standard della media.
-Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e la retta che interpola tali temperature.
+La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $20\%$ del training set per la validazione) a reticolo quadrato, e testata su set di \num{100000} per tutti e tre le geometrie di reticolo.
+Ciascun valore di temperatura riportato è dato dalla media di 100 temperature, i cui valori sono classificati da 10 diverse reti su 10 diversi test set, come spiegato nella sezione \ref{sec:stats}.
+Le reti utilizzate per questo scopo sono state scelte appositamente tra quelle con test accuracy alta e test loss bassa.
+I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 
 \begin{figure}[ht]
 \centering
@@ -1480,8 +1509,6 @@ Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e 
 \label{fig:Tlimit}
 \end{figure}
 
-In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura di transizione, il valore riportato è il termine costante della retta estratta tramite un fit eseguito con il metodo dei minimi quadrati.
-
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lll}
@@ -1494,9 +1521,14 @@ triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Valori ottenuti tramite il fit per la temperatura di transizione. I valori teorici esatti sono riportati in tabella \ref{tab:ltI}.}
+\caption{Valori ottenuti tramite il fit per la temperatura di transizione. I valori teorici sono riportati con maggiore precisione in tabella \ref{tab:ltI}.}
 \label{tab:Tising}
 \end{table}
+
+Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature $T_L$ al variare del lato del reticolo, con le relative barre d'errore date dalla deviazione standard della media.
+Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e la retta che interpola tali temperature, il fit è stato eseguito con il metodo dei minimi quadrati.
+
+In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura di transizione, il valore riportato è il termine costante della retta estratta tramite un fit eseguito con il metodo dei minimi quadrati.
 
 %----------------------------------------------------------------------------------------
 %	LAST SECTION
