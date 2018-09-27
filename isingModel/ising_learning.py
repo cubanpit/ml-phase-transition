@@ -374,13 +374,13 @@ if args.draw_weights:
     weights = models[0].layers[0].get_weights()[0]
     bias = models[0].layers[0].get_weights()[1]
 
-    # do not plt every test data, too much information is no information
+    # do not plot every test data, too much information is no information
     partial_configs = test_configs[:1000]
     y = np.matmul(partial_configs, weights) + bias
     x = test_magns[:1000]
 
     for i in range(y.shape[1]):
-        # plt.scatter(x, y[:,i], marker='*', label="N°."+str(i))
+        # plt.scatter(x, y[:,i], marker='*', label="N°"+str(i))
         print("x", "y")
         for j in range(len(x)):
             print(x[j], y[j,i])

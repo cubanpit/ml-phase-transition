@@ -182,6 +182,7 @@ Tale transizione di fase è detta del \emph{secondo ordine} ed è caratterizzata
 
 Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione per spin del sistema
 \begin{equation}
+\label{eq:magn}
 m =\frac{1}{N} \sum_i \sigma_i
 \end{equation}
 Sono stati studiati sistemi con geometrie di reticolo differenti e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica diversa, i valori sono riportati in tabella \ref{tab:ltI}.
@@ -1139,7 +1140,6 @@ Dopo aver esplorato la geometria della rete, si è provato ad allenare reti vari
     ylabel=$y$,
     xlabel=$x$,
     ]
-
     \addplot [mark=none, thick, smooth] {1/(1+exp(-\x))};
     %% Add the asymptotes
     \draw [dotted, thick] (axis cs:+10,+1)-- (axis cs:0,+1);
@@ -1160,9 +1160,7 @@ Dopo aver esplorato la geometria della rete, si è provato ad allenare reti vari
     ylabel=$y$,
     xlabel=$x$,
     ]
-
     \addplot [mark=none, thick, smooth] {tanh(\x)};
-
     %% Add the asymptotes
     \draw [dotted, thick] (axis cs:-10,-1)-- (axis cs:0,-1);
     \draw [dotted, thick] (axis cs:+10,+1)-- (axis cs:0,+1);
@@ -1183,9 +1181,7 @@ Dopo aver esplorato la geometria della rete, si è provato ad allenare reti vari
     ylabel=$y$,
     xlabel=$x$,
     ]
-
     \addplot [mark=none, thick] {max(0,\x)};
-
 \end{axis}
 \end{tikzpicture}
 }
@@ -1306,13 +1302,74 @@ L'analisi è stata effettuata su reticolo di lato 30, allenando una rete a singo
 \end{figure}
 
 \subsection{Apprendimento e magnetizzazione}
-Come è stato mostrato nella sezione \ref{sec:2Ln} esiste una soglia nel numero di neuroni del primo layer al di sotto della quale la rete non riesce ad apprendere correttamente la fase del sistema con una buona test accuracy.
 
-Secondo l'articolo \cite{carrasqu}, la rete riesce a classificare la fase del sistema apprendendo la sua magnetizzazione, e il numero minimo di neuroni per classificare con una buona test accuracy è 3: la sovrapposizione dello stato di ciascun neurone (acceso o spento) rappresenta la fase del sistema.
-Durante l'apprendimento si osserva l'accensione o meno di alcuni neuroni: ad esempio, nel caso di 3 neuroni, l'attivazione di un neurone N1 rappresenta tutti gli spin up, l'attivazione di un altro neurone N2 rappresenta tutti gli spin down e l'attivazione del terzo neurone N3 rappresenta o tutti gli spin up o tutti gli spin disordinati.
+\begin{figure}[!ht]
+\begin{tikzpicture}
+\begin{axis}[
+    title=1 neurone - TA \num{0.738 \pm 0.001},
+    grid=major,
+    xlabel=Magnetizzazione,
+    ylabel=Input pesato,
+    width=0.35\textwidth,
+    height=0.35\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[only marks, mark=star, mark size=1pt]
+    table[x=x, y=y] {dati/weights/weights_1neurons};
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+    title=2 neuroni - TA \num{0.9803 \pm 0.0004},
+    grid=major,
+    xlabel=Magnetizzazione,
+    width=0.35\textwidth,
+    height=0.35\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[only marks, mark=star, mark size=1pt]
+    table[x=x, y=y] {dati/weights/weights_2neurons_1};
+\addplot+[only marks, mark=star, mark size=1pt]
+    table[x=x, y=y] {dati/weights/weights_2neurons_2};
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+    title=3 neuroni - TA \num{0.9783 \pm 0.0003},
+    grid=major,
+    xlabel=Magnetizzazione,
+    width=0.35\textwidth,
+    height=0.35\textwidth,
+    major grid style = {line width=.1pt, dashed, draw=gray!30},
+    legend pos = north east,
+]
+\addplot+[only marks, mark=star, mark size=1pt]
+    table[x=x, y=y] {dati/weights/weights_3neurons_1};
+\addplot+[only marks, mark=star, mark size=1pt]
+    table[x=x, y=y] {dati/weights/weights_3neurons_2};
+\addplot+[only marks, mark=star, mark size=1pt]
+    table[x=x, y=y] {dati/weights/weights_3neurons_3};
+\end{axis}
+\end{tikzpicture}
+\caption{Valutazione degli input pesati in ingresso all'unico layer nascosto per diverse reti, sono rappresentati solo \num{1000} elementi del test set, in alto viene indicato il numero di neuroni e la test accuracy. L'apprendimento è stato eseguito su sistemi di Ising di lato 30, i modelli sono stati valutati su sistemi a reticolo quadrato. Sull'asse delle ascisse è posta la magnetizzazione media per spin, valutata tramite la formula \ref{eq:magn}. Sull'asse delle ordinate è posto l'input pesato tramite la formula $I_w = Wx + b$, dove $W$ è il vettore dei pesi, $b$ è il bias applicato e $x$ è il vettore di input ossia una configurazione del sistema di spin.}
+\label{fig:weights}
+\end{figure}
 
-In questa analisi la rete a singolo layer con tre neuroni non è in grado di classificare con una buona test accuracy tuttavia, aggiungendo un layer di supporto con un consistente numero di neuroni, si ottengono risultati accettabili.
-D'altra parte una rete con il primo layer a 2 neuroni, nonostante il layer aggiuntivo, non è in grado di classificare la fase del sistema: la sovrapposizione dello stato di due neuroni non è sufficiente per descrivere i tre stati di magnetizzazione.
+Come è stato mostrato nella sezione \ref{sec:2Ln} esiste una soglia nel numero di neuroni del primo layer al di sotto della quale la rete fa fatica ad apprendere correttamente la fase del sistema con una buona test accuracy.
+In quella sezione le reti sono state allenate senza scarti, tenendo conto della media delle performance, mentre in questa sezione le reti sono state allenate fino ad ottenere un unico buon risultato.
+
+Seguendo il procedimento in \cite{carrasqu} è stato rappresentato l'apprendimento dei pesi della rete in figura \ref{fig:weights}, si può notare come la funzione ottenuta dall'applicazione dei pesi sia lineare nella magnetizzazione, che è il parametro d'ordine per la transizione di fase del modello di Ising.
+La rete sembra quindi aver appreso il parametro d'ordine di questa transizione di fase.
+
+I grafici in figura \ref{fig:weights} si possono facilmente interpretare, ad esempio nel caso della rete a 2 neuroni si può osservare come uno dei due riceva un input maggiore di zero per magnetizzazione positiva, l'altro per magnetizzazione opposta.
+I neuroni hanno Sigmoid come funzione di attivazione (vd. figura \ref{fig:actv_func}).
+Nel caso in cui il sistema di spin sia ordinato, quindi con magnetizzazione non nulla, uno dei due neuroni avrà output positivo e l'altro avrà output opposto; nel caso in cui la configurazione degli spin sia disordinata, quindi con magnetizzazione nulla, entrambi i neuroni avranno output negativo.
+La rete può riconoscere facilmente in quale delle due fasi si trova il sistema.
+
 \subsection{Stima della temperatura critica}
 Attraverso l'utilizzo delle reti neuronali, è stato possibile stimare la temperatura critica $T_c$ del modello di Ising, riportata nell'introduzione.
 Tale valore teorico è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo.
