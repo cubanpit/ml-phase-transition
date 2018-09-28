@@ -636,7 +636,7 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
 \end{tikzpicture}
 }
 \hfill
-\subfloat[Con regolarizzazioni]{
+\subfloat[Con regolarizzatori]{
 \begin{tikzpicture}
 \begin{axis}[
     xlabel = {Epoche},
@@ -682,27 +682,25 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
 \end{axis}
 \end{tikzpicture}
 }
-\caption{Risultati dell'apprendimento di una rete convoluzionale, del tipo rappresentato in figura \ref{fig:cnn}, priva di metodi di regolarizzazione. I dati utilizzati sono relativi ad un modello XY su reticolo quadrato di lato 32.}
+\caption{Risultati dell'apprendimento di una rete convoluzionale, del tipo rappresentato in figura \ref{fig:cnn}. I dati utilizzati sono relativi ad un modello XY su reticolo quadrato di lato 32.}
 \label{fig:history}
 \end{figure}
 
 Il primo passo nel lavoro di creazione della rete è stato valutare se questa potesse apprendere efficacemente da un insieme di dati sufficientemente vasto.
-Dopo aver generato circa \num{100000} dati per l'apprendimento questi sono stati divisi in \emph{training set} e \emph{validation set} in una percentuale rispettivamente dell'$80\%$ e del $20\%$.
-Attraverso il \emph{validation set} è possibile stimare le performance della rete con l'avanzare del processo di apprendimento e capire se sta avvenendo un \emph{overfit}.
+Dopo aver generato circa \num{100000} configurazioni per l'apprendimento queste sono state divise in \emph{training set} e \emph{validation set} in una percentuale rispettivamente dell'$80\%$ e del $20\%$.
+Attraverso il validation set è possibile stimare le performance della rete con l'avanzare del processo di apprendimento e capire se sta avvenendo un \emph{overfit}.
 
 In figura \ref{fig:history} è possibile confrontare tre processi di apprendimento della rete convoluzionale utilizzata per la classificazione dei sistemi XY, vengono rappresentate la \emph{training loss} e la \emph{validation loss}, quando la seconda inizia a crescere si sta verificando un overfit, la rete sta imparando caratteristiche specifiche del training set e non generalizzabili ai dati sconosciuti del validation set.
 Nel caso della figura a sinistra non è stato utilizzato alcuno strumento di regolarizzazione; si vede immediatamente come la rete inizia un overfit già dopo la decima epoca.
 Per la figura al centro sono stati aggiunti due layer \emph{dropout}, uno prima ed uno dopo il layer nascosto da 128 neuroni, inoltre viene imposto un valore massimo pari a 5 alla norma dei pesi di questo layer nascosto; in questo caso la rete ha maggiori difficoltà a specializzarsi sui dati del training set.
 Infine nella figura di destra viene applicato un \emph{early stop}, ossia l'apprendimento viene bloccato in automatico quando una certa quantità (in questo caso la \emph{validation accuracy}) non cresce significativamente per diverse epoche; si osserva nell'immagine che il processo viene efficacemente interrotto quando la validation loss non ha ancora iniziato a crescere.
-
-I grafici in figura \ref{fig:history} sono stati generati utilizzando \num{100000} dati per l'apprendimento, in seguito per migliorare ulteriormente le performance della rete sono stati generati ulteriori dati per ottenere un totale di \num{400000} dati, sempre divisi in corso d'opera in training set e validation set.
 %TODO: controllare struttura rete, quanti layer nascosti? flatten rientra tra i layer? è corretto?
 
 Nell'apprendimento di sistemi di Ising il fenomeno di overfit è più contenuto, ma ai layer nascosti è stato ugualmente aggiunto un regolarizzatore L2, che limità la libertà di evoluzione dei pesi della rete impedendo la specializzazione sul training set.
 
 \subsection{Statistica sui dati} \label{sec:stats}
-Per ottenere in ogni analisi una stima solida delle variabili misurate, come la test accuracy, sono stati generati test set da \num{100000} elementi che vengono divisi in 10 insiemi più piccoli su cui ogni modello viene valutato.
-Allo stesso modo, per tenere conto della componente stocastica presente nel processo di apprendimento della rete, sono stati generati 10 modelli su ciascun training set.
+Per migliorare l'affidabilità delle variabili misurate, come la test accuracy, sono stati generati test set da \num{100000} elementi che vengono divisi equamente in 10 insiemi su cui ogni modello viene valutato.
+Allo stesso modo, per tenere conto della componente stocastica presente nel processo di apprendimento di una rete, sono stati generati 10 modelli per ciascuna rete sullo stesso training set.
 Questo procedimento genera quindi 10 misure per ciascuno dei 10 modelli, per un totale di 100 misure, da cui viene estratta la media e l'errore, come deviazione standard della media.
 Questo sarà lo standard utilizzato in tutte le analisi successive.
 
