@@ -20,8 +20,13 @@ parser.add_argument(
         "test_set", help="Test set file")
 parser.add_argument(
         "-lt", "--lattice_type",
-        help="Test set lattice type: square (sq), triangular (tr),\
-        honeycomb (hc), cubic (cb)", required=True)
+        help="Test (and training) set lattice type: \
+                raw square XY configurations (cg), \
+                vortex-antivortex configurations (vx)", required=True)
+parser.add_argument(
+        "-nn", "--neurons_number",
+        help="Neurons number for FFN",
+        required=False, type=int, default=128)
 parser.add_argument(
         "-lm", "--load_models",
         help="Files '.h5' containing previously trained model(s)",
@@ -68,8 +73,7 @@ def read_data(input_set, critical_temp):
                 else:
                     raise RuntimeError(
                             "Wrong number of information on the same line.\n"
-                            "Expected informations: (magnetization) "
-                            "temperature")
+                            "Expected informations: temperature")
                 temperature = float(temperature)
                 real_temperatures.append(temperature)
                 if temperature < critical_temp:
@@ -79,13 +83,21 @@ def read_data(input_set, critical_temp):
                 odd = False
 
             else:
-                configuration = np.fromstring(line, dtype=np.float32, sep=' ')
+                if args.lattice_type == 'vx':
+                    configuration = \
+                            np.fromstring(line, dtype=np.int8, sep=' ')
+                elif args.lattice_type == 'cg':
+                    configuration = \
+                            np.fromstring(line, dtype=np.float32, sep=' ')
                 configurations.append(configuration)
                 odd = True
 
     binary_temperatures = np.array(binary_temperatures).astype(np.uint8)
     real_temperatures = np.array(real_temperatures).astype(np.float32)
-    configurations = np.array(configurations).astype(np.int8)
+    if args.lattice_type == 'vx':
+        configurations = np.array(configurations).astype(np.int8)
+    elif args.lattice_type == 'cg':
+        configurations = np.array(configurations).astype(np.float32)
 
     return binary_temperatures, real_temperatures, configurations
 
@@ -94,11 +106,12 @@ def critical_temp(input_lattice):
     """Returns critical temperature for different lattice.
     """
 
+    # for the moment there is only square lattice
     square_temp = 0.893
+    test_temp = square_temp
 
-    if input_lattice == "sq":
-        test_temp = square_temp
-    else:
+    # TODO: this function is used improperly
+    if input_lattice != "cg" and input_lattice != "vx":
         raise SyntaxError("Use sq for square")
 
     return test_temp
@@ -155,31 +168,27 @@ def build_model(data_shape, neurons_number):
     """Build neural network model with given data shape.
     """
 
-    model = keras.Sequential([
-        keras.layers.Dense(
+    model = keras.models.Sequential()
+    model.add(keras.layers.Dense(
             neurons_number,
             activation=tf.sigmoid,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
             kernel_regularizer=keras.regularizers.l2(0.0001),
-            input_shape=(data_shape,)),
-        # keras.layers.Dropout(0.2),
-        keras.layers.Dense(
+            input_shape=(data_shape,)))
+    # keras.layers.Dropout(0.2),
+    model.add(keras.layers.Dense(
             2,
             activation=tf.nn.softmax,
-            # kernel_initializer=tf.constant_initializer(np.array([[2, 1, -1], [-2, -2, 1]])),
-            # bias_initializer=tf.constant_initializer(np.array([0, 0])))
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
-            bias_initializer=keras.initializers.RandomNormal(stddev=1))
-        ])
+            bias_initializer=keras.initializers.RandomNormal(stddev=1)))
 
     optimizer = tf.keras.optimizers.Adam(lr=0.0001)
 
     model.compile(
             loss='binary_crossentropy',
             optimizer=optimizer,
-            metrics=['accuracy', 'binary_crossentropy']
-            )
+            metrics=['accuracy', 'binary_crossentropy'])
 
     return model
 
@@ -215,11 +224,11 @@ if args.training_set is not None:
     else:
         save = True
 
-    if args.load_model is not None:
+    if args.load_models is not None:
         raise SyntaxError("You can not load a model and train a new one, choose\
                 between the two options.")
 else:
-    if args.load_model is None:
+    if args.load_models is None:
         raise SyntaxError("You must have a training set or \
                             a previously trained model.")
     else:
@@ -236,16 +245,17 @@ if train:
     print("Training new model(s) using as training set:", args.training_set)
     train_set = args.training_set
     train_bin_temps, train_real_temps, train_configs \
-        = read_data(train_set, critical_temp("sq"))
+        = read_data(train_set, critical_temp(args.lattice_type))
 
-    train_configs = train_configs / (2 * np.float32(np.pi))
+    if args.lattice_type == 'cg':
+        train_configs = train_configs / (2 * np.float32(np.pi))
 
     # number of training iterations
     n_models = 10
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
-        models.append(build_model(train_configs.shape[1:]))
+        models.append(build_model(train_configs.shape[1], args.neurons_number))
 
         # fit model on training data
         history = train_model(models[m], train_configs, train_bin_temps)
@@ -313,7 +323,8 @@ test_set = args.test_set
 test_bin_temps, test_real_temps, test_configs \
         = read_data(test_set, test_temp)
 
-test_configs = test_configs / (2 * np.float32(np.pi))
+if args.lattice_type == 'cg':
+    test_configs = test_configs / (2 * np.float32(np.pi))
 
 # split test set in n_split sets, to compute statistical accuracy
 n_split = 10
