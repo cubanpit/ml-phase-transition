@@ -4,6 +4,7 @@
 *.out
 # data files
 *.dat
+*.dat_vortex
 *.data
 *.backup
 *.old
