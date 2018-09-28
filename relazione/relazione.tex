@@ -138,7 +138,7 @@ Il modello di Ising descrive il comportamento di spin su reticolo che assumono v
 H=- \sum_{\langle i~j\rangle} \sigma_i\sigma_j
 \end{equation}
 dove le parentesi angolari indicano l'interazione a primi vicini fra gli spin $\sigma$.
-Quindi viene assunto nullo il campo magnetico esterno e la costante di accoppiamento assume lo stesso valore fra tutti gli spin, pari a $1$.
+Quindi viene assunto nullo il campo magnetico esterno e la costante di accoppiamento (solitamente indicata con $J$) assume lo stesso valore fra tutti gli spin, pari a $1$.
 Ad alte temperature il contributo entropico fa sì che il sistema si trovi in uno stato di disordine, ovvero nella fase paramagnetica, illustrata in figura \ref{fig:isingP}.
 Abbassando la temperatura prevale l'interazione tra gli spin e al di sotto della temperatura di transizione questi tendono ad allinearsi, quindi il sistema transisce alla fase ferromagnetica, rappresentata in figura \ref{fig:isingF}.
 Tale transizione di fase è detta del \emph{secondo ordine} ed è caratterizzata da un comportamento critico, per questo la temperatura di transizione viene anche detta temperatura critica.
@@ -180,18 +180,19 @@ Tale transizione di fase è detta del \emph{secondo ordine} ed è caratterizzata
 \caption{Ising 2D}
 \end{figure}
 
-Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione per spin del sistema
+Il parametro d'ordine che evidenzia la transizione di fase è la magnetizzazione media per spin del sistema
 \begin{equation}
 \label{eq:magn}
 m =\frac{1}{N} \sum_i \sigma_i
 \end{equation}
+che risulta vicina a 0 se valutata ad alte temperature, mentre a basse temperature tende a $+1$ o a $-1$.
 Sono stati studiati sistemi con geometrie di reticolo differenti e conseguentemente aventi un numero di primi vicini (nn) e temperatura critica diversa, i valori sono riportati in tabella \ref{tab:ltI}.
 
-\begin{table}[!ht]
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{lllll}
 \toprule
-reticolo & nn & $T_c$ & $T_c$ approx $[$\si{K}$]$ & $T_{init}$ $[$\si{K}$]$\\
+reticolo & nn & $T_c$ [$J/k_B$] & $T_c$ approx [$J/k_B$] & $T_{init}$ [$J/k_B$]\\
 \midrule
 honeycomb & $3$ & --- & $1.5187$ & $0.0$\\
 quadrato & $4$ & $2/ \!\ln{(1+\sqrt{2})}$ & $2.2692$ & $1.0$\\
@@ -199,16 +200,16 @@ triangolare & $6$ & $4/\!\ln{3}$ & $3.6410 $ & $2.0$\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Reticoli studiati}
+\caption{Temperatura critica per i reticoli studiati. Con $k_B$ si indica la costante di Boltzmann.}
 \label{tab:ltI}
 \end{table}
 
 La simulazione dei vari sistemi è stata effettuata con metodi Monte Carlo per $40$ diverse temperature distribuite simmetricamente attorno alla temperatura critica, specificando la temperatura iniziale $T_{init}$ riportata in tabella \ref{tab:ltI}.
-Il sistema è stato inizializzato random a $T_{init}$, lasciandolo raggiungere l'equilibrio a temperatura fissata per poi passare alla temperatura successiva senza randomizzare nuovamente il sistema.
-I modelli di Ising su reticolo quadrato e honeycomb sono stati simulati tramite l'algoritmo di Wolff \cite{wolff}, quindi eseguendo mosse a cluster, mentre il modello su reticolo triangolare è stato simulato con l'algoritmo di Metropolis, quindi ad ogni mossa viene provata l'inversione di un singolo spin.
+Il sistema è stato inizializzato a $T_{init}$, lasciandolo raggiungere l'equilibrio a temperatura fissata per poi passare alla temperatura successiva senza inizializzare nuovamente il sistema.
+I modelli di Ising su reticolo quadrato e honeycomb sono stati simulati tramite l'algoritmo di Wolff \cite{wolff}, quindi eseguendo mosse a cluster, mentre il modello su reticolo triangolare è stato simulato con l'algoritmo di Metropolis \cite{metropolis}, quindi ad ogni mossa viene provata l'inversione di un singolo spin.
+Nelle simulazioni con l'algoritmo di Wolff il sistema è inizializzato random, mentre nella simulazione con l'algoritmo di Metropolis il sistema è inizializzato ordinato per facilitare il raggiungimento dell'equilibrio a bassa temperatura.
 In tutti i sistemi studiati vengono applicate condizioni al contorno periodiche.
-Nelle simulazioni con l'algoritmo di Wolff il sistema di partenza è randomizzato, mentre nella simulazione con l'algoritmo di Metropolis il sistema di partenza è preso ordinato per facilitare il raggiungimento dell'equilibrio.
-Le simulazioni sono state scritte in linguaggio C++, il generatore di numeri casuali utilizzato è il Mersenne Twister 19937.
+Le simulazioni sono state scritte in linguaggio C++, il generatore di numeri casuali utilizzato è il Mersenne Twister 19937 \cite{mersenne}.
 
 Nel caso del reticolo honeycomb le dimensioni del reticolo si riferiscono ad un reticolo quadrato su cui si intrecciano due reticoli honeycomb, le interazioni sono progettate in modo che i due reticoli intrecciati siano indipendenti salvo una connessione tramite condizioni al contorno su un unico lato, riproducendo il comportamento di un reticolo honeycomb unico di dimensione doppia.
 L'accuratezza del procedimento viene confermata dai risultati stessi del lavoro.
@@ -326,26 +327,27 @@ Il modello XY descrive il comportamento di spin su reticolo in grado di ruotare 
 \begin{equation}
 H=-\sum_{\langle i~j\rangle} \cos(\theta_i-\theta_j)
 \end{equation}
-dove la costante si accoppiamento è stata fissata pari ad $1$ ed è stato posto nullo il campo magnetico esterno.
+dove la costante si accoppiamento (solitamente indicata con $J$) è stata fissata pari ad $1$ ed è stato posto nullo il campo magnetico esterno.
 Nel modello XY,  secondo il teorema di Mermin-Wagner \cite{mermin}, non è prevista alcuna transizione di fase del secondo ordine.
 Tuttavia presenta una transizione di fase \emph{topologica}, ovvero la transizione BKT \cite{kosterlitz}, che coinvolge la creazione di vortici e antivortici, configurazioni topologicamente stabili.
 Appena sotto la temperatura di transizione si osserva la formazione di coppie vortice-antivortice mentre non è energeticamente conveniente la creazione di vortici e antivortici singoli, abbassando la temperatura la maggior parte degli spin tende ad orientarsi in modo parallelo.
 Al di sopra della temperatura critica vince il contributo entropico e compaiono vortici e antivortici non accoppiati, gli spin in generale non sono più allineati tra loro.
-Due configurazioni esemplari temperature diverse sono riportate in Figura \ref{fig:xy}.
+Due configurazioni esemplari a temperature diverse sono riportate in Figura \ref{fig:xy}.
+
 Anche questo sistema è stato simulato tramite metodi Monte Carlo, utilizzando l'algoritmo di Wolff e seguendo una procedura analoga a quella utilizzata per il modello di Ising, i parametri sono riportati in tabella \ref{tab:ltXY}.
-L'inizializzazione degli spin sul reticolo è casuale e non viene ripetuta per ogni modifica di temperatura ma solo all'inizio della simulazione, a bassa temperatura.
+L'inizializzazione degli spin sul reticolo è casuale e non viene ripetuta per ogni passo di temperatura ma solo all'inizio della simulazione, a bassa temperatura.
 
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lllll}
 \toprule
-reticolo & nn & $T_t$ & $T_t$ approx $[$\si{K}$]$ & $T_{init}$ $[$\si{K}$]$\\
+reticolo & nn & $T_t$ & $T_t$ approx [$J/k_B$] & $T_{init}$ [$J/k_B$]\\
 \midrule
 quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Reticoli studiati}
+\caption{Temperatura critica per i reticoli studiati.}
 \label{tab:ltXY}
 \end{table}
 
@@ -359,6 +361,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     colorbar horizontal,
     colorbar/width=0.2cm,
     colorbar shift/.style={yshift=0cm},
+    colorbar style={xlabel=T [$J/k_B$]},
     xtick=\empty,
     ytick=\empty,
     colormap name=viridis,
@@ -380,6 +383,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     colormap name=viridis,
     colorbar/width=0.2cm,
     colorbar shift/.style={yshift=0cm},
+    colorbar style={xlabel=T [$J/k_B$]},
     xtick=\empty,
     ytick=\empty,
     grid=major,
@@ -399,6 +403,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     colorbar horizontal,
     colorbar/width=0.2cm,
     colorbar shift/.style={yshift=0cm},
+    colorbar style={xlabel=T [$J/k_B$]},
     colormap name=viridis,
     xtick=\empty,
     ytick=\empty,
@@ -419,6 +424,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
     colorbar horizontal,
     colorbar/width=0.2cm,
     colorbar shift/.style={yshift=0cm},
+    colorbar style={xlabel=T [$J/k_B$]},
     colormap name=viridis,
     xtick=\empty,
     ytick=\empty,
@@ -438,13 +444,14 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 
 \begin{figure}
 \centering
-\subfloat[Configurazioni]{
+\subfloat{
 \begin{tikzpicture}
 \begin{axis}[
-    title=XY Quadrato,
+    title=XY Configurazioni,
     colorbar horizontal,
     colorbar/width=0.2cm,
     colorbar shift/.style={yshift=0cm},
+    colorbar style={xlabel=T [$J/k_B$]},
     colormap name=viridis,
     xtick=\empty,
     ytick=\empty,
@@ -460,13 +467,14 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \end{tikzpicture}
 }
 \hspace{2cm}
-\subfloat[Vortici]{
+\subfloat{
 \begin{tikzpicture}
 \begin{axis}[
-    title=XY Quadrato,
+    title=XY Vortici,
     colorbar horizontal,
     colorbar/width=0.2cm,
     colorbar shift/.style={yshift=0cm},
+    colorbar style={xlabel=T [$J/k_B$]},
     colormap name=viridis,
     xtick=\empty,
     ytick=\empty,
@@ -575,8 +583,8 @@ Le reti sono state implementate tramite Keras \cite{keras}, utilizzando Tensorfl
 Per classificare le configurazioni di un modello di Ising è stata utilizzata una rete neuronale \emph{feed forward} a uno o più layer nascosti \emph{fully connected}, uno schema generico della rete è rappresentato in Figura \ref{fig:ffn}.
 Al layer di input vengono fornite le configurazioni degli spin del sistema fisico nella forma di un vettore di elementi $\{+1;-1\}$, la dimensione di questo vettore dipende ovviamente dalla dimensione del reticolo di Ising utilizzato, nel caso del presente lavoro spazia da un minimo di 400 elementi (reticolo $20\times20$) ad un massimo di 8100 elementi (reticolo $90\times90$).
 Le etichette con cui vengono classificate le configurazioni, e che vengono fornite per l'apprendimento, sono variabili binarie che indicano se il sistema si trova sopra o sotto la temperatura di transizione.
-
-Si tratta di un problema di classificazione binaria, è quindi possibile utilizzare uno o due nodi nel layer di output, per una questione di comodità nell'analisi dei risultati fisici è stato utilizzato un layer di output a due nodi.
+In particolare vengono fornite coppie di valori ([1,0] o [0,1]) come etichette, per ottenere due valori in output.
+Essendo un problema di classificazione binaria è possibile utilizzare uno o due nodi nel layer di output, per una questione di comodità nell'analisi dei risultati fisici è stato utilizzato un layer di output a due nodi.
 I nodi di output restituiscono la probabilità che la configurazione fisica sia in una fase ferromagnetica o in quella paramagnetica, le due probabilità sommano quindi a 1.
 
 La rete viene sempre allenata su configurazioni del modello di Ising su reticolo quadrato classico, ossia con 4 primi vicini; se riesce ad apprendere correttamente la transizione di fase dovrebbe essere in grado di classificare adeguatamente anche le configurazioni dei modelli a lei sconosciuti, come Ising su reticolo triangolare e honeycomb.
@@ -822,6 +830,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 
 
 \subsubsection{Diverso numero di layer}
+\label{sec:NL}
 
 \begin{figure}[ht]
 \centering
@@ -1121,7 +1130,7 @@ Si osserva che, diversamente dalle reti a singolo layer trattate in sezione \ref
 Questo sottolinea come il secondo layer abbia un ruolo non indifferente nella capacità di apprendimento della rete.
 
 \subsection{Valutazione dei parametri della rete}
-Dopo aver esplorato la geometria della rete, si è provato ad allenare reti variando altri tre parametri: la funzione di attivazione, l'ottimizzatore e la batch size. 
+Dopo aver esplorato la geometria della rete, si è provato ad allenare reti variando altri tre parametri: la funzione di attivazione, l'ottimizzatore e la batch size.
 
 \subsubsection{Funzione di attivazione: Sigmoid vs ReLu vs Tanh}
 
@@ -1201,8 +1210,8 @@ I rislutati sono riportati in tabella \ref{tab:SigVsReluVsTanh}.
 Rete L30& hc TA & sq TA & tr TA \\
 \midrule
 Sigmoid & \num{0.9886\pm 0.0007} & \num{0.979\pm 0.001} & \num{0.9750\pm 0.0002}\\
-Tanh & \num{0.9884\pm 0.0001} & \num{0.9788 \pm 0.0001} &\num{ 0.9749\pm 0.0002}\\ 
-ReLu  & \num{0.84\pm 0.02} & \num{0.83 \pm 0.02} &\num{ 0.83\pm 0.02}\\ 
+Tanh & \num{0.9884\pm 0.0001} & \num{0.9788 \pm 0.0001} &\num{ 0.9749\pm 0.0002}\\
+ReLu  & \num{0.84\pm 0.02} & \num{0.83 \pm 0.02} &\num{ 0.83\pm 0.02}\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1212,7 +1221,7 @@ ReLu  & \num{0.84\pm 0.02} & \num{0.83 \pm 0.02} &\num{ 0.83\pm 0.02}\\
 
 Come si può osservare, per le reti a singolo layer, i valori di test accuracy per Sigmoid e Tanh sono compatibili entro l'errore, mentre la rete implementata con ReLu raggiunge prestazioni nettamente inferiori.
 D'altra parte si osserva un notevole risultato per quanto riguarda la rete a 5 layer implementata utilizzando la funzione di attivazione ReLu: infatti le sue prestazioni aumentano notevolmente, sia rispetto a Sigmoid che a Tanh.
-Questo risultato spiega le scarse prestazioni ottenute attraverso le reti implementate nella sezione \ref{}.
+Questo risultato spiega le scarse prestazioni ottenute attraverso le reti implementate nella sezione \ref{sec:NL}.
 La funzione di attivazione ReLu sembrerebbe garantire un'elevata  capacità di classificazione per reti a più layer, al contrario delle altre due funzioni di attivazione che parrebbero diminuire notevolmente le performance.
 
 \subsubsection{Ottimizzazione: Adam vs SGD}
@@ -1230,7 +1239,7 @@ Come si può osservare tutti i valori relativi alla rete ottimizzata con Adam di
 Rete L30& lr & hc TA & sq TA & tr TA \\
 \midrule
 Adam &0.0001& \num{0.9886\pm 0.0001} & \num{0.9792\pm 0.0001} & \num{0.9750\pm 0.0002}\\
-SGD & 0.001 & \num{0.9875\pm 0.0001} & \num{0.9776 \pm 0.0001} &\num{ 0.9728\pm 0.0002}\\ 
+SGD & 0.001 & \num{0.9875\pm 0.0001} & \num{0.9776 \pm 0.0001} &\num{ 0.9728\pm 0.0002}\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1376,7 +1385,7 @@ La rete può riconoscere facilmente in quale delle due fasi si trova il sistema.
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    xlabel={$T$ [\si{K}]},
+    xlabel={T [J/k\textsubscript{B}]},
     ylabel={Output},
     width=0.8\textwidth,
     height=0.4\textwidth,
@@ -1436,7 +1445,7 @@ I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 \begin{tikzpicture}
 \begin{axis}[
     title={Honeycomb},
-    ylabel={$T$ [\si{K}]},
+    ylabel={T [J/k\textsubscript{B}]},
     xlabel={$L^{-1}$  [$\si{nspin}^{-1}$]},
     width=0.33\textwidth,
     height=0.44\textwidth,

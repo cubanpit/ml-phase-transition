@@ -19,8 +19,9 @@ parser.add_argument(
         "test_set", help="Test set file")
 parser.add_argument(
         "-lt", "--lattice_type",
-        help="Test set lattice type: square (sq), triangular (tr),\
-        honeycomb (hc), cubic (cb)", required=True)
+        help="Test (and training) set lattice type: \
+                raw square XY configurations (cg), \
+                vortex-antivortex configurations (vx)", required=True)
 parser.add_argument(
         "-lm", "--load_models",
         help="Files '.h5' containing previously trained model(s)",
@@ -67,8 +68,7 @@ def read_data(input_set, critical_temp):
                 else:
                     raise RuntimeError(
                             "Wrong number of information on the same line.\n"
-                            "Expected informations: "
-                            "temperature")
+                            "Expected informations: temperature")
                 temperature = float(temperature)
                 real_temperatures.append(temperature)
                 if temperature < critical_temp:
@@ -84,7 +84,10 @@ def read_data(input_set, critical_temp):
 
     binary_temperatures = np.array(binary_temperatures).astype(np.uint8)
     real_temperatures = np.array(real_temperatures).astype(np.float32)
-    configurations = np.array(configurations).astype(np.int8)
+    if args.lattice_type == 'vx':
+        configurations = np.array(configurations).astype(np.int8)
+    elif args.lattice_type == 'cg':
+        configurations = np.array(configurations).astype(np.float32)
 
     return binary_temperatures, real_temperatures, configurations
 
@@ -93,11 +96,12 @@ def critical_temp(input_lattice):
     """Returns critical temperature for different lattice.
     """
 
+    # for the moment there is only square lattice
     square_temp = 0.893
+    test_temp = square_temp
 
-    if input_lattice == "sq":
-        test_temp = square_temp
-    else:
+    # TODO: this function is used improperly
+    if input_lattice != "cg" and input_lattice != "vx":
         raise SyntaxError("Use sq for square")
 
     return test_temp
@@ -172,8 +176,11 @@ def build_model(data_shape):
     model.add(keras.layers.Dropout(0.5))
     model.add(keras.layers.Dense(2, activation='softmax'))
 
-    model.compile(loss=keras.losses.binary_crossentropy,
-                  optimizer=keras.optimizers.Adadelta(),
+    optimizer = keras.optimizers.Adam(lr=0.0001)
+    # optimizer = keras.optimizers.Adadelta()
+
+    model.compile(loss='binary_crossentropy',
+                  optimizer=optimizer,
                   metrics=['accuracy', 'binary_crossentropy'])
 
     return model
@@ -231,7 +238,7 @@ if train:
     print("Training new model(s) using as training set:", args.training_set)
     train_set = args.training_set
     train_bin_temps, train_real_temps, train_configs \
-        = read_data(train_set, critical_temp("sq"))
+        = read_data(train_set, critical_temp(args.lattice_type))
 
     tmp = []
     for i in range(len(train_configs)):
@@ -241,7 +248,8 @@ if train:
                 1))
     train_configs = np.array(tmp)
 
-    train_configs = train_configs / (2 * np.float32(np.pi))
+    if args.lattice_type == 'cg':
+        train_configs = train_configs / (2 * np.float32(np.pi))
 
     # number of training iterations
     n_models = 10
@@ -298,7 +306,6 @@ if train:
             filename = newname + "_" + str(m) + ".h5"
             print("Saving trained model to:", filename)
             models[m].save(str(filename))
-
 else:
     print("Loading trained model(s) from:", args.load_models, "\n")
     for mf in args.load_models:
@@ -324,7 +331,8 @@ for i in range(len(test_configs)):
             1))
 test_configs = np.array(tmp)
 
-test_configs = test_configs / (2 * np.float32(np.pi))
+if args.lattice_type == 'cg':
+    test_configs = test_configs / (2 * np.float32(np.pi))
 
 # split test set in n_split sets, to compute statistical accuracy
 n_split = 10
