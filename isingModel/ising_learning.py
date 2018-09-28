@@ -187,48 +187,12 @@ def build_model(data_shape, neurons_number):
     model = keras.models.Sequential()
     model.add(keras.layers.Dense(
             neurons_number,
-            # activation=tf.sigmoid,
-            activation=tf.nn.relu,
+            activation=tf.sigmoid,
+            # activation=tf.nn.relu,
             # activation=tf.tanh,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
             kernel_regularizer=keras.regularizers.l2(0.01),
-            input_shape=(data_shape,)))
-    model.add(keras.layers.Dense(
-            neurons_number,
-            # activation=tf.sigmoid,
-            activation=tf.nn.relu,
-            # activation=tf.tanh,
-            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
-            bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.01),
-            input_shape=(data_shape,)))
-    model.add(keras.layers.Dense(
-            neurons_number,
-            # activation=tf.sigmoid,
-            activation=tf.nn.relu,
-            # activation=tf.tanh,
-            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
-            bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.01),
-            input_shape=(data_shape,)))
-    model.add(keras.layers.Dense(
-            neurons_number,
-            # activation=tf.sigmoid,
-            activation=tf.nn.relu,
-            # activation=tf.tanh,
-            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
-            bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.01),
-            input_shape=(data_shape,)))
-    model.add(keras.layers.Dense(
-            neurons_number,
-            # activation=tf.sigmoid,
-            activation=tf.nn.relu,
-            # activation=tf.tanh,
-            kernel_initializer=keras.initializers.RandomNormal(stddev=1),
-            bias_initializer=keras.initializers.RandomNormal(stddev=1),
-            kernel_regularizer=keras.regularizers.l2(0.05),
             input_shape=(data_shape,)))
     model.add(keras.layers.Dense(
             2,
@@ -255,12 +219,12 @@ def train_model(model, training_inputs, training_labels):
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
-            patience=12, verbose=args.verbose, mode='auto')
+            patience=8, verbose=args.verbose, mode='auto')
     callbacks_list = [earlystop]
 
     return model.fit(
             training_inputs, training_labels,
-            validation_split=0.1, epochs=500,
+            validation_split=0.2, epochs=500,
             callbacks=callbacks_list,
             batch_size=100,
             shuffle=True, verbose=args.verbose)
@@ -302,7 +266,7 @@ if train:
         = read_data(train_set, critical_temp("sq"))
 
     # number of training iterations
-    n_models = 1
+    n_models = 10
 
     for m in range(n_models):
         print("\nTraining model", m, ". . .")
