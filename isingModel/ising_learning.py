@@ -48,7 +48,12 @@ parser.add_argument(
 parser.add_argument(
         "-dw", "--draw_weights",
         help="Enable plots of first hidden layer weights, \
-                x value is the magnetization.",
+              x value is the magnetization.",
+        required=False, action='store_true')
+parser.add_argument(
+        "-pt", "--plot_temperatures",
+        help="Enable plots of temperatures vs outputs, \
+              the crossing point is the predicted transition temperature.",
         required=False, action='store_true')
 args = parser.parse_args()
 
@@ -338,16 +343,16 @@ if args.draw_weights:
     weights = models[0].layers[0].get_weights()[0]
     bias = models[0].layers[0].get_weights()[1]
 
-    # do not plt every test data, too much information is no information
+    # do not plot every test data, too much information is no information
     partial_configs = test_configs[:1000]
     y = np.matmul(partial_configs, weights) + bias
     x = test_magns[:1000]
 
     for i in range(y.shape[1]):
-        # plt.scatter(x, y[:,i], marker='*', label="N°."+str(i))
+        # plt.scatter(x, y[:,i], marker='*', label="N°"+str(i))
         print("x", "y")
         for j in range(len(x)):
-            print(x[j], y[j,i])
+            print(x[j], y[j, i])
 
     # plt.legend()
     # plt.show()
@@ -408,7 +413,7 @@ for m in range(n_models):
         y1 = predictions_t1[:, 0]
         y2 = predictions_t2[:, 0]
 
-        if args.debug:
+        if args.plot_temperatures:
             y1_e = predictions_t1[:, 1]
             y2_e = predictions_t2[:, 1]
             plt.axvline(x=test_temp, marker='|', c='g', label='Critical temperature')
