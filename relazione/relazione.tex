@@ -1027,7 +1027,7 @@ Rete & L30 TA & L50 TA & L80 TA \\
 Anche in questo caso i risultati riportati in tabella \ref{tab:2LN5-95} sono assolutamente compatibili con i risultati in tabella \ref{tab:2LN30-70}, quindi anche una rete a due layer con un numero di neuroni sbilanciato non risulta essere sensibile all'inversione di layer.
 
 Provando a sbilanciare ulteriormente il numero di neuroni dei due layer, ovvero allenando una rete con un layer da 98 neuroni e un layer da 2 neuroni, si è ottenuto un risultato interessante: la rete con il primo layer da 98 neuroni e il secondo da 2 classifica correttamente la fase del sistema con una test accuracy alta, mentre invertendo i layer si ottengono risultati di test accuracy molto bassi.
-Questo è un segnale del fatto che 2 neuroni non sono sufficienti per passare le informazioni necessarie per la classificazione al layer successivo, viene persa parte dell'informazione.
+Questo è un segnale del fatto che 2 neuroni non sempre sono sufficienti per passare le informazioni necessarie per la classificazione al layer successivo, viene persa parte dell'informazione.
 Si è osservato che 5 neuroni nel primo layer sono sufficienti per classificare correttamente, per trovare il numero minimo di neuroni per una buona classificazione si è provato ad allenare reti 97-3, 96-4 e le relative reti inverse ottenendo i risultati riportati in tabella \ref{tab:2LN2-3-4}.
 
 \begin{table}[ht]
@@ -1198,29 +1198,44 @@ Dopo aver esplorato la geometria della rete, si è provato ad allenare reti vari
 
 Le tre funzioni riportate in figura \ref{fig:actv_func} sono le più comuni funzioni di attivazione utilizzate nelle reti neuronali: le reti analizzate in precedenza sono state implementate con la funzione di attivazione Sigmoid, utilizzando la medesima funzione di attivazione per tutti i layer nascosti.
 
-In questa sezione sono state testate reti a singolo layer con 100 neuroni e reti a 5 layer con 10 neuroni cianscuno, utilizzando queste tre funzioni di attivazione.
-I rislutati sono riportati in tabella \ref{tab:SigVsReluVsTanh}.
-
-\begin{table}[ht]
+In questa sezione sono state testate reti a singolo layer con 100 neuroni utilizzando queste tre funzioni di attivazione.
+Si riportano i rislutati per la rete 1x100 in tabella \ref{tab:SigVsReluVsTanhS}, mediando sulle tipologie di reticolo.
+\begin{table}[!ht]
 \begin{center}
 \begin{tabular}{llll}
 \toprule
-Rete L30& hc TA & sq TA & tr TA \\
+Rete & L30 TA & L50 TA & L80 TA \\
 \midrule
-Sigmoid & \num{0.9886\pm 0.0007} & \num{0.979\pm 0.001} & \num{0.9750\pm 0.0002}\\
-Tanh & \num{0.9884\pm 0.0001} & \num{0.9788 \pm 0.0001} &\num{ 0.9749\pm 0.0002}\\
-ReLu  & \num{0.84\pm 0.02} & \num{0.83 \pm 0.02} &\num{ 0.83\pm 0.02}\\
+Sigmoid & \num{0.981\pm 0.004} & \num{0.973\pm 0.006} & \num{0.994\pm 0.002}\\
+Tanh & \num{0.981\pm 0.004} & \num{0.990 \pm 0.003} &\num{ 0.994\pm 0.002}\\
+ReLu  & \num{0.833\pm 0.004} & \num{0.91 \pm 0.01} &\num{ 0.84\pm 0.03}\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy valutata su reti implementate sia con ottimizzazione Adam che SGD; per reticolo di lato 30, honeycomb, quadrato e triangolare.}
-\label{tab:SigVsReluVsTanh}
+\caption{Test accuracy valutata su reti di lato 30, 50, 80, per rete a singolo layer con 100 neuroni. Ogni valore si riferisce alla media tra i reticoli honeycomb, quadrato e triangolare.}
+\label{tab:SigVsReluVsTanhS}
 \end{table}
+Come si può osservare dai risultati riportati in tabella \ref{tab:SigVsReluVsTanhS}, per le reti a singolo layer i valori di test accuracy per Sigmoid e Tanh sono compatibili entro $1.5\sigma$, mentre la rete implementata con ReLu raggiunge prestazioni nettamente inferiori.
 
-Come si può osservare, per le reti a singolo layer, i valori di test accuracy per Sigmoid e Tanh sono compatibili entro l'errore, mentre la rete implementata con ReLu raggiunge prestazioni nettamente inferiori.
-D'altra parte si osserva un notevole risultato per quanto riguarda la rete a 5 layer implementata utilizzando la funzione di attivazione ReLu: infatti le sue prestazioni aumentano notevolmente, sia rispetto a Sigmoid che a Tanh.
-Questo risultato spiega le scarse prestazioni ottenute attraverso le reti implementate nella sezione \ref{sec:NL}.
-La funzione di attivazione ReLu sembrerebbe garantire un'elevata  capacità di classificazione per reti a più layer, al contrario delle altre due funzioni di attivazione che parrebbero diminuire notevolmente le performance.
+Si è quindi variata la geometria della rete, studiando una rete profonda a 5 layer da 10 neuroni per layer, implementando sia la funzione di attivazione Sigmoid che Relu.
+I risultati sono riportati in tabella \ref{tab:SigVsRelu}.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Rete & L30 TA & L50 TA & L80 TA \\
+\midrule
+Sigmoid & \num{0.49\pm 0.01} & \num{0.504\pm 0.002} & \num{0.468\pm 0.002}\\
+ReLu  & \num{0.964\pm 0.006} & \num{0.982 \pm 0.002} &\num{ 0.877\pm 0.007}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Test accuracy valutata su reti di lato 30, 50, 80, per rete da 5 layer a 10 neuroni per layer. Ogni valore si riferisce alla media tra i reticoli honeycomb, quadrato e triangolare.}
+\label{tab:SigVsRelu}
+\end{table}
+Utilizzando la funzione di attivazione ReLu si osserva un notevole risultato: infatti, come riportato in tabella \ref{tab:SigVsRelu}, si vede che le sue prestazioni aumentano notevolmente rispetto alla rete implementata con Sigmoid.
+Il risultato giustifica, per questo modello, le scarse prestazioni ottenute attraverso le reti implementate nella sezione \ref{sec:NL}.
+La funzione di attivazione ReLu sembrerebbe garantire un'elevata  capacità di classificazione per reti a più layer, al contrario dellla funzione di attivazione Sigmoid che parrebbe diminuire notevolmente le performance.
 
 \subsubsection{Ottimizzazione: Adam vs SGD}
 Tutte le reti analizzate in precedenza sono state implementate attraverso l'ottimizzatore Adam, con un \emph{learning rate} di 0.0001.
