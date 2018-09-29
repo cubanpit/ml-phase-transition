@@ -1567,8 +1567,28 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 %----------------------------------------------------------------------------------------
 
 \section{Modello XY: risultati e conclusioni}
-\subsection{Valutazione dei parametri della rete}
-Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY.
+\subsection{Breve valutazione dei parametri della rete}
+Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY, testandola sia sui dati non elaborati (quindi su valori in $[0, 2\pi)$) che sulle configurazioni di vortici, sempre per un reticolo a quattro primi vicini di lato 32.
+Innanzi tutto si è provato a variare il kernel del primo layer convoluzionale, allenando e testando la rete per un kernel 2x2 e 3x3.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Kernel I layer & Configurazioni & Vortici \\
+\midrule
+2x2 &\num{0.0\pm 0.0} & \num{0.0\pm 0.0}\\
+3x3 & \num{0.0\pm 0.0} &\num{0.0\pm 0.0}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{}
+\label{tab:2x2vs3x3}
+\end{table}
+
+Come si può osservare dai risultati riportati in tabella \ref{tab:2x2vs3x3}, i valori per le due diverse reti risultano compatibili entro $1\sigma$.
+
+Successivamente si è variata la geometria del layer nascosto a 128 neuroni, provando una rete a due layer da 16 neuroni ciascuno.
 %----------------------------------------------------------------------------------------
 %	APPENDICES
 %----------------------------------------------------------------------------------------
