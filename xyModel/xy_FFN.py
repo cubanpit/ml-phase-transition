@@ -112,7 +112,8 @@ def critical_temp(input_lattice):
 
     # TODO: this function is used improperly
     if input_lattice != "cg" and input_lattice != "vx":
-        raise SyntaxError("Use sq for square")
+        raise SyntaxError("Use 'cg' for configurations, " \
+                          "'vx' for vortex")
 
     return test_temp
 

@@ -102,7 +102,8 @@ def critical_temp(input_lattice):
 
     # TODO: this function is used improperly
     if input_lattice != "cg" and input_lattice != "vx":
-        raise SyntaxError("Use sq for square")
+        raise SyntaxError("Use 'cg' for configurations, " \
+                          "'vx' for vortex")
 
     return test_temp
 
@@ -159,7 +160,7 @@ def build_model(data_shape):
     """
 
     model = keras.models.Sequential()
-    model.add(keras.layers.Conv2D(8, kernel_size=(2, 2),
+    model.add(keras.layers.Conv2D(8, kernel_size=(3, 3),
                                   activation='relu',
                                   input_shape=data_shape,
                                   data_format='channels_last'))
