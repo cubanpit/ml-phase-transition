@@ -187,9 +187,9 @@ def build_model(data_shape, neurons_number):
     model = keras.models.Sequential()
     model.add(keras.layers.Dense(
             neurons_number,
-            activation=tf.sigmoid,
-            # activation=tf.nn.relu,
-            # activation=tf.tanh,
+            # activation=tf.sigmoid,
+           # activation=tf.nn.relu,
+            activation=tf.tanh,
             kernel_initializer=keras.initializers.RandomNormal(stddev=1),
             bias_initializer=keras.initializers.RandomNormal(stddev=1),
             kernel_regularizer=keras.regularizers.l2(0.01),

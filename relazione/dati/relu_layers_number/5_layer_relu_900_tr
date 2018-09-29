@@ -1,2 +1,2 @@
 size layer neuron accuracy stdev
-2500 5 10 0.9857 0.00296
+900 5 10 0.9732 0.00032
