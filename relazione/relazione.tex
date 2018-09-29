@@ -704,6 +704,10 @@ Allo stesso modo, per tenere conto della componente stocastica presente nel proc
 Questo procedimento genera quindi 10 misure per ciascuno dei 10 modelli, per un totale di 100 misure, da cui viene estratta la media e l'errore, come deviazione standard della media.
 Questo sarà lo standard utilizzato in tutte le analisi successive.
 
+Si osserva che le misure effettuate non sono indipendenti tra loro, l'intero insieme di 100 misure condivide il medesimo training set e a gruppi di 10 condividono lo stesso modello, quindi non è possibile applicare né i teoremi del limite centrale né la legge dei grandi numeri.
+Le medie e le deviazioni standard delle medie vengono ugualmente utilizzate nel lavoro perché sono lo strumento più semplice a disposizione.
+Si potrebbero ottenere misure indipendenti partendo da un training set diverso per ogni misura, ma questa procedura richiede un impegno computazionale non praticabile.
+
 %----------------------------------------------------------------------------------------
 %	SECTION 5
 %----------------------------------------------------------------------------------------
@@ -719,9 +723,9 @@ In questa sezione le principali caratteristiche  della rete che non vengono vari
 \begin{tabular}{ll}
 \toprule
 Batch size: & 100\\
-Pesi w e b iniziali: & Random\\
-Fz. attivazione: & Sigmoidale\\
-Earlystop: & validation acc \\
+Pesi w e b iniziali: & Gauss($\nu=0$, $\sigma=1$)\\
+Fz. attivazione: & Sigmoid\\
+Earlystop: & validation accuracy \\
 Regolarizzazione: & L2 0.01\\
 Ottimizzazione: & Adam 0.0001 \\
 \bottomrule
@@ -733,6 +737,9 @@ Ottimizzazione: & Adam 0.0001 \\
 
 \subsubsection{Diverso numero di neuroni}
 \label{sec:NN}
+La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
+L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
+Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
 
 \begin{figure}[ht]
 \centering
@@ -814,10 +821,6 @@ Ottimizzazione: & Adam 0.0001 \\
 \caption{Performance della rete feed forward a singolo layer fully connected sul modello di Ising.}
 \label{fig:NN}
 \end{figure}
-
-La prima analisi è stata effettuata allenando diverse reti a singolo layer nascosto con numero di neuroni variabile, i valori esplorati sono: 3, 10, 50, 100, 200 e 1000.
-L'analisi è stata limitata a modelli di Ising su reticoli di lato 30, 50 e 80.
-Nel grafico in figura \ref{fig:NN} sono riportati i valori di test accuracy al variare del numero di neuroni, rappresentati in scala logaritmica.
 
 Si osserva che per il reticolo di lato 30 una rete a 10 neuroni è sufficiente per classificare in maniera adeguata la fase del sistema, raggiungendo una test accuracy circa del $98\%$.
 Per reticoli di maggiori dimensioni sono necessari almeno 50 neuroni per raggiungre livelli di test accuracy superiori al $90\%$.
@@ -1061,6 +1064,8 @@ Rete & L30 TA & L50 TA & L80 TA \\
     grid = major,
     width=0.35\textwidth,
     height=0.40\textwidth,
+    ymin=0.6,
+    ymax=1.02,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1083,6 +1088,8 @@ Rete & L30 TA & L50 TA & L80 TA \\
     grid = major,
     width=0.35\textwidth,
     height=0.40\textwidth,
+    ymin=0.6,
+    ymax=1.02,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1105,6 +1112,8 @@ Rete & L30 TA & L50 TA & L80 TA \\
     grid = major,
     width=0.35\textwidth,
     height=0.40\textwidth,
+    ymin=0.6,
+    ymax=1.02,
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = south east,
 ]
@@ -1119,7 +1128,7 @@ Rete & L30 TA & L50 TA & L80 TA \\
 \addlegendentry{L80}
 \end{axis}
 \end{tikzpicture}
-\caption{Performance della rete a 2 layer con numero di neuroni totali pari a 100. I punti di test accuracy sono riportati in funzione del numero di neuroni del primo layer.}
+\caption{Performance della rete a 2 layer nascosti con numero di neuroni totali pari a 100.}
 \label{fig:2L1Lln}
 \end{figure}
 
@@ -1199,7 +1208,7 @@ Dopo aver esplorato la geometria della rete, si è provato ad allenare reti vari
 Le tre funzioni riportate in figura \ref{fig:actv_func} sono le più comuni funzioni di attivazione utilizzate nelle reti neuronali: le reti analizzate in precedenza sono state implementate con la funzione di attivazione Sigmoid, utilizzando la medesima funzione di attivazione per tutti i layer nascosti.
 
 In questa sezione sono state testate reti a singolo layer con 100 neuroni utilizzando queste tre funzioni di attivazione.
-Si riportano i rislutati per la rete 1x100 in tabella \ref{tab:SigVsReluVsTanhS}, mediando sulle tipologie di reticolo.
+Si riportano i risultati per la rete 1x100 in tabella \ref{tab:SigVsReluVsTanhS}, mediando sulle tipologie di reticolo.
 \begin{table}[!ht]
 \begin{center}
 \begin{tabular}{llll}
@@ -1215,7 +1224,7 @@ ReLu  & \num{0.833\pm 0.004} & \num{0.91 \pm 0.01} &\num{ 0.84\pm 0.03}\\
 \caption{Test accuracy valutata su reti di lato 30, 50, 80, per rete a singolo layer con 100 neuroni. Ogni valore si riferisce alla media tra i reticoli honeycomb, quadrato e triangolare.}
 \label{tab:SigVsReluVsTanhS}
 \end{table}
-Come si può osservare dai risultati riportati in tabella \ref{tab:SigVsReluVsTanhS}, per le reti a singolo layer i valori di test accuracy per Sigmoid e Tanh sono compatibili entro $1.5\sigma$, mentre la rete implementata con ReLu raggiunge prestazioni nettamente inferiori.
+Come si può osservare, per le reti a singolo layer i valori di test accuracy per Sigmoid e Tanh distano al più $1.5\sigma$, mentre la rete implementata con ReLu raggiunge prestazioni nettamente inferiori.
 
 Si è quindi variata la geometria della rete, studiando una rete profonda a 5 layer da 10 neuroni per layer, implementando sia la funzione di attivazione Sigmoid che Relu.
 I risultati sono riportati in tabella \ref{tab:SigVsRelu}.
@@ -1233,17 +1242,11 @@ ReLu  & \num{0.964\pm 0.006} & \num{0.982 \pm 0.002} &\num{ 0.877\pm 0.007}\\
 \caption{Test accuracy valutata su reti di lato 30, 50, 80, per rete da 5 layer a 10 neuroni per layer. Ogni valore si riferisce alla media tra i reticoli honeycomb, quadrato e triangolare.}
 \label{tab:SigVsRelu}
 \end{table}
-Utilizzando la funzione di attivazione ReLu si osserva un notevole risultato: infatti, come riportato in tabella \ref{tab:SigVsRelu}, si vede che le sue prestazioni aumentano notevolmente rispetto alla rete implementata con Sigmoid.
+Utilizzando la funzione di attivazione ReLu si osserva un notevole risultato, le sue prestazioni aumentano notevolmente rispetto alla rete implementata con Sigmoid.
 Il risultato giustifica, per questo modello, le scarse prestazioni ottenute attraverso le reti implementate nella sezione \ref{sec:NL}.
-La funzione di attivazione ReLu sembrerebbe garantire un'elevata  capacità di classificazione per reti a più layer, al contrario dellla funzione di attivazione Sigmoid che parrebbe diminuire notevolmente le performance.
+La funzione di attivazione ReLu sembra garantire un'elevata  capacità di classificazione per reti a più layer, al contrario dellla funzione di attivazione Sigmoid che pare diminuire notevolmente le performance.
 
 \subsubsection{Ottimizzazione: Adam vs SGD}
-Tutte le reti analizzate in precedenza sono state implementate attraverso l'ottimizzatore Adam, con un \emph{learning rate} di 0.0001.
-Si è provato a variare l'ottimizzatore impostando SGD, ovvero \emph{stochastic gradient descend}, con il medesimo learning rate per una rete a singolo layer con 100 neuroni, implementata con l'attivatore Sigmoid e su reticolo di lato 30.
-
-Tuttavia il sistema per convergere deve effettuare più di 500 epoche, risultando impossibile allenare 10 modelli differenti entro limiti di tempo convenienti.
-Quindi si è provato ad alzare il learning rate a 0.001, ottenendo risultati comunque soddisfacenti, riportati in tabella \ref{tab:adaVSsgd}.
-Come si può osservare tutti i valori relativi alla rete ottimizzata con Adam distano più di $5\sigma$ rispetto ai valori ottenuti con SGD, risulta quindi sconveniente utilizzare quest'ultimo.
 
 \begin{table}[ht]
 \begin{center}
@@ -1260,13 +1263,16 @@ SGD & 0.001 & \num{0.9875\pm 0.0001} & \num{0.9776 \pm 0.0001} &\num{ 0.9728\pm 
 \label{tab:adaVSsgd}
 \end{table}
 
+Tutte le reti analizzate in precedenza sono state implementate attraverso l'ottimizzatore Adam, con un \emph{learning rate} di 0.0001.
+Si è provato a variare l'ottimizzatore impostando SGD, ovvero \emph{stochastic gradient descend}, con il medesimo learning rate per una rete a singolo layer con 100 neuroni, implementata con l'attivatore Sigmoid e su reticolo di lato 30.
+
+Tuttavia il sistema per convergere deve effettuare più di 500 epoche, risultando impossibile allenare 10 modelli differenti entro limiti di tempo convenienti.
+Quindi si è provato ad alzare il learning rate a 0.001, ottenendo risultati comunque soddisfacenti, riportati in tabella \ref{tab:adaVSsgd}.
+Come si può osservare tutti i valori relativi alla rete ottimizzata con Adam distano più di $5\sigma$ rispetto ai valori ottenuti con SGD, risulta quindi sconveniente utilizzare quest'ultimo.
+
 \subsubsection{Diversa batch size}
-Infine si è provato a variare la dimensione dei batch, come riportato in figura \ref{fig:batch} per batch tra i 10 e i 100 elementi si ottiene una buona test accuracy, aumentandone ulteriormente la dimensione la test accuracy diminuisce.
-Dimensioni minori di 10 elementi non sono convenienti da un punto di vista computazionale.
 
-L'analisi è stata effettuata su reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni, funzione di attivazione Sigmoid e ottimizzatore Adam.
-
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1319,9 +1325,14 @@ L'analisi è stata effettuata su reticolo di lato 30, allenando una rete a singo
 \addlegendentry{L30}
 \end{axis}
 \end{tikzpicture}
-\caption{}
+\caption{Andamento della test accuracy per diversa batch size. I dati provengono da un sistema di Ising di lato 30.}
 \label{fig:batch}
 \end{figure}
+
+Infine si è provato a variare la dimensione dei batch, ossia il numero di dati utilizzati per un singolo aggiornamento del gradiente.
+Come riportato in figura \ref{fig:batch} per batch tra i 10 e i 100 elementi si ottiene una buona test accuracy, aumentandone ulteriormente la dimensione la test accuracy diminuisce.
+Dimensioni minori di 10 elementi non sono convenienti da un punto di vista computazionale.
+L'analisi è stata effettuata su reticolo di lato 30, allenando una rete a singolo layer con 100 neuroni, funzione di attivazione Sigmoid e ottimizzatore Adam.
 
 \subsection{Apprendimento e magnetizzazione}
 
@@ -1398,7 +1409,7 @@ La rete può riconoscere facilmente in quale delle due fasi si trova il sistema.
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    xlabel={T [J/k\textsubscript{B}]},
+    xlabel={T [$J/k_B$]},
     ylabel={Output},
     width=0.8\textwidth,
     height=0.4\textwidth,
@@ -1426,7 +1437,7 @@ La rete può riconoscere facilmente in quale delle due fasi si trova il sistema.
 
 Attraverso l'utilizzo delle reti neuronali è stato possibile stimare la temperatura critica $T_c$ del modello di Ising.
 Il valore teorico, riportato in tabella \ref{tab:ltI}, è esatto per sistemi su reticolo di lato infinito; per sistemi di lato finito la temperatura critica presenta una correzione che aumenta al diminuire della dimensione del reticolo \cite{fisher}.
-Per stimare il valore esatto per dimensione infinità è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare del lato del reticolo da 20 a 90, con passo 10, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$ come ordinata all'origine della retta che interpola i dati.
+Per stimare il valore esatto per dimensione infinità è stato effettuato il calcolo della temperatura critica su diversi reticoli al variare del lato da 20 a 90, con passo 10, andando poi ad interpolare i risultati e ottenendo il valore per $L\rightarrow \infty$ come ordinata all'origine della retta che interpola i dati.
 Un esempio di misura della temperatura critica è presentato in figura \ref{fig:temp_cross}, il punto in cui le due curve si incontrano è preso come stima della temperatura critica per quel set di dati.
 
 \begin{table}[ht]
@@ -1450,7 +1461,7 @@ Ottimizzazione: & Adam 0.0001 \\
 
 La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $20\%$ del training set per la validazione) a reticolo quadrato, e testata su set di \num{100000} per tutti e tre le geometrie di reticolo.
 Ciascun valore di temperatura riportato è dato dalla media di 100 temperature, i cui valori sono classificati da 10 diverse reti su 10 diversi test set, come spiegato nella sezione \ref{sec:stats}.
-Le reti utilizzate per questo scopo sono state scelte appositamente tra quelle con test accuracy alta e test loss bassa.
+Le reti utilizzate per questo scopo sono state scelte singolarmente tra quelle con test accuracy alta e test loss bassa.
 I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 
 \begin{figure}[ht]
@@ -1458,7 +1469,7 @@ I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 \begin{tikzpicture}
 \begin{axis}[
     title={Honeycomb},
-    ylabel={T [J/k\textsubscript{B}]},
+    ylabel={T [$J/k_B$]},
     xlabel={$L^{-1}$  [$\si{nspin}^{-1}$]},
     width=0.33\textwidth,
     height=0.44\textwidth,
@@ -1535,7 +1546,7 @@ I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
-Reticolo & T estratta & T teorica \\
+Reticolo & T estratta [$J/k_B$] & T teorica [$J/k_B$] \\
 \midrule
 honeycomb & \num{1.52 \pm 0.04} & \num{1.519} \\
 quadrato & \num{2.27 \pm 0.07} & \num{2.269} \\
@@ -1549,8 +1560,7 @@ triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
 
 Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature $T_L$ al variare del lato del reticolo, con le relative barre d'errore date dalla deviazione standard della media.
 Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e la retta che interpola tali temperature, il fit è stato eseguito con il metodo dei minimi quadrati.
-
-In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura di transizione, il valore riportato è il termine costante della retta estratta tramite un fit eseguito con il metodo dei minimi quadrati.
+In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura di transizione.
 
 %----------------------------------------------------------------------------------------
 %	LAST SECTION
