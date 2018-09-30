@@ -1570,6 +1570,12 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 %----------------------------------------------------------------------------------------
 
 \section{Modello XY: risultati e conclusioni}
+Contrariamente al modello di Ising, per sistemi ideali non è noto un parametro d'ordine che manifesti la transizone di fase: quindi non si può stabilire con certezza cosa apprenda la rete.
+La letteratura \cite{melko} suggerisce che per sistemi finito dimensionali, come ovviamente quelli studiati in questa relazione, il sistema sia parzialmente magnetizzato, e quindi si suppone che la rete allenata sulle configurazioni di spin possa apprendere appunto questa sorta di magnetizzazione dovuta alla non idealità del sistema.
+Perciò, come riportato nell'itroduzione, si è provato ad allenare la rete anche sulle configurazioni di vortici ottenendo risultati simili a quelli relativi alle configurazioni.
+Tuttavia, sempre come osservato nell'articolo \cite{melko}, non è chiaro cosa la rete riesca ad apprendere e sopratutto se l'apprendimento sia reso possibile unicamente dalla non idealità del sistema.
+
+In questa relazione è stata effettuata una breve analisi sul modello XY, giustificata dall'interesse fisico più che strettamente informatico, sopratutto a causa della scarsa possibilità di variare i parametri della rete, dovuta a limiti computazionali.
 \subsection{Breve valutazione dei parametri della rete}
 Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY, testandola sia sui dati non elaborati (quindi su valori in $[0, 2\pi)$) che sulle configurazioni di vortici, sempre per un reticolo a quattro primi vicini di lato 32.
 Innanzi tutto si è provato a variare il kernel del primo layer convoluzionale, allenando e testando la rete per un kernel 2$\times$2 e 3$\times$3.
@@ -1593,6 +1599,71 @@ Come si può osservare dai risultati riportati in tabella \ref{tab:2x2vs3x3}, la
 La differenza di performance nel caso delle semplici configurazioni di spin si può imputare alla struttura delle caratteristiche che la rete deve apprendere, i vortici e gli antivortici possono infatti essere identificati su sottomatrici di lato 2, come mostrato in figura \ref{fig:xy}.
 
 Successivamente si è variata la geometria del layer nascosto a 128 neuroni, provando una rete a due layer da 16 neuroni ciascuno.
+L'analisi è stata effettuata sia su un set di configurazioni che su un set di vortici, per una rete convoluzionale con un kernel 2$\times$2 per il primo layer convoluzionale.
+In tabella \ref{tab:16x16} si confrontano i risultati in test accuracy fra la rete allenata con un solo layer fully connected a 128 nodi e due layer fully connected da 16 neuroni ciascuno.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+NN Layer Dense & Configurazioni & Vortici \\
+\midrule
+128 &\num{0.9738 \pm 0.0002} & \num{0.9743 \pm 0.0002}\\
+16+16 & \num{0.9722 \pm 0.0003} &\num{0.9740 \pm 0.0002}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{}
+\label{tab:16x16}
+\end{table}
+
+\subsection{Stima della temperatura di transizione}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    title={Vortici},
+    ylabel={T [$J/k_B$]},
+    xlabel = {$ln(L)^{-2}$  [$\si{ln(nspin)}^{-2}$]},
+    width=0.4\textwidth,
+    height=0.44\textwidth,
+    xmin=0.0,
+    xmax=0.15,
+    minor y tick num=1,
+    ytick={0.87,0.88,0.89, 0.9},
+    grid=both,
+    minor grid style={line width=.1pt, dashed, draw=gray!30},
+    major grid style={line width=.1pt, dashed, draw=gray!30},
+    legend pos=north east
+]
+\addplot+[mark=none, red, thick] coordinates {(0.0,0.893) (0.15,0.893)};
+\addlegendentry{$T_c$}
+\addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
+     table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_vx};
+\addlegendentry{$T_L$}
+\addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.2297*x + 0.9081};
+\end{axis}
+\end{tikzpicture}
+\caption{Interpolazione temperatura}
+\label{fig:Tlimit}
+\end{figure}
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Dati & T estratta [$J/k_B$] & T teorica [$J/k_B$] \\
+\midrule
+vortici & \num{0.91 \pm0.05}  & \num{0.893} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Valori ottenuti tramite il fit per la temperatura di transizione.}
+\label{tab:Tising}
+\end{table}
+
+Anche per il modello XY si è provato ad stimare la temperatura di transizione di fase, unicamente per le configurazioni di vortici, che risultano essere 
 %----------------------------------------------------------------------------------------
 %	APPENDICES
 %----------------------------------------------------------------------------------------

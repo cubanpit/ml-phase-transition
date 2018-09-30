@@ -1,0 +1,2 @@
+size 1conv2d 2conv2d hidden1 hidden2 accuracy stdev
+1024 2 3 16 16 0.974 0.00017
