@@ -41,6 +41,7 @@ inv_sizes = np.array(1 / np.power(np.log(sizes), 2))
 weights = np.array(1 / temps_e)
 coeff, cov = np.polyfit(inv_sizes, temps, deg=1, w=weights, cov=True)
 line = np.poly1d(coeff)
+print(line)
 print(
         "Predicted critical temperature : ",
         np.round(line[0], decimals=4), " +- ",
@@ -48,7 +49,7 @@ print(
 plt.errorbar(inv_sizes, temps, yerr=temps_e, linestyle='', marker='o')
 plt.hlines(y=tc_theo, xmin=0, xmax=(np.max(inv_sizes)), color='r', label="critical temperature")
 plt.plot(inv_sizes, line(inv_sizes), '-', color='y', label="data fit line")
-plt.xlabel('1/L')
+plt.xlabel('1/ln(L)^2')
 plt.ylabel('Temperature')
 plt.legend(loc=2)
 plt.grid(linestyle='dashed')
