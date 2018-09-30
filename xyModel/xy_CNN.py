@@ -160,7 +160,7 @@ def build_model(data_shape):
     """
 
     model = keras.models.Sequential()
-    model.add(keras.layers.Conv2D(8, kernel_size=(3, 3),
+    model.add(keras.layers.Conv2D(8, kernel_size=(2, 2),
                                   activation='relu',
                                   input_shape=data_shape,
                                   data_format='channels_last'))
@@ -171,7 +171,11 @@ def build_model(data_shape):
     model.add(keras.layers.Dropout(0.25))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(
-        128,
+        16,
+        kernel_constraint=keras.constraints.MaxNorm(5),
+        activation='relu'))
+    model.add(keras.layers.Dense(
+        16,
         kernel_constraint=keras.constraints.MaxNorm(5),
         activation='relu'))
     model.add(keras.layers.Dropout(0.5))

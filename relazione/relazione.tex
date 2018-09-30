@@ -1567,8 +1567,8 @@ Innanzi tutto si è provato a variare il kernel del primo layer convoluzionale, 
 \toprule
 Kernel I layer & Configurazioni & Vortici \\
 \midrule
-2x2 &\num{0.0\pm 0.0} & \num{0.0\pm 0.0}\\
-3x3 & \num{0.0\pm 0.0} &\num{0.0\pm 0.0}\\
+2x2 &\num{0.9738 \pm 0.0002} & \num{0.9743 \pm 0.0002}\\
+3x3 & \num{0.9729 \pm 0.0002} &\num{0.9743 \pm 0.0002}\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1576,7 +1576,7 @@ Kernel I layer & Configurazioni & Vortici \\
 \label{tab:2x2vs3x3}
 \end{table}
 
-Come si può osservare dai risultati riportati in tabella \ref{tab:2x2vs3x3}, i valori per le due diverse reti risultano compatibili entro $1\sigma$.
+Come si può osservare dai risultati riportati in tabella \ref{tab:2x2vs3x3}, la test accuracy per le configurazioni classificate con kernel 2x2 risulta essere superiore di $3\sigma$ rispetto alle configurazioni classificate con la rete avente kernel 3x3. Al contrario per i vortici si ottiene esattamente lo stesso valore.
 
 Successivamente si è variata la geometria del layer nascosto a 128 neuroni, provando una rete a due layer da 16 neuroni ciascuno.
 %----------------------------------------------------------------------------------------
