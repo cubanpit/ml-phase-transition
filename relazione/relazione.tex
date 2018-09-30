@@ -599,6 +599,9 @@ La rete viene sempre allenata su configurazioni del modello di Ising su reticolo
 \end{figure}
 
 Il metodo migliore per classificare un modello XY risulta essere una rete convoluzionale \cite{melko}, uno schema di una rete di questo tipo effettivamente utilizzata in questo lavoro è rappresentato in Figura \ref{fig:cnn}.
+I primi due layer, detti convoluzionali, sono fondamentali per estrarre le caratteristiche (\emph{feature}) che permettono la classificazione delle configurazioni.
+La struttura della rete è quella tipica utilizzata per la classificazione di immagini, per esempio il riconoscimento di caratteri scritti a mano del database MNIST.
+
 Il layer di input può ricevere come argomento la semplice configurazione degli spin, quindi una matrice di valori reali nell'intervallo $[0,2\pi)$, oppure la configurazione espressa in vortici e antivortici, che appare come una matrice con valori $\{-1;0;+1\}$ che rappresentano rispettivamente la presenza di un antivortice, l'assenza di strutture e la presenza di un vortice.
 Come nel caso di Ising le etichette indicano se la temperatura del sistema si trova sopra o sotto la temperatura di transizone e il layer di output ha due nodi, che rappresentano le probabilità complementari di essere in una delle due fasi.
 
@@ -1569,16 +1572,16 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 \section{Modello XY: risultati e conclusioni}
 \subsection{Breve valutazione dei parametri della rete}
 Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY, testandola sia sui dati non elaborati (quindi su valori in $[0, 2\pi)$) che sulle configurazioni di vortici, sempre per un reticolo a quattro primi vicini di lato 32.
-Innanzi tutto si è provato a variare il kernel del primo layer convoluzionale, allenando e testando la rete per un kernel 2x2 e 3x3.
+Innanzi tutto si è provato a variare il kernel del primo layer convoluzionale, allenando e testando la rete per un kernel 2$\times$2 e 3$\times$3.
 
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lll}
 \toprule
-Kernel I layer & Configurazioni & Vortici \\
+Kernel 1\textsuperscript{o} layer & Configurazioni & Vortici \\
 \midrule
-2x2 &\num{0.9738 \pm 0.0002} & \num{0.9743 \pm 0.0002}\\
-3x3 & \num{0.9729 \pm 0.0002} &\num{0.9743 \pm 0.0002}\\
+2$\times$2 &\num{0.9738 \pm 0.0002} & \num{0.9743 \pm 0.0002}\\
+3$\times$3 & \num{0.9729 \pm 0.0002} &\num{0.9743 \pm 0.0002}\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1586,7 +1589,8 @@ Kernel I layer & Configurazioni & Vortici \\
 \label{tab:2x2vs3x3}
 \end{table}
 
-Come si può osservare dai risultati riportati in tabella \ref{tab:2x2vs3x3}, la test accuracy per le configurazioni classificate con kernel 2x2 risulta essere superiore di $3\sigma$ rispetto alle configurazioni classificate con la rete avente kernel 3x3. Al contrario per i vortici si ottiene esattamente lo stesso valore.
+Come si può osservare dai risultati riportati in tabella \ref{tab:2x2vs3x3}, la test accuracy per le configurazioni classificate con kernel 2$\times$2 risulta essere superiore di $3\sigma$ rispetto alle configurazioni classificate con la rete avente kernel 3$\times$3. Al contrario per i vortici si ottiene esattamente lo stesso valore.
+La differenza di performance nel caso delle semplici configurazioni di spin si può imputare alla struttura delle caratteristiche che la rete deve apprendere, i vortici e gli antivortici possono infatti essere identificati su sottomatrici di lato 2, come mostrato in figura \ref{fig:xy}.
 
 Successivamente si è variata la geometria del layer nascosto a 128 neuroni, provando una rete a due layer da 16 neuroni ciascuno.
 %----------------------------------------------------------------------------------------
