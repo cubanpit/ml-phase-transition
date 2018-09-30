@@ -171,11 +171,7 @@ def build_model(data_shape):
     model.add(keras.layers.Dropout(0.25))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(
-        16,
-        kernel_constraint=keras.constraints.MaxNorm(5),
-        activation='relu'))
-    model.add(keras.layers.Dense(
-        16,
+        128,
         kernel_constraint=keras.constraints.MaxNorm(5),
         activation='relu'))
     model.add(keras.layers.Dropout(0.5))

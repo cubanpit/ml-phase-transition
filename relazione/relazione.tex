@@ -1570,14 +1570,16 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 %----------------------------------------------------------------------------------------
 
 \section{Modello XY: risultati e conclusioni}
-Contrariamente al modello di Ising, per sistemi ideali non è noto un parametro d'ordine che manifesti la transizone di fase: quindi non si può stabilire con certezza cosa apprenda la rete.
-La letteratura \cite{melko} suggerisce che per sistemi finito dimensionali, come ovviamente quelli studiati in questa relazione, il sistema sia parzialmente magnetizzato, e quindi si suppone che la rete allenata sulle configurazioni di spin possa apprendere appunto questa sorta di magnetizzazione dovuta alla non idealità del sistema.
-Perciò, come riportato nell'itroduzione, si è provato ad allenare la rete anche sulle configurazioni di vortici ottenendo risultati simili a quelli relativi alle configurazioni.
+Contrariamente al modello di Ising, per sistemi XY non è noto un parametro d'ordine che manifesti la transizione di fase, quindi non si può stabilire con certezza cosa apprenda la rete.
+La letteratura \cite{melko} suggerisce che per sistemi finito dimensionali, come quelli studiati in questa relazione, il sistema sia parzialmente magnetizzato e quindi si suppone che la rete allenata sulle configurazioni di spin possa apprendere questa leggera magnetizzazione dovuta alla non idealità del sistema.
+Perciò, come riportato nell'introduzione, si è provato ad allenare la rete anche sulle configurazioni di vortici ottenendo risultati simili a quelli relativi alle configurazioni.
 Tuttavia, sempre come osservato nell'articolo \cite{melko}, non è chiaro cosa la rete riesca ad apprendere e sopratutto se l'apprendimento sia reso possibile unicamente dalla non idealità del sistema.
 
-In questa relazione è stata effettuata una breve analisi sul modello XY, giustificata dall'interesse fisico più che strettamente informatico, sopratutto a causa della scarsa possibilità di variare i parametri della rete, dovuta a limiti computazionali.
+In questo lavoro viene effettuata solo una breve analisi sul modello XY, giustificata principalmente dall'interesse fisico, approfondimenti significativi sulla parte di apprendimento richiederebbero risorse computazionali di gran lunga maggiori.
+La struttura di rete da cui si è partiti corrisponde a quella rappresentata in figura \ref{fig:cnn}.
+
 \subsection{Breve valutazione dei parametri della rete}
-Analogamente a quanto svolto per il modello di Ising si è provato a variare qualche parametro della rete convoluzionale utilizzata per il modello XY, testandola sia sui dati non elaborati (quindi su valori in $[0, 2\pi)$) che sulle configurazioni di vortici, sempre per un reticolo a quattro primi vicini di lato 32.
+Analogamente a quanto svolto per il modello di Ising si è provato a variare alcuni parametri significativi della rete convoluzionale utilizzata per il modello XY, testandola sia sui dati non elaborati (quindi su valori in $[0, 2\pi)$) che sulle configurazioni di vortici (quindi su valori in $\{1;0;-1\}$), sempre per un reticolo a quattro primi vicini di lato 32.
 Innanzi tutto si è provato a variare il kernel del primo layer convoluzionale, allenando e testando la rete per un kernel 2$\times$2 e 3$\times$3.
 
 \begin{table}[ht]
@@ -1591,7 +1593,7 @@ Kernel 1\textsuperscript{o} layer & Configurazioni & Vortici \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{}
+\caption{Confronto tra reti con diversa dimensione del kernel nel primo layer convoluzionale, per il resto la struttura delle reti è identica a quella in figura \ref{fig:cnn}.}
 \label{tab:2x2vs3x3}
 \end{table}
 
@@ -1599,8 +1601,8 @@ Come si può osservare dai risultati riportati in tabella \ref{tab:2x2vs3x3}, la
 La differenza di performance nel caso delle semplici configurazioni di spin si può imputare alla struttura delle caratteristiche che la rete deve apprendere, i vortici e gli antivortici possono infatti essere identificati su sottomatrici di lato 2, come mostrato in figura \ref{fig:xy}.
 
 Successivamente si è variata la geometria del layer nascosto a 128 neuroni, allenando una rete a due layer da 16 neuroni ciascuno.
-L'analisi è stata effettuata sia sul set di configurazioni che sul set di vortici, per una rete convoluzionale con un kernel 2$\times$2 per il primo layer convoluzionale.
-In tabella \ref{tab:16x16} si confrontano i risultati in test accuracy fra la rete allenata con un solo layer fully connected a 128 nodi e due layer fully connected da 16 neuroni ciascuno.
+L'analisi è stata effettuata sia sul set di configurazioni che sul set di vortici, per una rete con un kernel 2$\times$2 per il primo layer convoluzionale.
+In tabella \ref{tab:16x16} si confrontano i risultati dell'analisi.
 
 \begin{table}[ht]
 \begin{center}
@@ -1613,14 +1615,14 @@ NN Layer Dense & Configurazioni & Vortici \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{}
+\caption{Confronto fra le test accuracy di una rete convoluzionale con un singolo layer nascosto da 128 neuroni e una con due layer da 16 neuroni ciascuno.}
 \label{tab:16x16}
 \end{table}
 
-In entrambi i casi risultano superiori le prestazioni per la rete con singolo layer da 128 neuroni, sebbene nel caso dei vortici la test accuracy sia superiore  poco più di $1\sigma$.
+In entrambi i casi risultano superiori le prestazioni per la rete con singolo layer da 128 neuroni, sebbene nel caso dei vortici la test accuracy sia superiore di appena $1\sigma$.
 
 \subsection{CNN vs FFNN}
-Per provare gli effettivi vantaggi di una rete convoluzionale nel caso in cui non si fornisca alla rete direttamente le feature da apprendere, si è provato a confrontare le prestazioni in classificazione fra una rete neuronale convoluzionale e una rete feedforward fully connected.
+Per verificare gli effettivi vantaggi di una rete convoluzionale nel caso in cui non si forniscano alla rete le caratteristiche da apprendere, si è provato a confrontare le prestazioni in classificazione fra una rete convoluzionale e una rete feed forward a singolo layer.
 L'analisi è stata effettuata sempre per il reticolo di lato 32, sia su configurazioni di vortici che di spin.
 La rete utilizzata è a singolo layer da 128 neuroni, con attivatore Sigmoid, ottimizzatore Adam e i vari metodi descritti in precedenza per evitare l'overfitting.
 
@@ -1630,16 +1632,18 @@ La rete utilizzata è a singolo layer da 128 neuroni, con attivatore Sigmoid, ot
 \toprule
 Rete & Configurazioni & Vortici \\
 \midrule
-FFNN &\num{0.0 \pm 0.0} & \num{0.0 \pm 0.0}\\
-CNN & \num{0.0 \pm 0.0} &\num{0.0 \pm 0.0}\\
+FFNN &\num{0.9116 \pm 0.0004} & \num{0.9610 \pm 0.0002}\\
+CNN & \num{0.9738 \pm 0.0002} & \num{0.9743 \pm 0.0002}\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{}
+\caption{Confronto tra una rete feed forward a singolo layer nascosto da 128 neuroni e la rete convoluzionale più performante (vd. tabella \ref{tab:2x2vs3x3}).}
 \label{tab:FFNNvsCNN}
 \end{table}
 
 Come si può osservare dai risultati riportati in tabella \ref{tab:FFNNvsCNN}, la rete convoluzionale risulta essere nettamente più performante, giustificando le scelte effettuate in precedenza.
+Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratteristiche del sistema, in particolare nel caso in cui vengono fornite in input le sole configurazioni degli spin.
+
 \subsection{Stima della temperatura di transizione}
 
 \begin{figure}[!ht]
@@ -1661,7 +1665,7 @@ Come si può osservare dai risultati riportati in tabella \ref{tab:FFNNvsCNN}, l
     legend pos=north east
 ]
 \addplot+[mark=none, red, thick] coordinates {(0.0,0.893) (0.15,0.893)};
-\addlegendentry{$T_c$}
+\addlegendentry{$T_t$}
 \addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
      table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_vx};
 \addlegendentry{$T_L$}
@@ -1686,7 +1690,7 @@ Come si può osservare dai risultati riportati in tabella \ref{tab:FFNNvsCNN}, l
     legend pos=north east
 ]
 \addplot+[mark=none, red, thick] coordinates {(0.0,0.893) (0.15,0.893)};
-\addlegendentry{$T_c$}
+\addlegendentry{$T_t$}
 \addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
      table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_vx};
 \addlegendentry{$T_L$}
@@ -1712,25 +1716,21 @@ vortici & \num{0.91 \pm0.05}  & \num{0.893} \\
 \label{tab:Txy}
 \end{table}
 
-Anche per il modello XY si è provato ad stimare la temperatura di transizione di fase, sia per le configurazioni che per i vortici.
-Basandosi sui risultati ripotati in tabella \ref{tab:2x2vs3x3}, sono state allenate due reti convoluzionali differenti per le due tipologie di dati in input.
+Anche per il modello XY si è provato a stimare la temperatura a cui avviene la transizione di fase, sia utilizzando le semplici configurazioni sia utilizzando i vortici.
+Basandosi sui risultati riportati in tabella \ref{tab:2x2vs3x3}, sono state allenate due reti convoluzionali differenti per le due tipologie di dati in input.
 Per la classificazione basata sulle configurazioni di spin è stata allenata una rete avete il primo layer convoluzionale con kernel 2$\times$2, il secondo 3$\times$3 e un layer fully connected a 128 neuroni.
 Invece per la rete che classifica basandosi sui vortici è stato impostato il primo layer convoluzionale con kernel 3$\times$3, mantenendo le altre caratteristiche invariate.
 
-Nei grafici di figura \ref{fig:xyTlimit}  sono riportati le temperature e gli errori relativi ai reticoli di lato 16, 24, 32, 40 e 48; in tabella \ref{tab:Txy} i valori otteniti tramite il fit delle varie temperature.
+Nei grafici di figura \ref{fig:xyTlimit} sono riportati le temperature e gli errori relativi ai reticoli di lato 16, 24, 32, 40 e 48; in tabella \ref{tab:Txy} sono indicati i valori estratti tramite i due procedimenti.
 
 \dots
 
-Il grafico per i vortici presenta un andamento anomalo rispetto a quanto ci si aspetterebbe: infatti, come riportato in \cite{melko}, la temperatura critica teorica per reticoli di lato finito $T_L=T(L)$ è legata alla temperatura critica teorica nel limite termodinamico $T_c$ dalla formula
+Il grafico per le temperature estratte dai vortici presenta un andamento anomalo rispetto a quanto ci si aspetterebbe infatti, come riportato in \cite{melko}, la temperatura di transizione teorica per reticoli di lato finito $T_L=T(L)$ è legata alla temperatura di transizione del sistema ideale nel limite termodinamico $T_t$ dalla formula
 \begin{equation}
-T(L) \approx T_c+\frac{\pi^2}{4c \ln{L}^2}
+T(L) \approx T_t + \frac{\pi^2}{4c \ln{L}^2}
 \end{equation}
-quindi ci si aspetterebbe una convergenza a $T_c$ dall'alto.
-Ciononostante la stima della temperatura riportata in tabella \ref{tab:Txy} risulta compatibile entro l'errore con la temperatura teorica.
-%----------------------------------------------------------------------------------------
-%	APPENDICES
-%----------------------------------------------------------------------------------------
-
+quindi ci si aspetterebbe una convergenza a $T_t$ dall'alto.
+Nonostante ciò la stima della temperatura riportata in tabella \ref{tab:Txy} risulta largamente compatibile entro l'errore con la temperatura teorica.
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
