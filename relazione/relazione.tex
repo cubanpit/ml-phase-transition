@@ -211,7 +211,7 @@ Nelle simulazioni con l'algoritmo di Wolff il sistema è inizializzato random, m
 In tutti i sistemi studiati vengono applicate condizioni al contorno periodiche.
 Le simulazioni sono state scritte in linguaggio C++, il generatore di numeri casuali utilizzato è il Mersenne Twister 19937 \cite{mersenne}.
 
-Nel caso del reticolo honeycomb le dimensioni del reticolo si riferiscono ad un reticolo quadrato su cui si intrecciano due reticoli honeycomb, le interazioni sono progettate in modo che i due reticoli intrecciati siano indipendenti salvo una connessione tramite condizioni al contorno su un unico lato, riproducendo il comportamento di un reticolo honeycomb unico di dimensione doppia.
+Nel caso del reticolo honeycomb le dimensioni si riferiscono ad un reticolo quadrato su cui si intrecciano due reticoli honeycomb, le interazioni sono progettate in modo che i due reticoli intrecciati siano indipendenti salvo una connessione tramite condizioni al contorno su un unico lato, riproducendo il comportamento di un reticolo honeycomb unico di dimensione doppia.
 L'accuratezza del procedimento viene confermata dai risultati stessi del lavoro.
 
 \subsection{Modello XY}
@@ -629,10 +629,10 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, dotted, very thick]
     table[x=epoch, y=loss] {dati/training_history/training_histo_xy_overfit};
 \addlegendentry{Training loss}
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, very thick]
     table[x=epoch, y=val_loss] {dati/training_history/training_histo_xy_overfit};
 \addlegendentry{Validation loss}
 \end{axis}
@@ -653,10 +653,10 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, dotted, very thick]
     table[x=epoch, y=loss] {dati/training_history/training_histo_xy_reg};
 \addlegendentry{Training loss}
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, very thick]
     table[x=epoch, y=val_loss] {dati/training_history/training_histo_xy_reg};
 \addlegendentry{Validation loss}
 \end{axis}
@@ -676,10 +676,10 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, dotted, very thick]
     table[x=epoch, y=loss] {dati/training_history/training_histo_xy_stop};
 \addlegendentry{Training loss}
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, very thick]
     table[x=epoch, y=val_loss] {dati/training_history/training_histo_xy_stop};
 \addlegendentry{Validation loss}
 \end{axis}
@@ -1650,7 +1650,7 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Vortici},
+    title={Configurazioni},
     ylabel={T [$J/k_B$]},
     xlabel = {$ln(L)^{-2}$  [$\si{ln(nspin)}^{-2}$]},
     width=0.4\textwidth,
@@ -1667,7 +1667,7 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \addplot+[mark=none, red, thick] coordinates {(0.0,0.893) (0.15,0.893)};
 \addlegendentry{$T_t$}
 \addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-     table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_vx};
+     table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_cg};
 \addlegendentry{$T_L$}
 \addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.2297*x + 0.9081};
 \end{axis}
