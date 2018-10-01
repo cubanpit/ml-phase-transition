@@ -1669,7 +1669,7 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
      table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_cg};
 \addlegendentry{$T_L$}
-\addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.2297*x + 0.9081};
+%\addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.2297*x + 0.9081};
 \end{axis}
 \end{tikzpicture}
 \hspace{2cm}
