@@ -211,7 +211,7 @@ Nelle simulazioni con l'algoritmo di Wolff il sistema è inizializzato random, m
 In tutti i sistemi studiati vengono applicate condizioni al contorno periodiche.
 Le simulazioni sono state scritte in linguaggio C++, il generatore di numeri casuali utilizzato è il Mersenne Twister 19937 \cite{mersenne}.
 
-Nel caso del reticolo honeycomb le dimensioni del reticolo si riferiscono ad un reticolo quadrato su cui si intrecciano due reticoli honeycomb, le interazioni sono progettate in modo che i due reticoli intrecciati siano indipendenti salvo una connessione tramite condizioni al contorno su un unico lato, riproducendo il comportamento di un reticolo honeycomb unico di dimensione doppia.
+Nel caso del reticolo honeycomb le dimensioni si riferiscono ad un reticolo quadrato su cui si intrecciano due reticoli honeycomb, le interazioni sono progettate in modo che i due reticoli intrecciati si connettano lungo una direzione tramite condizioni al contorno periodiche, riproducendo il comportamento di un reticolo honeycomb unico con una dimensione doppia.
 L'accuratezza del procedimento viene confermata dai risultati stessi del lavoro.
 
 \subsection{Modello XY}
@@ -347,7 +347,7 @@ quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Temperatura critica per i reticoli studiati.}
+\caption{Temperatura critica per il reticolo studiato.}
 \label{tab:ltXY}
 \end{table}
 
@@ -594,7 +594,7 @@ La rete viene sempre allenata su configurazioni del modello di Ising su reticolo
 
 \begin{figure}[ht]
  \centerline{\includegraphics[scale=0.35]{cnn.png}}
- \caption{Schema di una rete convoluzionale effettivamente utilizzata per l'analisi di un sistema XY su reticolo $32\times32$, sono stati tralasciati i layer \emph{dropout}.}
+  \caption{Schema di una rete convoluzionale effettivamente utilizzata per l'analisi di un sistema XY su reticolo $32\times32$, sono stati tralasciati i layer \emph{dropout}. Immagine generata adattando il codice disponibile presso \url{https://github.com/gwding/draw_convnet}.}
  \label{fig:cnn}
 \end{figure}
 
@@ -629,10 +629,10 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, dotted, very thick]
     table[x=epoch, y=loss] {dati/training_history/training_histo_xy_overfit};
 \addlegendentry{Training loss}
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, very thick]
     table[x=epoch, y=val_loss] {dati/training_history/training_histo_xy_overfit};
 \addlegendentry{Validation loss}
 \end{axis}
@@ -653,10 +653,10 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, dotted, very thick]
     table[x=epoch, y=loss] {dati/training_history/training_histo_xy_reg};
 \addlegendentry{Training loss}
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, very thick]
     table[x=epoch, y=val_loss] {dati/training_history/training_histo_xy_reg};
 \addlegendentry{Validation loss}
 \end{axis}
@@ -676,10 +676,10 @@ Come nel caso di Ising le etichette indicano se la temperatura del sistema si tr
     major grid style = {line width=.1pt, dashed, draw=gray!30},
     legend pos = north east,
 ]
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, dotted, very thick]
     table[x=epoch, y=loss] {dati/training_history/training_histo_xy_stop};
 \addlegendentry{Training loss}
-\addplot+[mark=none, smooth, ultra thick]
+\addplot+[mark=none, smooth, very thick]
     table[x=epoch, y=val_loss] {dati/training_history/training_histo_xy_stop};
 \addlegendentry{Validation loss}
 \end{axis}
@@ -1245,13 +1245,13 @@ ReLu  & \num{0.964\pm 0.006} & \num{0.982 \pm 0.002} &\num{ 0.877\pm 0.007}\\
 \caption{Test accuracy valutata su reti di lato 30, 50, 80, per rete da 5 layer a 10 neuroni per layer. Ogni valore si riferisce alla media tra i reticoli honeycomb, quadrato e triangolare.}
 \label{tab:SigVsRelu}
 \end{table}
-Utilizzando la funzione di attivazione ReLu si osserva un notevole risultato, le sue prestazioni aumentano notevolmente rispetto alla rete implementata con Sigmoid.
+Utilizzando la funzione di attivazione ReLu si osserva un notevole risultato, le sue prestazioni aumentano rispetto alla rete implementata con Sigmoid.
 Il risultato giustifica, per questo modello, le scarse prestazioni ottenute attraverso le reti implementate nella sezione \ref{sec:NL}.
 La funzione di attivazione ReLu sembra garantire un'elevata  capacità di classificazione per reti a più layer, al contrario dellla funzione di attivazione Sigmoid che pare diminuire notevolmente le performance.
 
 \subsubsection{Ottimizzazione: Adam vs SGD}
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \begin{center}
 \begin{tabular}{lllll}
 \toprule
@@ -1579,7 +1579,7 @@ In questo lavoro viene effettuata solo una breve analisi sul modello XY, giustif
 La struttura di rete da cui si è partiti corrisponde a quella rappresentata in figura \ref{fig:cnn}.
 
 \subsection{Breve valutazione dei parametri della rete}
-Analogamente a quanto svolto per il modello di Ising si è provato a variare alcuni parametri significativi della rete convoluzionale utilizzata per il modello XY, testandola sia sui dati non elaborati (quindi su valori in $[0, 2\pi)$) che sulle configurazioni di vortici (quindi su valori in $\{1;0;-1\}$), sempre per un reticolo a quattro primi vicini di lato 32.
+Analogamente a quanto svolto per il modello di Ising si è provato a variare alcuni parametri significativi della rete convoluzionale utilizzata per il modello XY, testandola sia su configurazioni di dati non elaborati (quindi su valori in $[0, 2\pi)$) che sulle configurazioni di vortici (quindi su valori in $\{1;0;-1\}$), sempre per un reticolo a quattro primi vicini di lato 32.
 Innanzi tutto si è provato a variare il kernel del primo layer convoluzionale, allenando e testando la rete per un kernel 2$\times$2 e 3$\times$3.
 
 \begin{table}[ht]
@@ -1650,7 +1650,7 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    title={Vortici},
+    title={Configurazioni},
     ylabel={T [$J/k_B$]},
     xlabel = {$ln(L)^{-2}$  [$\si{ln(nspin)}^{-2}$]},
     width=0.4\textwidth,
@@ -1667,9 +1667,9 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \addplot+[mark=none, red, thick] coordinates {(0.0,0.893) (0.15,0.893)};
 \addlegendentry{$T_t$}
 \addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
-     table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_vx};
+     table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_cg};
 \addlegendentry{$T_L$}
-\addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.2297*x + 0.9081};
+%\addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.2297*x + 0.9081};
 \end{axis}
 \end{tikzpicture}
 \hspace{2cm}
@@ -1723,14 +1723,18 @@ Invece per la rete che classifica basandosi sui vortici è stato impostato il pr
 
 Nei grafici di figura \ref{fig:xyTlimit} sono riportati le temperature e gli errori relativi ai reticoli di lato 16, 24, 32, 40 e 48; in tabella \ref{tab:Txy} sono indicati i valori estratti tramite i due procedimenti.
 
-\dots
-
-Il grafico per le temperature estratte dai vortici presenta un andamento anomalo rispetto a quanto ci si aspetterebbe infatti, come riportato in \cite{melko}, la temperatura di transizione teorica per reticoli di lato finito $T_L=T(L)$ è legata alla temperatura di transizione del sistema ideale nel limite termodinamico $T_t$ dalla formula
+Entrabi i grafici presentano un andamento anomalo rispetto a quanto ci si aspetterebbe infatti, come riportato in \cite{melko}, la temperatura di transizione teorica per reticoli di lato finito $T_L=T(L)$ è legata alla temperatura di transizione del sistema ideale nel limite termodinamico $T_t$ dalla formula
 \begin{equation}
 T(L) \approx T_t + \frac{\pi^2}{4c \ln{L}^2}
+\label{formula:TL}
 \end{equation}
 quindi ci si aspetterebbe una convergenza a $T_t$ dall'alto.
-Nonostante ciò la stima della temperatura riportata in tabella \ref{tab:Txy} risulta largamente compatibile entro l'errore con la temperatura teorica.
+
+Come si può osservare dal primo grafico riportato in figura \ref{fig:xyTlimit}, ovvero quello relativo alle configurazioni non elaborate in vortici, i valori per le diverse dimensioni di reticolo presentano barre d'errore estese.
+La retta che interpola i dati (da concludere, in attesa dell'ultimo dato!) \dots
+
+D'altra parte le temperature estrapolate dalla classificazione di configurazioni di vortici presentano barre d'errore contenute, e vengono interpolate adeguatamente dalla retta riportata nel grafico.
+Inoltre, come si può vedere in tabella \ref{tab:Txy}, nonostante l'andamento differente dalla predizione teorica \ref{formula:TL} si ottiene una buona stima della temperatura di transizione, largamente compatibile entro l'errore con la temperatura teorica.
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
