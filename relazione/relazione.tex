@@ -89,7 +89,7 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Rete neuronale per Ising e XY} % Title
+\title{Apprendimento di transizioni di fase} % Title
 
 \author{Martina \textsc{Crippa}, Pietro Francesco \textsc{Fontana}} % Author name
 
@@ -192,11 +192,11 @@ Sono stati studiati sistemi con geometrie di reticolo differenti e conseguenteme
 \begin{center}
 \begin{tabular}{lllll}
 \toprule
-reticolo & nn & $T_c$ [$J/k_B$] & $T_c$ approx [$J/k_B$] & $T_{init}$ [$J/k_B$]\\
+Reticolo & nn & $T_c$ [$J/k_B$] & $T_c$ approx [$J/k_B$] & $T_{init}$ [$J/k_B$]\\
 \midrule
-honeycomb & $3$ & --- & $1.5187$ & $0.0$\\
-quadrato & $4$ & $2/ \!\ln{(1+\sqrt{2})}$ & $2.2692$ & $1.0$\\
-triangolare & $6$ & $4/\!\ln{3}$ & $3.6410 $ & $2.0$\\
+Honeycomb & $3$ & --- & $1.5187$ & $0.0$\\
+Quadrato & $4$ & $2/ \!\ln{(1+\sqrt{2})}$ & $2.2692$ & $1.0$\\
+Triangolare & $6$ & $4/\!\ln{3}$ & $3.6410 $ & $2.0$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -341,9 +341,9 @@ L'inizializzazione degli spin sul reticolo è casuale e non viene ripetuta per o
 \begin{center}
 \begin{tabular}{lllll}
 \toprule
-reticolo & nn & $T_t$ & $T_t$ approx [$J/k_B$] & $T_{init}$ [$J/k_B$]\\
+Reticolo & nn & $T_t$ & $T_t$ approx [$J/k_B$] & $T_{init}$ [$J/k_B$]\\
 \midrule
-quadrato & $4$ & --- & $0.893$ & $0.01$\\
+Quadrato & $4$ & --- & $0.893$ & $0.01$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -704,7 +704,7 @@ Nell'apprendimento di sistemi di Ising il fenomeno di overfit è più contenuto,
 \subsection{Statistica sui dati} \label{sec:stats}
 Per migliorare l'affidabilità delle variabili misurate, come la test accuracy, sono stati generati test set da \num{100000} elementi che vengono divisi equamente in 10 insiemi su cui ogni modello viene valutato.
 Allo stesso modo, per tenere conto della componente stocastica presente nel processo di apprendimento di una rete, sono stati generati 10 modelli per ciascuna rete sullo stesso training set.
-Questo procedimento genera quindi 10 misure per ciascuno dei 10 modelli, per un totale di 100 misure, da cui viene estratta la media e l'errore, come deviazione standard della media.
+Questo procedimento genera quindi 10 misure per ciascuno dei 10 modelli, per un totale di 100 misure, da cui vengono estratti la media e l'errore, come deviazione standard della media.
 Questo sarà lo standard utilizzato in tutte le analisi successive.
 
 Si osserva che le misure effettuate non sono indipendenti tra loro, l'intero insieme di 100 misure condivide il medesimo training set e a gruppi di 10 condividono lo stesso modello, quindi non è possibile applicare né i teoremi del limite centrale né la legge dei grandi numeri.
@@ -719,7 +719,7 @@ Si potrebbero ottenere misure indipendenti partendo da un training set diverso p
 
 \subsection{Valutazione della geometria della rete}
 Per meglio valutare il contributo dei diversi parametri della rete sono stati generati più modelli, eseguendo la fase di apprendimento sullo stesso training set e variando di volta in volta alcune caratteristiche quali il numero di neuroni in un layer o il numero di layer.
-In questa sezione le principali caratteristiche  della rete che non vengono variate sono riportati in tabella \ref{tab:ffnnfixed}.
+In questa sezione le principali caratteristiche della rete che non vengono variate sono riportate in tabella \ref{tab:ffnnfixed}.
 
 \begin{table}[ht]
 \begin{center}
@@ -831,7 +831,6 @@ Per tutte le dimensioni considerate aumentando il numero di neuroni a 1000 si os
 Per limiti computazionali non sono state realizzate reti con un numero di neuroni superiore, quindi non è stato possibile chiarire l'andamento complessivo per il reticolo triangolare.
 Si osserva che una differenza tra la configurazione su reticolo triangolare e gli altri due sistemi, oltre alla geometria del reticolo, è l'algoritmo utilizzato per la simulazione del sistema, come riportato in sezione \ref{sec:simIsing}.
 %TODO approfondire la cosa
-
 
 \subsubsection{Diverso numero di layer}
 \label{sec:NL}
@@ -960,7 +959,7 @@ Si osserva che una differenza tra la configurazione su reticolo triangolare e gl
 Il primo grafico riportato in figura \ref{fig:par} presenta l'andamento del numero di parametri normalizzato sul numero di training data rispetto al numero di neuroni per reti a un layer nascosto.
 Come si può notare il numero di parametri segue un andamento lineare e cresce velocemente.
 Diversamente, nel secondo grafico in figura \ref{fig:par} si osserva che aumentando il numero di layer il numero di parametri cresce sempre linearmente ma in maniera molto meno marcata, la crescita è rappresentata rispetto al numero di layer nascosti che è proporzionale al numero totale di neuroni.
-Le specifiche delle reti a più layer sono specificate successivamente.
+Le caratteristiche delle reti a più layer sono specificate successivamente.
 
 Nell'ambito delle reti neuronali si cerca di avere sempre un equilibrio tra il numero di parametri da apprendere ed il numero di dati utilizzati per l'apprendimento, preferendo se possibile una prevalenza della seconda quantità.
 Si può trovare un parallelo con il numero di vincoli necessari per ottenere una soluzione unica in un sistema a molte variabili.
@@ -985,7 +984,7 @@ Rete & L30 TA & L50 TA & L80 TA \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy valutata su una rete a singolo layer da 100 neuroni e su una rete a 2 layer da 10 neuroni ciascuno. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\caption{Test accuracy valutata su una rete a singolo layer da 100 neuroni e su una rete a 2 layer da 10 neuroni ciascuno. I valori corrispondono alla media sulle tre diverse tipologie di reticolo per ciascuna dimensione.}
 \label{tab:NNLN}
 \end{table}
 
@@ -1008,7 +1007,7 @@ Rete & L30 TA & L50 TA & L80 TA\\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy (TA) valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\caption{Test accuracy (TA) valutata su una rete a 2 layer da 70 e 30 neuroni e su una rete a 2 layer da 30 e 70 neuroni. I valori corrispondono alla media sulle tre diverse tipologie di reticolo per ciascuna dimensione.}
 \label{tab:2LN30-70}
 \end{table}
 
@@ -1026,7 +1025,7 @@ Rete & L30 TA & L50 TA & L80 TA \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy (TA) valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori sono la media sulle tre diverse tipologie di reticolo per ciascuna dimensione, l'errore è stimato come deviazione standard della media.}
+\caption{Test accuracy (TA) valutata su una rete a 2 layer da 95 e 5 neuroni e su una rete a 2 layer da 5 e 95 neuroni. I valori corrispondono alla media sulle tre diverse tipologie di reticolo per ciascuna dimensione.}
 \label{tab:2LN5-95}
 \end{table}
 
@@ -1053,7 +1052,7 @@ Rete & L30 TA & L50 TA & L80 TA \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Test accuracy (TA) per diverse reti. I valori sono le medie e le deviazioni standard dei risultati ottenuti per il reticolo honeycomb, quadrato e triangolare.}
+\caption{Test accuracy (TA) per diverse reti. I valori sono le medie dei risultati ottenuti per il reticolo honeycomb, quadrato e triangolare.}
 \label{tab:2LN2-3-4}
 \end{table}
 
@@ -1403,7 +1402,7 @@ La rete sembra quindi aver appreso il parametro d'ordine di questa transizione d
 
 I grafici in figura \ref{fig:weights} si possono facilmente interpretare, ad esempio nel caso della rete a 2 neuroni si può osservare come uno dei due riceva un input maggiore di zero per magnetizzazione positiva, l'altro per magnetizzazione opposta.
 I neuroni hanno Sigmoid come funzione di attivazione (vd. figura \ref{fig:actv_func}).
-Nel caso in cui il sistema di spin sia ordinato, quindi con magnetizzazione non nulla, uno dei due neuroni avrà output positivo e l'altro avrà output opposto; nel caso in cui la configurazione degli spin sia disordinata, quindi con magnetizzazione nulla, entrambi i neuroni avranno output negativo.
+Nel caso in cui il sistema di spin sia ordinato, quindi con magnetizzazione non nulla, uno dei due neuroni avrà output vicino a 1 e l'altro avrà output vicino a 0; nel caso in cui la configurazione degli spin sia disordinata, quindi con magnetizzazione nulla, entrambi i neuroni avranno output vicino a 0.
 La rete può riconoscere facilmente in quale delle due fasi si trova il sistema.
 
 \subsection{Stima della temperatura critica}
@@ -1434,7 +1433,7 @@ La rete può riconoscere facilmente in quale delle due fasi si trova il sistema.
 \addlegendentry{Output 2}
 \end{axis}
 \end{tikzpicture}
-\caption{Output dei due neuroni presenti nel layer di output, la rete è valutata su configurazioni di un sistema di Ising di lato 30. La temperatura critica per il modello di Ising si trova in tabella \ref{tab:ltI}. I risultati sono ottenuti dalla media su 250 configurazioni per ciascuna temperatura.}
+  \caption{Output dei due neuroni presenti nel layer di output, la rete è valutata su configurazioni di un sistema di Ising di lato 30. La temperatura critica per il modello di Ising si trova in tabella \ref{tab:ltI}. I risultati sono ottenuti dalla media su 250 configurazioni per ciascuna temperatura, per un totale di \num{10000} configurazioni.}
 \label{fig:temp_cross}
 \end{figure}
 
@@ -1462,7 +1461,7 @@ Ottimizzazione: & Adam 0.0001 \\
 \label{tab:ffnnpar}
 \end{table}
 
-La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $20\%$ del training set per la validazione) a reticolo quadrato, e testata su set di \num{100000} per tutti e tre le geometrie di reticolo.
+La rete è stata allenata su set di almeno \num{100000} configurazioni (prendendo un sottoinsieme di configurazioni pari al $20\%$ del training set per la validazione) a reticolo quadrato, e valutata su set di \num{100000} configurazioni per tutte e tre le geometrie di reticolo.
 Ciascun valore di temperatura riportato è dato dalla media di 100 temperature, i cui valori sono classificati da 10 diverse reti su 10 diversi test set, come spiegato nella sezione \ref{sec:stats}.
 Le reti utilizzate per questo scopo sono state scelte singolarmente tra quelle con test accuracy alta e test loss bassa.
 I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
@@ -1473,7 +1472,7 @@ I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 \begin{axis}[
     title={Honeycomb},
     ylabel={T [$J/k_B$]},
-    xlabel={$L^{-1}$  [$\si{nspin}^{-1}$]},
+    xlabel={$L^{-1}$},
     width=0.33\textwidth,
     height=0.44\textwidth,
     xmin=0.0,
@@ -1497,7 +1496,7 @@ I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 \begin{tikzpicture}
 \begin{axis}[
     title={Quadrato},
-    xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+    xlabel = {$L^{-1}$},
     width=0.33\textwidth,
     height=0.44\textwidth,
     xmin=0.0,
@@ -1521,7 +1520,7 @@ I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 \begin{tikzpicture}
 \begin{axis}[
     title={Triangolare},
-    xlabel = {$L^{-1}$  [$\si{nspin}^{-1}$]},
+    xlabel = {$L^{-1}$},
     width=0.33\textwidth,
     height=0.44\textwidth,
     xmin=0.0,
@@ -1551,9 +1550,9 @@ I parametri comuni alle reti sono riportati in tabella \ref{tab:ffnnpar}.
 \toprule
 Reticolo & T estratta [$J/k_B$] & T teorica [$J/k_B$] \\
 \midrule
-honeycomb & \num{1.52 \pm 0.04} & \num{1.519} \\
-quadrato & \num{2.27 \pm 0.07} & \num{2.269} \\
-triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
+Honeycomb & \num{1.52 \pm 0.04} & \num{1.519} \\
+Quadrato & \num{2.27 \pm 0.07} & \num{2.269} \\
+Triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1562,8 +1561,8 @@ triangolare & \num{3.63 \pm 0.16} & \num{3.641} \\
 \end{table}
 
 Nei grafici in figura \ref{fig:Tlimit} sono riportate le medie delle temperature $T_L$ al variare del lato del reticolo, con le relative barre d'errore date dalla deviazione standard della media.
-Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e la retta che interpola tali temperature, il fit è stato eseguito con il metodo dei minimi quadrati.
-In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura di transizione.
+Inoltre è riportato il valore teorico della temperatura di transizione $T_c$ e la retta che interpola le temperature estratte, il fit è stato eseguito con il metodo dei minimi quadrati.
+In tabella \ref{tab:Tising} sono riportati i valori finali ottenuti per la temperatura di transizione.
 
 %----------------------------------------------------------------------------------------
 %	LAST SECTION
@@ -1571,7 +1570,7 @@ In tabella \ref{tab:Tising} sono riportati i valori estratti per la temperatura 
 
 \section{Modello XY: risultati e conclusioni}
 Contrariamente al modello di Ising, per sistemi XY non è noto un parametro d'ordine che manifesti la transizione di fase, quindi non si può stabilire con certezza cosa apprenda la rete.
-La letteratura \cite{melko} suggerisce che per sistemi finito dimensionali, come quelli studiati in questa relazione, il sistema sia parzialmente magnetizzato e quindi si suppone che la rete allenata sulle configurazioni di spin possa apprendere questa leggera magnetizzazione dovuta alla non idealità del sistema.
+La letteratura \cite{melko} suggerisce che per sistemi finito dimensionali, come quelli studiati in questo lavoro, il sistema sia parzialmente magnetizzato e quindi si suppone che la rete allenata sulle configurazioni di spin possa apprendere questa leggera magnetizzazione dovuta alla non idealità del sistema.
 Perciò, come riportato nell'introduzione, si è provato ad allenare la rete anche sulle configurazioni di vortici ottenendo risultati simili a quelli relativi alle configurazioni.
 Tuttavia, sempre come osservato nell'articolo \cite{melko}, non è chiaro cosa la rete riesca ad apprendere e sopratutto se l'apprendimento sia reso possibile unicamente dalla non idealità del sistema.
 
@@ -1652,7 +1651,7 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \begin{axis}[
     title={Configurazioni},
     ylabel={T [$J/k_B$]},
-    xlabel = {$ln(L)^{-2}$  [$\si{ln(nspin)}^{-2}$]},
+    xlabel = {$ln(L)^{-2}$},
     width=0.4\textwidth,
     height=0.44\textwidth,
     xmin=0.0,
@@ -1669,7 +1668,7 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \addplot[only marks, blue, mark=*, error bars/.cd, y dir = both, y explicit, error mark=none, error bar style=thick]
      table [x expr={1/ln(\thisrow{size})^2}, y=temp, y error=temp_e] {dati/temperature_cg};
 \addlegendentry{$T_L$}
-%\addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.2297*x + 0.9081};
+\addplot+[mark=none, green!70!black, thick, domain=0.06:0.13, samples=101]{-0.1331*x + 0.8978};
 \end{axis}
 \end{tikzpicture}
 \hspace{2cm}
@@ -1677,7 +1676,7 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \begin{axis}[
     title={Vortici},
     ylabel={T [$J/k_B$]},
-    xlabel = {$ln(L)^{-2}$  [$\si{ln(nspin)}^{-2}$]},
+    xlabel = {$ln(L)^{-2}$},
     width=0.38\textwidth,
     height=0.44\textwidth,
     xmin=0.0,
@@ -1707,8 +1706,8 @@ Infatti una rete priva dei layer convoluzionali fatica ad apprendere le caratter
 \toprule
 Dati & T estratta [$J/k_B$] & T teorica [$J/k_B$] \\
 \midrule
-configurazioni & \num{ 0.0 \pm 0.0} & \num{0.893}\\
-vortici & \num{0.91 \pm0.05}  & \num{0.893} \\
+Configurazioni & \num{0.90 \pm 0.07} & \num{0.893}\\
+Vortici & \num{0.91 \pm0.05}  & \num{0.893} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1733,8 +1732,8 @@ quindi ci si aspetterebbe una convergenza a $T_t$ dall'alto.
 Come si può osservare dal primo grafico riportato in figura \ref{fig:xyTlimit}, ovvero quello relativo alle configurazioni non elaborate in vortici, i valori per le diverse dimensioni di reticolo presentano barre d'errore estese.
 La retta che interpola i dati (da concludere, in attesa dell'ultimo dato!) \dots
 
-D'altra parte le temperature estrapolate dalla classificazione di configurazioni di vortici presentano barre d'errore contenute, e vengono interpolate adeguatamente dalla retta riportata nel grafico.
-Inoltre, come si può vedere in tabella \ref{tab:Txy}, nonostante l'andamento differente dalla predizione teorica \ref{formula:TL} si ottiene una buona stima della temperatura di transizione, largamente compatibile entro l'errore con la temperatura teorica.
+D'altra parte le temperature estrapolate dalla classificazione di sistemi di vortici presentano barre d'errore contenute, e vengono interpolate adeguatamente dalla retta riportata nel grafico.
+Inoltre, come si può vedere in tabella \ref{tab:Txy}, nonostante l'andamento differente dalla predizione teorica \ref{formula:TL} si ottiene una buona stima della temperatura di transizione, largamente compatibile entro l'errore con il valore atteso.
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
