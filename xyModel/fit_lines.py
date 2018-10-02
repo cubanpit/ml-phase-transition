@@ -41,7 +41,6 @@ inv_sizes = np.array(1 / np.power(np.log(sizes), 2))
 weights = np.array(1 / temps_e)
 coeff, cov = np.polyfit(inv_sizes, temps, deg=1, w=weights, cov=True)
 line = np.poly1d(coeff)
-print(line)
 print(
         "Predicted critical temperature : ",
         np.round(line[0], decimals=4), " +- ",
