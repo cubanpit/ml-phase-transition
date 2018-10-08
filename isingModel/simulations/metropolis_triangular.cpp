@@ -48,8 +48,8 @@ int main() {
   // initialize nearest neighbours array
   init_nn();
 
-  // initialize all spins - cold start
-  std::fill(spins.begin(), spins.end(), 1);
+  // initialize all spins - cold start (every s=+1 or every s=-1)
+  std::fill(spins.begin(), spins.end(), binGen());
 
   // randomize all spins - hot start
   //std::generate(spins.begin(), spins.end(), binGen);
