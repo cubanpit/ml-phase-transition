@@ -4,7 +4,7 @@
 
 This is an exam project for a master course on ''Statistical Methods for Learning''.
 
-The repository include C++ simulations of physical systems and Python Keras/Tensorflow code for the neural networks part.
+The repository includes C++ simulations of physical systems and Python Keras/Tensorflow code for the neural networks part.
 
 Simulated physical systems:
 
