@@ -1,4 +1,4 @@
-# Ising Learning
+# Machine Learning Phase Transitions 
 
 ### Analyse phase transitions with neural networks
 
