@@ -1,10 +1,10 @@
-# Machine Learning Phase Transitions 
+# Machine Learning Phase Transitions
 
 ### Analyse phase transitions with neural networks
 
 This is an exam project for a master course on ''Statistical Methods for Learning''.
 
-The repository includes C++ simulations of physical systems and Python Keras/Tensorflow code for the neural networks part.
+The repository includes C++ simulations of physical systems, Python Keras/Tensorflow code for the neural networks part and the LaTeX code for the exam report (in Italian, but with nice pictures!).
 
 Simulated physical systems:
 
