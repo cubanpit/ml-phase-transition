@@ -1,9 +1,14 @@
 #!/usr/bin/python3
 
+# File: cv_ising_learning.py
+
 # Machine Learning programm written using TensorFlow
 # Data used to train the neural network come from a computer simulated 2D Ising
 #  model, the purpose is to identify critical phase transitions using a trained
 #  neural network, without feeding it with the order parameter.
+# WARNING: this model does not perform well, a simpler approach is with a
+#  fully connected neural network (see file ising_learning.py). This file could
+#  be messy and contain leftovers from testing work.
 
 import numpy as np
 import tensorflow as tf
@@ -252,18 +257,18 @@ if train:
     train_magns, train_bin_temps, train_real_temps, train_configs \
             = read_data(train_set, critical_temp("sq"))
     model = build_model(train_configs.shape[1], args.neurons_number)
-    
+
     folds = list(KFold(n_splits=10, shuffle=True, random_state=1).split(train_configs, train_bin_temps))
-    
+
     # define callback to stop when accuracy is stable
     earlystop = keras.callbacks.EarlyStopping(
             monitor='val_acc', min_delta=0.0001,
             patience=6, verbose=1, mode='auto')
-    
+
     callbacks_list = [earlystop]
-    
+
     for j, (train_idx, val_idx) in enumerate(folds):
-        
+
         print ('\nFold', j)
         config_train = train_configs[train_idx]
         config_val = train_configs[val_idx]
@@ -273,14 +278,14 @@ if train:
 
         # fit model on training data
         history = model.fit(
-                        config_train, 
-                        temp_train, 
+                        config_train,
+                        temp_train,
                         epochs=30,
-                        callbacks=callbacks_list, 
+                        callbacks=callbacks_list,
                         batch_size=100,
-                        validation_data=(config_val, temp_val), 
+                        validation_data=(config_val, temp_val),
                         verbose=1)
-        
+
         if train and not args.no_plot:
             acc = history.history['acc']
             val_acc = history.history['val_acc']
@@ -288,25 +293,25 @@ if train:
             val_loss = history.history['val_loss']
             binary_crossentropy = history.history['binary_crossentropy']
             val_binary_crossentropy = history.history['val_binary_crossentropy']
-        
+
             epochs = range(1, len(acc) + 1)
-        
+
             plt.plot(epochs, acc, 'g', label='Training acc')
             plt.plot(epochs, val_acc, 'g--', label='Validation acc')
             plt.xlabel('Epochs')
             plt.ylabel('Accuracy')
             plt.legend()
-        
+
             plt.show()
-        
+
             plt.plot(epochs, loss, 'b', label='Training loss')
             plt.plot(epochs, val_loss, 'b--', label='Validation loss')
             plt.xlabel('Epochs')
             plt.ylabel('Loss')
             plt.legend()
-        
+
             plt.show()
-        
+
             plt.plot(
                     epochs,
                     binary_crossentropy,
@@ -320,7 +325,7 @@ if train:
             plt.xlabel('Epochs')
             plt.ylabel('Binary_crossentropy')
             plt.legend()
-        
+
             plt.show()
     if save:
         print("Saving trained model to:", args.save_model)

@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# File: view_data_tsne.py
+
 # Simple program to draw t-SNE representation of spin configurations for
 #  Ising and XY model. Spin configurations come from a MonteCarlo simulation.
 

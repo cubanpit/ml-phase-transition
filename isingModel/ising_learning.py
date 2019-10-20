@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# File: ising_learning.py
+
 # Machine Learning programm written using TensorFlow
 # Data used to train the neural network come from a computer simulated 2D Ising
 #  model, the purpose is to identify critical phase transitions using a trained

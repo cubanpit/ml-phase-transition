@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# File: xy_CNN.py
+
 # Machine Learning programm written using TensorFlow
 # Data used to train the neural network come from a computer simulated XY
 #  model, the purpose is to identify critical phase transitions using a trained

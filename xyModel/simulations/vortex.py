@@ -1,5 +1,11 @@
 #! /bin/python3
 
+# File: vortex.py
+
+# This script should identify vortices in an XY model, the input file comes
+#  from a simulation in the same folder and contains angles.
+# It should also provide some help in plotting the XY system with nice arrows.
+
 import matplotlib
 import numpy as np
 import argparse

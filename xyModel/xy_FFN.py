@@ -1,9 +1,14 @@
 #!/usr/bin/python3
 
+# File: xy_FFN.py
+
 # Machine Learning programm written using TensorFlow
 # Data used to train the neural network come from a computer simulated XY
 #  model, the purpose is to identify critical phase transitions using a trained
 #  neural network, without feeding it with the order parameter.
+# WARNING: this model does not perform well, the right approach is with a
+#  convolutional neural network (see file xy_CNN.py). This file could be messy
+#  and contain leftovers from testing work.
 
 import numpy as np
 import tensorflow as tf

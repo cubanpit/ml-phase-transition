@@ -1,4 +1,4 @@
-// Wolff cluster algorithm for the 2-D Ising Model
+// Wolff cluster algorithm for the 3-D Ising Model
 
 #include <cmath>
 #include <cstdlib>
